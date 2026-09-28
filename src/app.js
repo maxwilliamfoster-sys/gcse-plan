@@ -754,6 +754,14 @@ function viewSubject(s) {
   h += '<div class="sect"><h2>Papers</h2><div class="tbl"><table class="xt"><tbody>';
   for (const p of s.papers) h += `<tr class="${p.date < d ? 'gone' : ''}"><td class="d">${esc(D.fmt(p.date, { day: 'numeric', month: 'short' }))}<br><span class="muted">${esc(p.time)}</span></td><td><b>${esc(p.name)}</b><br><span class="tag">${esc(p.code)}</span> <span class="small muted">${p.approx ? 'date set by school' : minsTxt(p.dur)}</span></td><td class="n">${p.date >= d ? plural(D.diff(d, p.date), 'day') : 'done'}</td></tr>`;
   h += '</tbody></table></div></div>';
+  const G = (RG.given || {})[s.id];
+  if (G) {
+    const list = (arr) => '<ul class="pts">' + arr.map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul>';
+    h += `<div class="sect"><h2>What the exam gives you</h2><div class="card stack given">
+      <div><div class="eyebrow">Given in the exam</div>${list(G.given)}</div>
+      <div><div class="eyebrow">Learn this yourself</div>${list(G.memorise)}</div>
+      <div><div class="eyebrow">How it's marked</div>${list(G.marking)}</div></div></div>`;
+  }
   h += `<div class="sect"><h2>How it's assessed</h2><div class="card"><ul class="pts">${s.structure.map((x) => '<li>' + esc(x) + '</li>').join('')}</ul></div></div>`;
   h += `<div class="sect"><h2>Exam technique</h2><div class="card"><ul class="pts">${s.technique.map((x) => '<li>' + esc(x) + '</li>').join('')}</ul></div></div>`;
   // topics grouped by paper

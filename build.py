@@ -3,7 +3,7 @@ root = pathlib.Path(__file__).parent
 src = root / 'src'
 shell = (src / 'shell.html').read_text(encoding='utf8')
 css = (src / 'app.css').read_text(encoding='utf8')
-data = '\n'.join((src / f).read_text(encoding='utf8') for f in ['d-maths.js', 'd-science.js', 'd-english.js', 'd-humanities.js', 'd-german.js', 'd-specref.js'])
+data = '\n'.join((src / f).read_text(encoding='utf8') for f in ['d-maths.js', 'd-science.js', 'd-english.js', 'd-humanities.js', 'd-german.js', 'd-specref.js', 'd-given.js'])
 app = (src / 'app.js').read_text(encoding='utf8')
 frag = shell.replace('/*CSS*/', css).replace('/*DATA*/', data).replace('/*APP*/', app)
 

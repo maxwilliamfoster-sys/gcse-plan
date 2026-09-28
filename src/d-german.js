@@ -33,7 +33,7 @@ RG.subjects.push({
         'Role models (H): Mein Vorbild ist …, weil er/sie hilfsbereit und ehrlich ist.',
         'Future: Ich möchte (nicht) heiraten / Kinder haben, weil …',
         'Every word on these cards is on AQA\'s official 8662 vocabulary list. (H) = Higher tier only.'],
-      cards: [['sich verstehen mit (+ dative)', 'to get on with'], ['jdm auf die Nerven gehen', 'to get on someone\'s nerves'], ['das Vorbild (H)', 'role model'],
+      cards: [['sich verstehen mit (+ dative)', 'to get on with'], ['auf die Nerven gehen (e.g. Er geht mir auf die Nerven)', 'to get on someone\'s nerves (He gets on my nerves)'], ['das Vorbild (H)', 'role model'],
         ['geduldig', 'patient'], ['hilfsbereit', 'helpful'], ['eifersüchtig (H)', 'jealous'], ['geschieden', 'divorced'], ['ledig', 'single (unmarried)'],
         ['der Stiefvater (Stief- = step-)', 'stepfather'], ['streiten', 'to argue'], ['die Beziehung', 'relationship'], ['vertrauen (H)', 'to trust'],
         ['I get on well with my sister', 'Ich verstehe mich gut mit meiner Schwester']],

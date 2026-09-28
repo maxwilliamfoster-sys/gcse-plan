@@ -9,7 +9,7 @@ RG.spec = {
   'm-ratio': '1MA1 Ratio R4–R8, R10', 'm-rates': '1MA1 Ratio R1, R11 · Number N13', 'm-angles': '1MA1 Geometry G1, G3, G4 · bearings',
   'm-area': '1MA1 Geometry: mensuration (G14–G18) · Appendix 3 formulae', 'm-trig': '1MA1 Geometry G6, G20–G23 (Pythagoras & trigonometry)',
   'm-transf': '1MA1 Geometry G2, G5, G7, G19', 'm-circle': '1MA1 Geometry G10 (Higher)', 'm-vectors': '1MA1 Geometry G24, G25',
-  'm-prob': '1MA1 Probability P1–P9', 'm-stats': '1MA1 Statistics S1–S6', 'm-proof': '1MA1 Algebra A6, A20', 'm-exam': '1MA1 AO2 & AO3 (reasoning & problem solving)',
+  'm-prob': '1MA1 Probability P1–P9', 'm-stats': '1MA1 Statistics S1–S6', 'm-proof': '1MA1 Algebra A6, A20', 'm-exam': '1MA1 AO2 & AO3 (reasoning & problem solving)', 'm-sheet': '1MA1 formulae sheet (Ofqual decision 2025–2027) · Appendix 3',
   // Combined Science — AQA 8464
   'b-cells': 'AQA 8464 4.1.1 Cell structure', 'b-div': 'AQA 8464 4.1.2 Cell division', 'b-transport': 'AQA 8464 4.1.3 Transport in cells',
   'b-digest': 'AQA 8464 4.2.1–4.2.2 (digestive system, enzymes)', 'b-heart': 'AQA 8464 4.2.2 (heart, blood vessels, blood, lungs)',
@@ -23,7 +23,7 @@ RG.spec = {
   'c-atmos': 'AQA 8464 5.9 Chemistry of the atmosphere', 'c-resources': 'AQA 8464 5.10 Using resources',
   'p-energy': 'AQA 8464 6.1 Energy', 'p-elec': 'AQA 8464 6.2 Electricity', 'p-particles': 'AQA 8464 6.3 Particle model of matter',
   'p-atomic': 'AQA 8464 6.4 Atomic structure', 'p-forces': 'AQA 8464 6.5 Forces', 'p-waves': 'AQA 8464 6.6 Waves',
-  'p-magnet': 'AQA 8464 6.7 Magnetism & electromagnetism', 'p-equations': 'AQA 8464 Appendix B: Physics equations',
+  'p-magnet': 'AQA 8464 6.7 Magnetism & electromagnetism', 'p-equations': 'AQA 8464 Physics Equations Sheet (June 2027) · Appendix B',
   'p-skills': 'AQA 8464 Working scientifically · 21 required practicals',
   // English Language — AQA 8700
   'el-p1q1': 'AQA 8700 Paper 1 Q1 & Paper 2 Q1 (AO1)', 'el-lang': 'AQA 8700 P1 Q2 & P2 Q3 (AO2)', 'el-struct': 'AQA 8700 P1 Q3 (AO2)',

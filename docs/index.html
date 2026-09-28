@@ -9,6 +9,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/png" href="icon-192.png">
+<script src="firebase-config.js"></script>
 <meta name="theme-color" content="#16203A">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -245,6 +246,15 @@ details.why ul{margin:8px 0 0;padding-left:18px;display:flex;flex-direction:colu
 }
 @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
 
+/* login + spec reference */
+.login{max-width:460px;margin:0 auto}
+.login input{border:1px solid var(--line);border-radius:var(--r-sm);background:var(--card);padding:10px 12px;min-height:44px;font-size:16px;width:100%}
+.login .l{font-weight:700}
+.or{text-align:center}
+.spec-ref{margin-top:14px;font-size:14px;display:flex;flex-wrap:wrap;gap:6px 8px;align-items:baseline}
+.nav[hidden]{display:none!important}
+.count:empty{display:none}
+
 </style>
 </head>
 <body>
@@ -274,6 +284,7 @@ RG.subjects.push({
     'Always show working: most marks are method marks, even when the final answer is wrong.',
     'Underline the instruction: units, decimal places, "give reasons", "show that".',
     'Check your calculator is in Degrees (D) before any trig question.',
+    'Only four formulae are provided (cone and sphere volume/surface area). Learn the rest: area of a trapezium, circle formulae, Pythagoras, trig ratios, and (Higher) the quadratic formula and sine/cosine rules.',
     'Non-calc: practise written multiplication, division and fraction arithmetic until automatic.',
     'Stuck? Write down anything you know (a formula, a labelled diagram). Then move on and come back.'
   ],
@@ -402,7 +413,7 @@ RG.subjects.push({
       pts: ['Triangle ½bh. Trapezium ½(a + b)h. Circle area πr², circumference πd.',
         'Arc length = θ/360 × 2πr. Sector area = θ/360 × πr².',
         'Prism volume = cross-section area × length. Cylinder πr²h.',
-        'Cone ⅓πr²h, sphere ⁴⁄₃πr³, sphere surface 4πr², cone curved surface πrl — check your formula sheet, but know how to use them.',
+        'Given in the exam (1MA1 Appendix 3): cone volume ⅓πr²h, cone curved surface πrl, sphere volume ⁴⁄₃πr³, sphere surface 4πr². Every other area/volume formula you must know yourself.',
         '"In terms of π" means leave π in the answer.'],
       cards: [['Area of a circle, radius 5 (in terms of π)', '25π'], ['Trapezium a = 6, b = 10, h = 4', '32'],
         ['Cylinder volume, r = 3, h = 10 (in terms of π)', '90π'], ['Arc length: r = 6, angle 60°', '2π']],
@@ -501,7 +512,7 @@ RG.subjects.push({
     'Calculations: write the equation, substitute with units, give the answer with a unit and sensible significant figures.',
     'Graphs: read values with a ruler, draw lines of best fit smoothly, and quote data when asked to use the graph.',
     'Required practicals: know the independent, dependent and control variables and how to improve accuracy.',
-    'Physics equations: check with your teacher whether an equation sheet is given in 2027. Learn them anyway — it is faster.'
+    'Physics equations: AQA lists 21 equations you must recall and a set you select from the Physics equation sheet — see the "Physics equations" topic.'
   ],
   resources: [
     ['AQA Trilogy 8464 spec & past papers', 'https://www.aqa.org.uk/subjects/science/gcse/combined-science-trilogy-8464'],
@@ -599,7 +610,8 @@ RG.subjects.push({
 
     /* ---------- BIOLOGY PAPER 2 ---------- */
     { id: 'b-nerves', n: 'Nervous system & reaction time', p: ['sb2'], w: 2, from: '2027-01-04',
-      pts: ['Stimulus → receptor → sensory neurone → relay neurone (CNS) → motor neurone → effector → response.',
+      pts: ['Homeostasis keeps internal conditions (blood glucose, body temperature, water levels) steady. Control systems have receptors, coordination centres (brain, spinal cord, pancreas) and effectors.',
+        'Stimulus → receptor → sensory neurone → relay neurone (CNS) → motor neurone → effector → response.',
         'Reflexes are automatic and rapid, and they do not involve the conscious brain. Synapses pass signals chemically across a gap.',
         'The CNS is the brain and spinal cord.',
         'Required practical: ruler-drop reaction time. Repeat, calculate the mean, control the hand and the distractions.'],
@@ -655,7 +667,7 @@ RG.subjects.push({
     { id: 'c-atoms', n: 'Atoms, the periodic table & separating', p: ['sc1'], w: 3,
       pts: ['Proton: charge +1, mass 1. Neutron: 0, mass 1. Electron: −1, very small mass. Atomic number = protons. Mass number = protons + neutrons.',
         'Isotopes: same number of protons, different number of neutrons.',
-        'Model of the atom: Dalton (solid spheres) → Thomson plum pudding (electron discovered) → Rutherford alpha scattering (nucleus) → Bohr (electron shells) → Chadwick (neutron).',
+        'Model of the atom: tiny spheres → discovery of the electron led to the plum pudding model → alpha scattering showed a small positive nucleus (nuclear model) → Bohr: electrons in shells → Chadwick provided evidence for the neutron.',
         'Electron shells: 2, 8, 8. Group number = outer electrons. Period = number of shells.',
         'Group 1: react with water → metal hydroxide + hydrogen, more reactive down the group. Group 7: less reactive down the group, displacement reactions. Group 0: unreactive (full outer shell).',
         'Separating mixtures: filtration, crystallisation, simple and fractional distillation, chromatography. Mendeleev left gaps for undiscovered elements.'],
@@ -826,6 +838,17 @@ RG.subjects.push({
       cards: [['Direction of field lines', 'North to south'], ['How can you make an electromagnet stronger?', 'More current, more turns, add an iron core'],
         ['Fleming\'s left-hand rule fingers (H)', 'Thumb: motion. First: field. Second: current'], ['Motor effect equation (H)', 'F = BIl']],
       ex: 'Draw field patterns (bar magnet, wire, solenoid) and do 2 F = BIl questions (H).' },
+    { id: 'p-equations', n: 'Physics equations (recall list + equation sheet)', p: ['sp1', 'sp2'], w: 3,
+      pts: ['AQA Appendix B lists 21 equations you must RECALL. The rest are given on the Physics equation sheet — you only need to select and use them.',
+        'Recall (forces & motion): W = mg · W = Fs · F = ke · s = vt · a = Δv/t · F = ma · p = mv (H).',
+        'Recall (energy): Eₖ = ½mv² · Eₚ = mgh · P = E/t · P = W/t · efficiency = useful output ÷ total input (energy or power).',
+        'Recall (waves, electricity, density): v = fλ · Q = It · V = IR · P = VI · P = I²R · E = Pt · E = QV · ρ = m/V.',
+        'Given on the sheet: v² − u² = 2as · Eₑ = ½ke² · ΔE = mcΔθ · T = 1/f · F = BIl (H) · E = mL · VₚIₚ = VₛIₛ (H).',
+        'Always: write the equation, substitute with units, rearrange, then give the answer with a unit.'],
+      cards: [['Weight equation (recall)', 'W = mg'], ['Kinetic energy (recall)', 'Eₖ = ½mv²'], ['Gravitational PE (recall)', 'Eₚ = mgh'], ['Wave speed (recall)', 'v = fλ'],
+        ['Charge flow (recall)', 'Q = It'], ['Two power equations for circuits (recall)', 'P = VI and P = I²R'], ['Energy transferred by charge (recall)', 'E = QV'],
+        ['Density (recall)', 'ρ = m/V'], ['Momentum (recall, H)', 'p = mv'], ['Is ΔE = mcΔθ on the equation sheet?', 'Yes — select and apply it'], ['Is v = fλ on the equation sheet?', 'No — you must recall it']],
+      ex: 'Cover the list and write all 21 recall equations from memory, with units. Then do 6 mixed calculations.' },
     { id: 'p-skills', n: 'Required practicals & working scientifically', p: ['sb1', 'sc1', 'sp1', 'sb2', 'sc2', 'sp2'], w: 2,
       pts: ['Independent variable = what you change. Dependent = what you measure. Control = kept the same.',
         'Accurate = close to the true value. Precise = results close together. Repeatable = same person, same method. Reproducible = different person or method.',
@@ -1082,7 +1105,8 @@ RG.subjects.push({
   ],
   topics: [
     { id: 'g-tect', n: 'Tectonic hazards', p: ['g1'], w: 3,
-      pts: ['Constructive margin: plates move apart, magma rises, gentle shield volcanoes (e.g. Iceland). Destructive: oceanic plate subducts under continental — explosive composite volcanoes and strong earthquakes. Conservative: plates slide past, earthquakes only (San Andreas).',
+      pts: ['A natural hazard is a natural process that could cause death, injury or disruption. Hazard risk depends on factors such as population density, wealth, and the frequency and magnitude of the hazard.',
+        'Constructive margin: plates move apart, magma rises, gentle shield volcanoes (e.g. Iceland). Destructive: oceanic plate subducts under continental — explosive composite volcanoes and strong earthquakes. Conservative: plates slide past, earthquakes only (San Andreas).',
         'Plates move due to convection currents in the mantle (and slab pull).',
         'Primary effects are caused directly (buildings collapse). Secondary effects follow (fires, tsunami, disease). Immediate vs long-term responses.',
         'Compare two earthquakes in areas of contrasting wealth (use your class examples, e.g. Nepal 2015 in an LIC vs Chile 2010 in a richer country).',
@@ -1095,27 +1119,29 @@ RG.subjects.push({
       pts: ['Global atmospheric circulation: Hadley, Ferrel and Polar cells. Low pressure at the equator (rain, rainforests). High pressure at about 30° (dry, deserts).',
         'Tropical storms form over oceans above 27°C, between 5° and 30° from the equator, in late summer. The Coriolis effect makes them spin. Eye, eyewall, spiralling cloud bands.',
         'Effects: high winds, storm surge, flooding, landslides. Climate change may make storms stronger and spread their range.',
-        'Know one tropical storm case study (your class example — Typhoon Haiyan, Philippines 2013, is commonly used).',
+        'Know one named tropical storm example: its primary and secondary effects and immediate and long-term responses (use your class example — Typhoon Haiyan, Philippines 2013, is commonly used).',
+        'How monitoring, prediction, protection and planning reduce the effects of tropical storms.',
         'UK weather hazards: storms, floods, droughts, snow, heatwaves. Know one extreme UK weather event and argue whether UK weather is becoming more extreme.'],
       cards: [['Minimum sea temperature for a tropical storm', '27°C'], ['Why are deserts found at about 30° N/S?', 'Sinking air creates high pressure, so there is little rain'],
         ['What makes tropical storms spin?', 'The Coriolis effect'], ['Why don\'t tropical storms form on the equator?', 'The Coriolis effect is too weak there']],
       ex: 'Draw the structure of a tropical storm with labels, then a 6-marker on the effects of your storm case study.' },
     { id: 'g-climate', n: 'Climate change', p: ['g1'], w: 2,
-      pts: ['Evidence: ice cores, tree rings, temperature records since about 1850, shrinking glaciers and sea ice, sea-level rise.',
-        'Natural causes: orbital changes (Milankovitch cycles), solar output, volcanic eruptions.',
+      pts: ['Evidence for climate change from the beginning of the Quaternary period (about 2.6 million years ago) to today: ice cores, tree rings, temperature records, shrinking glaciers and sea ice, sea-level rise.',
+        'Natural causes: orbital changes, volcanic activity, solar output.',
         'Human causes: burning fossil fuels, farming (methane), deforestation — the enhanced greenhouse effect.',
         'Mitigation (reduce the cause): alternative energy, carbon capture, planting trees, international agreements such as Paris 2015.',
-        'Adaptation (live with it): drought-resistant crops, managing water supply, coastal defences.'],
+        'Adaptation (live with it): changing agricultural systems, managing water supply, reducing risk from rising sea levels.',
+        'Know an overview of the effects of climate change on people and the environment.'],
       cards: [['Mitigation vs adaptation', 'Mitigation reduces causes; adaptation adjusts to effects'], ['Three natural causes of climate change', 'Orbital changes, solar output, volcanic eruptions'],
         ['Two pieces of evidence for climate change', 'Ice cores, tree rings, temperature records, shrinking glaciers']],
       ex: 'Write a 9-marker: "Evaluate strategies to mitigate climate change."' },
     { id: 'g-eco', n: 'Ecosystems & tropical rainforests', p: ['g1'], w: 3,
-      pts: ['Ecosystems: producers, consumers, decomposers, food webs and nutrient cycling. Know a small-scale UK ecosystem (e.g. a pond).',
+      pts: ['Ecosystems: producers, consumers, decomposers, food chains, food webs and nutrient cycling. Know a small-scale UK ecosystem (e.g. a pond) and what happens when one component changes. Know the distribution of the global biomes.',
         'Rainforest climate: hot (about 27°C) and wet (over 2000 mm a year), with no seasons. Layers: emergent, canopy, under-canopy, shrub.',
         'Adaptations: buttress roots, drip-tip leaves, lianas, epiphytes. Animals such as sloths are camouflaged and slow to save energy.',
         'Nutrient cycling is fast and soils are poor, because nutrients are stored in the biomass.',
-        'Deforestation causes: subsistence and commercial farming, logging, road building, mining, energy (HEP), settlement. Know your case study (e.g. Malaysia or Brazil).',
-        'Sustainable management: selective logging, replanting, conservation areas, ecotourism, international agreements, debt reduction.'],
+        'Deforestation causes: subsistence and commercial farming, logging, road building, mineral extraction, energy development, settlement, population growth. Impacts: economic development, soil erosion, contribution to climate change. Know your case study (e.g. Malaysia or Brazil) and changing rates of deforestation.',
+        'Value of rainforests to people and the environment. Sustainable management: selective logging and replanting, conservation and education, ecotourism, international agreements about tropical hardwoods, debt reduction.'],
       cards: [['Why are rainforest soils poor?', 'Nutrients are held in the biomass and leached by heavy rain'], ['Purpose of drip-tip leaves', 'Shed heavy rain quickly, preventing rot'],
         ['Three causes of deforestation', 'Commercial farming, logging, mineral extraction'], ['Name three sustainable management strategies', 'Selective logging, ecotourism, conservation']],
       ex: 'Draw the rainforest layers with 2 adaptations each, then write a 9-marker on the causes of deforestation in your case study.' },
@@ -1130,21 +1156,24 @@ RG.subjects.push({
       ex: 'Revise your desert case study as a 1-page fact sheet, then write a 6-marker on opportunities and challenges.' },
     { id: 'g-coast', n: 'Coastal landscapes', p: ['g1'], w: 3,
       pts: ['Constructive waves have a strong swash and build beaches. Destructive waves have a strong backwash and erode.',
-        'Erosion: hydraulic action, abrasion, attrition, solution. Weathering: freeze–thaw, chemical. Mass movement: sliding, slumping, rock falls.',
+        'Coastal erosion: hydraulic power, abrasion, attrition. Weathering: mechanical (e.g. freeze–thaw) and chemical. Mass movement: sliding, slumping, rock falls. Know why sediment is deposited at the coast.',
         'Longshore drift moves sediment along the coast in the direction of the prevailing wind (zig-zag: swash at an angle, backwash straight down).',
-        'Erosional landforms: headlands and bays (alternating hard and soft rock), wave-cut platforms, then cave → arch → stack → stump (e.g. Old Harry, Dorset).',
+        'How geology and rock type shape the coast. Erosional landforms: headlands and bays (alternating hard and soft rock), cliffs and wave-cut platforms, caves, arches and stacks (e.g. Old Harry, Dorset).',
         'Depositional landforms: beaches, sand dunes, spits (e.g. Spurn Head), bars.',
-        'Management: hard (sea walls, groynes, rock armour, gabions), soft (beach nourishment, dune regeneration), managed retreat. Know one scheme from class.'],
-      cards: [['Sequence from cave to stump', 'Cave → arch → stack → stump'], ['How does longshore drift move sediment?', 'Swash at an angle with the prevailing wind; backwash straight down the beach'],
-        ['Advantage of groynes', 'Trap sediment and widen the beach'], ['Four processes of erosion', 'Hydraulic action, abrasion, attrition, solution']],
+        'Know an example stretch of UK coastline and its landforms.',
+        'Management — costs and benefits: hard (sea walls, rock armour, gabions, groynes), soft (beach nourishment and reprofiling, dune regeneration), managed retreat (coastal realignment). Know one UK scheme: why, what was done, effects and conflicts.',
+        'UK physical landscapes: know where the major upland and lowland areas and main river systems are.'],
+      cards: [['Sequence of erosional landforms at a headland', 'Crack → cave → arch → stack'], ['How does longshore drift move sediment?', 'Swash at an angle with the prevailing wind; backwash straight down the beach'],
+        ['Advantage of groynes', 'Trap sediment and widen the beach'], ['Three processes of coastal erosion (AQA)', 'Hydraulic power, abrasion, attrition']],
       ex: 'Draw an annotated sequence diagram of spit formation. Then write a 9-marker evaluating your coastal management scheme.' },
     { id: 'g-river', n: 'River landscapes & flooding', p: ['g1'], w: 3,
-      pts: ['Long profile: steep and V-shaped in the upper course, gentler and wider downstream.',
+      pts: ['Long profile and changing cross profile: steep and V-shaped in the upper course, gentler and wider downstream. Erosion: hydraulic action, abrasion, attrition, solution; vertical and lateral erosion.',
         'Transportation: traction, saltation, suspension, solution.',
         'Waterfalls: hard rock over soft rock, the soft rock is undercut, a plunge pool forms, the overhang collapses and a gorge retreats upstream.',
         'Meanders: fastest flow on the outside bend (erosion, river cliff), deposition on the inside (slip-off slope). A neck cuts through to make an ox-bow lake. Also levees, floodplains and estuaries.',
         'Hydrographs: peak rainfall, peak discharge, lag time, rising and falling limbs. Urbanisation shortens lag time.',
-        'Flood management: hard (dams, straightening, embankments, flood relief channels) vs soft (flood warnings, floodplain zoning, planting trees, river restoration). Know one scheme from class.'],
+        'Flood management — costs and benefits: hard (dams and reservoirs, straightening, embankments, flood relief channels) vs soft (flood warnings and preparation, floodplain zoning, planting trees, river restoration). Know one UK scheme: why it was needed, the strategy, and the social, economic and environmental issues.',
+        'Know an example UK river valley and its landforms of erosion and deposition.'],
       cards: [['Define lag time', 'Time between peak rainfall and peak discharge'], ['How does urbanisation increase flood risk?', 'Impermeable surfaces and drains → faster runoff, shorter lag time'],
         ['Where is erosion greatest on a meander?', 'The outside bend (fastest flow)'], ['Four transport processes', 'Traction, saltation, suspension, solution']],
       ex: 'Sketch and label a storm hydrograph and explain two factors that make it "flashy".' },
@@ -1152,28 +1181,29 @@ RG.subjects.push({
       pts: ['Global urbanisation is fastest in LICs and NEEs. Push and pull factors, natural increase, megacities (over 10 million people).',
         'Rio: on Brazil\'s south-east coast (Guanabara Bay), one of Brazil\'s most important cities — tourism, a port, oil, culture (Christ the Redeemer), 2016 Olympics.',
         'Growth came mainly from rural–urban migration from poorer areas of Brazil.',
-        'Opportunities: healthcare, education, water and energy supply, industrial jobs.',
-        'Challenges: favelas (e.g. Rocinha), unemployment and the informal economy, crime, pollution and waste, traffic congestion.',
-        'Urban planning example: the Favela Bairro Project — upgraded infrastructure and services inside existing favelas.'],
+        'Opportunities — social: access to healthcare and education, water supply, energy. Economic: industrial areas as a stimulus for development.',
+        'Challenges: managing slums and squatter settlements (favelas, e.g. Rocinha); providing clean water, sanitation and energy; access to health and education; reducing unemployment and crime; waste disposal, air and water pollution, traffic congestion.',
+        'Urban planning example improving life for the urban poor: the Favela Bairro Project — upgraded infrastructure and services inside existing favelas.'],
       cards: [['Define megacity', 'City with over 10 million people'], ['Rio\'s largest favela (commonly cited)', 'Rocinha'],
         ['What did the Favela Bairro Project do?', 'Improved infrastructure, services and housing within favelas'], ['Main cause of Rio\'s growth', 'Rural–urban migration (plus natural increase)']],
       ex: 'Make a Rio fact sheet (6 opportunities, 6 challenges, 1 scheme with evaluation), then write a 6-marker.' },
     { id: 'g-urban-cam', n: 'Urban issues — Cambridge & sustainable cities', p: ['g2'], w: 3, from: '2026-09-02',
       pts: ['Cambridge is your HIC city case study. Importance: a world-leading university, the "Silicon Fen" technology and life-sciences cluster (e.g. the Biomedical Campus), and tourism.',
         'Migration: national and international migrants for university, tech and research jobs.',
-        'Opportunities: culture (museums, colleges), recreation, jobs, and transport (the Guided Busway, Cambridge North station).',
-        'Challenges: very high house prices, inequality between areas, congestion, and pressure on the green belt.',
-        'Regeneration: know your fieldwork site and examples such as the new developments around the city (e.g. Eddington, the station area). Use your class facts.',
-        'Sustainable urban living: water and energy conservation, recycling, green space, integrated transport (Park & Ride, cycling — Cambridge has some of the UK\'s highest cycling rates).'],
+        'Opportunities — social and economic: cultural mix, recreation and entertainment, employment, integrated transport (the Guided Busway, Cambridge North station). Environmental: urban greening.',
+        'Challenges — social and economic: urban deprivation and inequalities in housing, education, health and employment. Environmental: dereliction, building on brownfield vs greenfield sites, waste disposal. Urban sprawl on the rural–urban fringe and the growth of commuter settlements (e.g. Cambourne, Northstowe).',
+        'An urban regeneration project: why the area needed regeneration and its main features — use your fieldwork site and class facts.',
+        'Sustainable urban living: water and energy conservation, waste recycling, creating green space. Transport strategies to reduce congestion (Park & Ride, busways, cycling — Cambridge has some of the UK\'s highest cycling rates).'],
       cards: [['Two challenges facing Cambridge', 'Unaffordable housing, congestion, inequality'], ['Two sustainable transport features in Cambridge', 'Park & Ride, Guided Busway, cycling infrastructure'],
         ['Why do people migrate to Cambridge?', 'University, high-tech and life-science jobs']],
       ex: 'Write a 9-marker: "Evaluate how successful urban regeneration has been in a UK city you have studied." Use Cambridge.' },
     { id: 'g-dev', n: 'Development & reducing the gap', p: ['g2'], w: 3, from: '2026-11-02',
-      pts: ['Measures: GNI per head, HDI (health, education, income), birth rate, death rate, infant mortality, literacy, life expectancy. A single measure can mislead.',
+      pts: ['Measures: GNI per head, birth and death rates, infant mortality, life expectancy, people per doctor, literacy, access to safe water, HDI. Know their limitations — a single measure can mislead.',
         'Demographic Transition Model: 5 stages of birth and death rates as a country develops.',
         'Causes of uneven development: physical (climate, hazards, landlocked), economic (trade in primary products, debt), historical (colonialism).',
         'Consequences: disparities in wealth and health, and international migration.',
-        'Reducing the gap: investment, industrial development, tourism, aid, fair trade, debt relief, microfinance, intermediate technology.'],
+        'Reducing the gap: investment, industrial development and tourism, aid, intermediate technology, fairtrade, debt relief, microfinance loans.',
+        'Know an example of tourism growth in an LIC or NEE reducing the development gap (use your class example, e.g. Jamaica).'],
       cards: [['What does HDI combine?', 'Life expectancy, education and income'], ['Define infant mortality', 'Deaths under age 1 per 1000 live births'],
         ['Three ways of reducing the development gap', 'Fair trade, aid, microfinance, debt relief, tourism']],
       ex: 'Draw and label the DTM from memory. Then do a 6-marker on one strategy for reducing the development gap.' },
@@ -1182,7 +1212,7 @@ RG.subjects.push({
         'Context: independence from Britain in 1960, civil war 1967–70, democracy since 1999. Ethnically and religiously diverse. Culture: Nollywood, music, football.',
         'Changing industrial structure: growth of manufacturing and services (especially in Lagos).',
         'Transnational corporations (TNCs), e.g. Shell in the Niger Delta: jobs and tax, but oil spills, gas flaring and profits leaving the country.',
-        'Aid (e.g. anti-malaria bed-net programmes), trade links, and environmental problems (oil pollution, deforestation, waste in Lagos).',
+        'Changing political and trading relationships with the wider world. International aid: types and impacts (e.g. anti-malaria bed-net programmes). Environmental impacts of development (oil pollution, deforestation, waste in Lagos).',
         'Economic growth has improved the quality of life for many, but inequality remains high.'],
       cards: [['When did Nigeria gain independence?', '1960'], ['One advantage and one disadvantage of Shell in Nigeria', 'Jobs and tax revenue / oil spills in the Niger Delta'],
         ['Nigeria\'s largest city', 'Lagos'], ['Nigeria\'s main export', 'Oil']],
@@ -1190,19 +1220,22 @@ RG.subjects.push({
     { id: 'g-ukecon', n: 'UK economic change', p: ['g2'], w: 2, from: '2026-11-02',
       pts: ['Deindustrialisation: manufacturing declined due to global competition, mechanisation and government policy.',
         'Post-industrial economy: services, finance, research and IT. Science and business parks (the Cambridge Science Park, from 1970, is the UK\'s oldest).',
-        'Rural change: some areas grow (commuter villages near cities, e.g. around Cambridge) while remote areas decline.',
+        'Impacts of industry on the physical environment, and an example of more environmentally sustainable modern industry (use your class example).',
+        'Rural change: one area of population growth (e.g. commuter villages around Cambridge) and one area of population decline (use your class example).',
         'Transport improvements: roads, rail, ports, airports. The north–south divide and strategies to reduce it.',
         'The UK\'s place in the world: trade, culture, the Commonwealth, and its relationship with the EU.'],
       cards: [['Define deindustrialisation', 'Decline of manufacturing industry'], ['Why do science parks locate near universities?', 'Research links, graduate workforce, good transport'],
         ['Define the north–south divide', 'Economic and health differences between the richer South East and the poorer North']],
       ex: 'Write a 6-marker explaining the growth of science parks, using the Cambridge Science Park.' },
     { id: 'g-resources', n: 'Resource management & food', p: ['g2'], w: 3, from: '2027-01-04',
-      pts: ['UK food: demand for high-value, all-year imports; food miles and carbon footprint; growth of organic produce and agribusiness.',
+      pts: ['Resources overview: food, water and energy matter for well-being; global inequalities in supply and consumption.',
+        'UK food: growing demand for high-value food exports from low-income countries and all-year seasonal and organic produce; food miles and carbon footprints; moves to local sourcing; the trend towards agribusiness.',
         'UK water: deficit in the South East (including East Anglia) and surplus in the North and West. Water transfer schemes and pollution management.',
-        'UK energy: coal has declined; gas and renewables have grown. Debates over nuclear power and fracking.',
+        'UK energy: the changing energy mix (reliance on fossil fuels, growing renewables), reduced domestic supplies of coal, gas and oil, and the economic and environmental issues of exploiting energy sources.',
         'Global food security: enough safe, nutritious food. Supply is affected by climate, technology, pests, water stress, conflict and poverty.',
-        'Increase supply: irrigation, hydroponics and aeroponics, a new Green Revolution, GM crops, large-scale schemes (use your class example).',
-        'Sustainable food: organic farming, permaculture, urban farming, sustainable fishing, seasonal food, less waste.'],
+        'Global patterns of calorie intake; impacts of food insecurity (famine, undernutrition, soil erosion, rising prices, social unrest).',
+        'Increase supply: irrigation, aeroponics and hydroponics, the new green revolution and biotechnology, appropriate technology; an example of a large-scale agricultural development (use your class example).',
+        'Sustainable food: organic farming, permaculture, urban farming, fish and meat from sustainable sources, seasonal food, reduced waste — plus an example of a local scheme in an LIC or NEE.'],
       cards: [['Define food security', 'Everyone has access to enough safe, nutritious food'], ['Why does the UK import so much food?', 'Demand for exotic, all-year and cheap food'],
         ['Region of UK water deficit', 'The South East / East Anglia'], ['Two ways to increase food supply', 'Irrigation, hydroponics, GM crops, new Green Revolution']],
       ex: 'Write a 9-marker: "To what extent can large-scale agricultural developments increase food security?"' },
@@ -1216,7 +1249,7 @@ RG.subjects.push({
         ['Define reliability in fieldwork', 'Would you get the same results if you repeated it?']],
       ex: 'Write your two enquiries on one page each (aim, site, methods, results, conclusion, evaluation). Then do a Paper 3 fieldwork section from a past paper.' },
     { id: 'g-issue', n: 'Issue evaluation & skills (Paper 3)', p: ['g3'], w: 2, from: '2027-03-15',
-      pts: ['The pre-release resource booklet is issued in the spring, 12 weeks before Paper 3 (check with your teacher). Annotate every figure and learn the key terms.',
+      pts: ['The pre-release resource booklet is issued 12 weeks before Paper 3 (so around mid-March 2027). You get a clean copy in the exam. Annotate every figure and learn the key terms.',
         'The final decision question is usually worth 9 marks plus 3 for SPaG. Choose an option, justify it using the resources, acknowledge the drawbacks, and say why the others are worse.',
         'Consider social, economic and environmental impacts, plus short- vs long-term effects and different stakeholders.',
         'Skills: 4- and 6-figure grid references, scale, contours, choropleth and isoline maps, percentage change, median, interquartile range.'],
@@ -1230,153 +1263,228 @@ RG.subjects.push({
   id: 'hist', name: 'History', board: 'OCR', spec: 'J410', quals: 1, share: 0.14,
   link: 'https://www.ocr.org.uk/qualifications/gcse/history-a-explaining-the-modern-world-j410-from-2016/',
   papers: [
-    { id: 'h1', code: 'J410/06', name: 'Paper 1 · International Relations 1918–c.1975 + USA 1919–1948', date: '2027-05-20', time: 'am', dur: 105 },
-    { id: 'h2', code: 'J410/08', name: 'Paper 2 · Migration to Britain (thematic)', date: '2027-05-28', time: 'am', dur: 60 },
-    { id: 'h3', code: 'J410/11', name: 'Paper 3 · Impact of Empire 1688–c.1730 + historic environment', date: '2027-06-09', time: 'pm', dur: 75 }
+    { id: 'h1', code: 'J410/06', name: 'Paper 1 · International Relations 1918–1975 + USA 1919–1948', date: '2027-05-20', time: 'am', dur: 105 },
+    { id: 'h2', code: 'J410/08', name: 'Paper 2 · Migration to Britain c.1000–c.2010', date: '2027-05-28', time: 'am', dur: 60 },
+    { id: 'h3', code: 'J410/11', name: 'Paper 3 · Impact of Empire 1688–c.1730 + Spitalfields', date: '2027-06-09', time: 'pm', dur: 75 }
   ],
   structure: [
-    'OCR History A (Explaining the Modern World), J410 — the boards on the Chesterton exams page.',
-    'Paper 1 (1h 45m): period study International Relations: the changing international order 1918–c.1975, with the non-British depth study The USA 1919–1948: The People and the State.',
-    'Paper 2 (1h): British thematic study — Migration to Britain.',
-    'Paper 3 (1h 15m): British depth study The Impact of Empire on Britain 1688–c.1730, with the historic environment study Urban Environments: Patterns of Migration (your class site: Spitalfields).',
-    'Paper codes are from the OCR 2027 timetable. Confirm your exact component codes with your teacher.'
+    'OCR History A (Explaining the Modern World), J410 — the board on the Chesterton exams page. Content below follows the OCR specification (version 1.9) line by line.',
+    'Paper 1 (1h 45m): period study International Relations: the changing international order 1918–1975 (30% of the GCSE) + non-British depth study The USA 1919–1948: The People and the State.',
+    'Paper 2 (1h): British thematic study Migration to Britain c.1000 to c.2010.',
+    'Paper 3 (1h 15m): British depth study The Impact of Empire on Britain 1688–c.1730 + historic environment Urban Environments: Patterns of Migration (10% of the GCSE). OCR fixed the site at Spitalfields, London from 2020 onwards.',
+    'The period study also examines two historical controversies: changing interpretations of appeasement and of responsibility for the Cold War.'
   ],
   technique: [
     'Sources: judge how useful they are from their content AND provenance (Nature, Origin, Purpose) plus your own knowledge.',
-    'Interpretations: explain HOW they differ and WHY (the author\'s purpose, evidence used, when it was written).',
+    'Interpretations: explain HOW they differ and WHY (when they were written, the evidence available, the author\'s purpose).',
     '"Explain why": two or three developed factors, each linked back to the question.',
     '"How far do you agree": argue both sides with specific evidence, then give a clear judgement with a criterion (e.g. most long-lasting effect).',
     'Use precise dates, names and statistics — examiners reward specific knowledge.'
   ],
   resources: [
-    ['OCR J410 spec & past papers', 'https://www.ocr.org.uk/qualifications/gcse/history-a-explaining-the-modern-world-j410-from-2016/'],
+    ['OCR J410 specification & past papers', 'https://www.ocr.org.uk/qualifications/gcse/history-a-explaining-the-modern-world-j410-from-2016/'],
     ['OCR past paper finder', 'https://www.ocr.org.uk/qualifications/past-paper-finder/']
   ],
   topics: [
-    { id: 'h-ir-peace', n: 'Peace settlement 1919 & the League of Nations', p: ['h1'], w: 3,
+    /* ---------- PAPER 1: period study ---------- */
+    { id: 'h-ir-peace', n: 'Versailles, the League & 1920s agreements', p: ['h1'], w: 3,
       pts: ['Big Three aims: Clemenceau (France) wanted revenge and security. Wilson (USA) wanted a fair peace (14 Points, self-determination, a League). Lloyd George (Britain) wanted a middle way that protected trade and the Empire.',
-        'Treaty of Versailles (June 1919): Land (Alsace-Lorraine to France, Polish Corridor, colonies became mandates, Saar run by the League), Army (100,000 men, no air force, Rhineland demilitarised), Money (reparations set at £6.6bn in 1921), Blame (Article 231, war guilt).',
-        'Germans called it a "Diktat" (dictated peace). Other treaties: St Germain (Austria), Trianon (Hungary), Neuilly (Bulgaria), Sèvres (Turkey).',
-        'League of Nations (1920): Assembly, Council, Secretariat, Permanent Court, agencies (ILO, Refugees Committee). Weaknesses: USA never joined, no army, decisions had to be unanimous, sanctions were weak.',
-        '1920s: successes in the Åland Islands (1921), Upper Silesia (1921) and Bulgaria (1925). Failures at Vilna (1920) and Corfu (1923). Locarno Treaties (1925), Kellogg–Briand Pact (1928).',
-        '1930s collapse: the Depression, Manchuria (1931, Lytton Report, Japan left in 1933), and Abyssinia (1935–36, oil sanctions delayed, the Suez Canal kept open, the Hoare–Laval Pact).'],
+        'Treaty of Versailles (June 1919): Land (Alsace-Lorraine to France, Polish Corridor, colonies became mandates, Saar run by the League), Army (100,000 men, no air force, Rhineland demilitarised), Money (reparations set at £6.6bn in 1921), Blame (Article 231, war guilt). Germans called it a "Diktat".',
+        'League of Nations (1920): Assembly, Council, Secretariat, Permanent Court, agencies. Weaknesses: the USA never joined, no army, decisions had to be unanimous, sanctions were weak.',
+        'The League in the 1920s: successes in the Åland Islands (1921), Upper Silesia (1921) and the Greek–Bulgarian dispute (1925), plus humanitarian work. Failures at Vilna (1920) and Corfu (1923).',
+        'International agreements: Dawes Plan 1924 (US loans, reparations rescheduled), Locarno 1925 (Germany accepted its western borders and joined the League in 1926), Kellogg–Briand Pact 1928 (war renounced), Young Plan 1929 (reparations cut, longer to pay).',
+        'Disarmament: the Washington Naval Conference (1921–22) limited navies, but the World Disarmament Conference (1932–34) failed and Germany walked out in 1933.'],
       cards: [['LAMB — the four areas of Versailles terms', 'Land, Army, Money, Blame'], ['Size of the German army after Versailles', '100,000 men'],
-        ['Why was the USA\'s absence from the League important?', 'Lost the most powerful economy — sanctions weak, less authority'], ['What did the Lytton Report conclude?', 'Japan was wrong to invade Manchuria — Japan left the League (1933)'],
-        ['Why did Abyssinia damage the League?', 'Britain and France didn\'t ban oil or close the Suez Canal; the Hoare–Laval Pact showed they would bargain with aggressors']],
-      ex: 'Write a "how far do you agree" essay: "The League failed mainly because of the Depression."' },
-    { id: 'h-ir-war', n: 'The road to war 1933–1939', p: ['h1'], w: 2,
-      pts: ['Hitler\'s aims: overturn Versailles, unite German speakers, gain Lebensraum in the east, and destroy communism.',
-        'Steps: left the League (1933), rearmament and conscription (1935), remilitarised the Rhineland (March 1936), Anschluss with Austria (March 1938), Sudetenland and the Munich Agreement (September 1938), invasion of the rest of Czechoslovakia (March 1939).',
+        ['Why was the USA\'s absence from the League important?', 'Lost the most powerful economy — sanctions weak, less authority'],
+        ['What was the Dawes Plan (1924)?', 'US loans to Germany and reparations rescheduled, so the German economy recovered'],
+        ['What did Germany accept at Locarno (1925)?', 'Its western borders with France and Belgium; it joined the League in 1926'],
+        ['What was the Kellogg–Briand Pact (1928)?', 'An agreement by many countries to renounce war as a way of settling disputes'],
+        ['What did the Young Plan (1929) do?', 'Reduced German reparations and gave longer to pay']],
+      ex: 'Answer: "Explain why the 1920s were a time of improving international relations" (use Dawes, Locarno, Kellogg–Briand).' },
+    { id: 'h-ir-war', n: 'The Depression, the League\'s failure & the road to war', p: ['h1'], w: 3,
+      pts: ['The worldwide Depression (after 1929) boosted nationalism and extremist leaders, and made Britain and France reluctant to spend on sanctions or war.',
+        'Manchuria (1931): Japan invaded, the Lytton Report condemned it, and Japan left the League (1933). Abyssinia (1935–36): Italy invaded, oil sanctions were delayed, the Suez Canal stayed open, and the Hoare–Laval Pact showed Britain and France would bargain.',
+        'Hitler\'s steps: left the League and the Disarmament Conference (1933), rearmament and conscription (1935), remilitarised the Rhineland (March 1936), Anschluss with Austria (March 1938), Sudetenland and the Munich Agreement (September 1938), invaded the rest of Czechoslovakia (March 1939).',
         'Nazi–Soviet Pact (August 1939) → invasion of Poland (1 September 1939) → Britain and France declared war.',
-        'Appeasement: it was defended as buying time to rearm and as reasonable given Versailles. It was criticised because it encouraged Hitler and abandoned Czechoslovakia.'],
+        'Appeasement: defended as buying time to rearm, reflecting public opinion and the belief that Versailles was unfair. Criticised because it encouraged Hitler and abandoned Czechoslovakia.'],
       cards: [['Date of the Munich Agreement', 'September 1938'], ['Why was the Nazi–Soviet Pact important?', 'Hitler could invade Poland without fighting the USSR'],
         ['One argument for appeasement', 'Britain needed time to rearm / public didn\'t want war / Versailles seen as unfair'],
         ['Remilitarisation of the Rhineland — when, and why did it matter?', 'March 1936. German troops marched into the Rhineland, which Versailles had demilitarised. Britain and France did nothing, so Hitler grew bolder'],
         ['What was the Anschluss?', 'March 1938: Germany united with (took over) Austria — banned by Versailles. A controlled vote showed over 99% approval; Britain and France only protested'],
-        ['What happened to Czechoslovakia in 1938–39?', 'Munich Agreement (Sept 1938) gave Hitler the Sudetenland; in March 1939 he invaded the rest of Czechoslovakia — the end of appeasement']],
-      ex: 'Make a timeline 1933–39 from memory, then answer "Explain why appeasement failed to prevent war."' },
-    { id: 'h-ir-cw1', n: 'Cold War origins 1945–1955', p: ['h1'], w: 3, from: '2026-11-02',
-      pts: ['Yalta (February 1945) had broad agreement. Potsdam (July–August 1945) brought tension: Truman replaced Roosevelt, the atomic bomb, and Soviet control of Poland.',
-        'Soviet "salami tactics" took over Eastern Europe. Churchill\'s "Iron Curtain" speech came in March 1946.',
-        'Truman Doctrine (March 1947) set the policy of containment. The Marshall Plan (1947) sent billions of dollars of aid to Europe. The USSR responded with Cominform and Comecon.',
-        'Berlin Blockade (June 1948–May 1949) → the Allied airlift → the division of Germany (FRG and GDR, 1949) → NATO (1949).',
-        'The USSR tested an atomic bomb in 1949. Korean War 1950–53: UN forces vs communist North Korea and China, ending with the border at the 38th parallel.',
-        'Warsaw Pact (1955).'],
-      cards: [['What was containment?', 'US policy to stop the spread of communism (Truman Doctrine 1947)'], ['Dates of the Berlin Blockade', 'June 1948 – May 1949'],
-        ['Soviet response to the Marshall Plan', 'Cominform (1947) and Comecon (1949)'], ['When was NATO formed?', '1949']],
+        ['What happened to Czechoslovakia in 1938–39?', 'Munich Agreement (Sept 1938) gave Hitler the Sudetenland; in March 1939 he invaded the rest of Czechoslovakia — the end of appeasement'],
+        ['How did the Manchurian crisis end?', 'The Lytton Report condemned Japan, which left the League in 1933 and kept Manchuria'],
+        ['Why did the Abyssinian crisis damage the League?', 'Oil sanctions were delayed, the Suez Canal stayed open, and the Hoare–Laval Pact showed Britain and France would bargain with an aggressor']],
+      ex: 'Essay: "The Great Depression was the main reason the League of Nations failed." How far do you agree?' },
+    { id: 'h-ir-interp', n: 'Interpretations: appeasement & the Cold War', p: ['h1'], w: 2,
+      pts: ['The spec asks HOW and WHY interpretations changed, not just what they say.',
+        'Appeasement: straight after it failed, "Guilty Men" (1940) blamed the appeasers, and the Second World War itself made appeasement look cowardly and foolish.',
+        'During the Cold War, appeasement became a "lesson" — Western leaders argued you must never appease a dictator (e.g. the USSR), which kept the critical view alive.',
+        'Later, when government papers were released, historians saw the pressures on Chamberlain (a weak military, public opinion, the Empire, the economy), giving more sympathetic views. New sources from c.1990 onwards added further evidence.',
+        'Cold War responsibility: the "orthodox" view (Western, 1940s–50s) blamed Soviet expansion. The "revisionist" view (1960s–70s, shaped by the Vietnam War and criticism of US policy at home) blamed US economic expansion.',
+        '"Post-revisionists" argued both sides misunderstood each other. After c.1990, Soviet archives opened and some historians returned to stressing Stalin\'s role.'],
+      cards: [['Why were early interpretations of appeasement so critical?', 'Written straight after its failure and during WW2 (e.g. "Guilty Men", 1940)'],
+        ['How did the Cold War affect views of appeasement?', 'Appeasement became a lesson — never give in to a dictator — so the critical view continued'],
+        ['What is the orthodox view of the Cold War?', 'The USSR and Stalin\'s expansion were to blame'], ['What is the revisionist view of the Cold War?', 'The USA was to blame — shaped by the Vietnam War and criticism of US policy'],
+        ['What changed interpretations after c.1990?', 'New sources — Soviet and other archives opened after the Cold War ended']],
+      ex: 'Take two interpretations of appeasement from a past paper and explain why they differ (when written, evidence available, purpose).' },
+    { id: 'h-ir-cw1', n: 'The Cold War in Europe 1945–1961', p: ['h1'], w: 3, from: '2026-11-02',
+      pts: ['Yalta (February 1945): Germany to be divided into four zones, free elections promised in Eastern Europe, the USSR to join the war against Japan. Potsdam (July–August 1945): Truman replaced Roosevelt; disagreements over Germany, reparations and Poland.',
+        'Soviet actions in Eastern Europe 1945–48: communist governments installed step by step ("salami tactics"). Churchill\'s "Iron Curtain" speech (March 1946).',
+        'US response: the Truman Doctrine (March 1947) set the policy of containment. The Marshall Plan (1947) gave economic aid to Europe. Stalin replied with Cominform and Comecon.',
+        'Division of Germany: the Berlin Blockade and Airlift (June 1948–May 1949) → West Germany (FRG) and East Germany (GDR) created in 1949.',
+        'Alliances: NATO (1949); the Warsaw Pact (1955) after West Germany joined NATO.',
+        'Berlin Wall (August 1961): built to stop East Germans escaping west. It reduced the Berlin crisis but became a symbol of the divided world.'],
+      cards: [['What was agreed at Yalta?', 'Germany divided into four zones, free elections in Eastern Europe, USSR to fight Japan'], ['What was containment?', 'US policy to stop the spread of communism (Truman Doctrine 1947)'],
+        ['Dates of the Berlin Blockade', 'June 1948 – May 1949'], ['Soviet response to the Marshall Plan', 'Cominform (1947) and Comecon (1949)'], ['When was NATO formed?', '1949'],
+        ['Why was the Berlin Wall built in 1961?', 'To stop East Germans escaping to the West through Berlin']],
       ex: 'Answer a source question on the Berlin Blockade and an "explain why tension grew 1945–49" question.' },
-    { id: 'h-ir-cw2', n: 'Cold War crises 1955–1975', p: ['h1'], w: 3, from: '2027-01-04',
-      pts: ['Hungary (1956): Nagy wanted to leave the Warsaw Pact, and Soviet tanks crushed the rising.',
-        'Arms and space race: Sputnik (1957), missiles. Berlin Wall built in August 1961 to stop East Germans escaping west.',
-        'Cuban Missile Crisis (October 1962): U-2 photos of Soviet missiles → US naval "quarantine" → Khrushchev removed the missiles, and the US secretly agreed to remove missiles from Turkey. Aftermath: the hotline and the Test Ban Treaty (1963).',
-        'Prague Spring (1968): Dubček\'s reforms were ended by a Warsaw Pact invasion. The Brezhnev Doctrine followed.',
-        'Vietnam: US escalation after the Gulf of Tonkin incident (1964), the Tet Offensive (1968), US withdrawal (1973), and the fall of Saigon (1975).',
-        'Détente: the SALT I treaty (1972) and the Helsinki Accords (1975).'],
-      cards: [['When was the Berlin Wall built?', 'August 1961'], ['How was the Cuban Missile Crisis resolved?', 'USSR removed Cuban missiles; US promised not to invade Cuba and secretly removed missiles from Turkey'],
-        ['What was the Brezhnev Doctrine?', 'USSR would intervene if any Eastern Bloc country threatened communism'], ['What was détente?', 'Easing of Cold War tension in the 1970s (SALT I, Helsinki)']],
-      ex: 'Write an essay: "The Cuban Missile Crisis was the most dangerous moment of the Cold War. How far do you agree?"' },
-    { id: 'h-usa-20s', n: 'USA 1919–1929: boom & intolerance', p: ['h1'], w: 3, from: '2026-09-02',
-      pts: ['Causes of the boom: mass production (Ford\'s assembly line, Model T), new industries, hire purchase, advertising, and Republican laissez-faire policies with high tariffs (Fordney–McCumber, 1922).',
-        'Left out: farmers (overproduction, falling prices), African Americans, and workers in older industries (coal, textiles).',
-        'Roaring Twenties: jazz, cinema, flappers — changing but limited freedoms for women.',
-        'Prohibition (1920–33): the 18th Amendment and the Volstead Act. Speakeasies, bootleggers, organised crime (Al Capone, the St Valentine\'s Day Massacre 1929). Repealed by the 21st Amendment in 1933.',
-        'Intolerance: the Red Scare and Palmer Raids (1919–20), Sacco and Vanzetti (executed 1927), immigration quotas (1921, 1924), a revived Ku Klux Klan, and the Scopes "Monkey" Trial (1925).'],
-      cards: [['Which amendment introduced Prohibition?', '18th (repealed by the 21st in 1933)'], ['Why did farmers not share in the boom?', 'Overproduction after WW1 led to falling prices'],
-        ['Who were Sacco and Vanzetti?', 'Italian immigrant anarchists executed in 1927 after a controversial trial'], ['Two causes of the 1920s boom', 'Mass production and hire purchase (also advertising, Republican policies)']],
+    { id: 'h-ir-cw2', n: 'Cuban Missile Crisis & the origins of Vietnam 1954–1965', p: ['h1'], w: 3, from: '2027-01-04',
+      pts: ['Cuban Missile Crisis (October 1962): Castro\'s revolution (1959) and the failed US-backed Bay of Pigs invasion (1961) → Soviet missiles in Cuba → U-2 photographs → a US naval "quarantine".',
+        'It was resolved when Khrushchev removed the missiles; the USA promised not to invade Cuba and secretly agreed to remove its missiles from Turkey. Afterwards: a hotline between Washington and Moscow and the Test Ban Treaty (1963).',
+        'Vietnam origins: the French defeat at Dien Bien Phu (1954) → the Geneva Accords divided Vietnam at the 17th parallel. The USA backed Diem\'s anti-communist South Vietnam because of the domino theory.',
+        'Growing involvement under Eisenhower and Kennedy: money, advisers and the Strategic Hamlet programme.',
+        'Gulf of Tonkin incident (1964) → the Gulf of Tonkin Resolution gave Johnson power to escalate. 1965: the Rolling Thunder bombing began and US combat troops arrived.'],
+      cards: [['How was the Cuban Missile Crisis resolved?', 'USSR removed the missiles; US promised not to invade Cuba and secretly removed missiles from Turkey'],
+        ['Two results of the Cuban Missile Crisis', 'A hotline between the leaders and the Test Ban Treaty (1963)'], ['What was the domino theory?', 'If one country fell to communism, its neighbours would follow'],
+        ['What did the Geneva Accords (1954) do?', 'Divided Vietnam at the 17th parallel after the French defeat'], ['Why was the Gulf of Tonkin incident (1964) important?', 'Led to the Resolution that let Johnson escalate the war']],
+      ex: 'Essay: "The Cuban Missile Crisis was a victory for Kennedy." How far do you agree?' },
+    { id: 'h-ir-vietnam', n: 'The Vietnam War & US withdrawal 1965–1975', p: ['h1'], w: 3, from: '2027-01-04',
+      pts: ['US tactics: bombing (Operation Rolling Thunder), search and destroy, chemical weapons (Agent Orange, napalm). Consequences: huge civilian casualties, peasants turned against the USA, atrocities such as My Lai (1968).',
+        'Vietcong tactics: guerrilla warfare, tunnels, booby traps, supplies along the Ho Chi Minh Trail, and support from the peasants. Hard for a conventional army to defeat.',
+        'The Tet Offensive (1968) was a military defeat for the Vietcong but a turning point: Americans stopped believing the war could be won.',
+        'Opposition in the USA: TV coverage, the draft, student protests (e.g. Kent State, 1970) and rising casualties.',
+        'Withdrawal: Nixon\'s "Vietnamisation" from 1969 → Paris Peace Accords (1973) → the fall of Saigon (1975) and a communist Vietnam.',
+        'Impact on international relations: US prestige damaged, limits on US power exposed, and neighbouring Laos and Cambodia also became communist (1975).'],
+      cards: [['What was "search and destroy"?', 'US patrols finding and killing Vietcong in villages — often killed civilians and turned peasants against the USA'],
+        ['Why was the Tet Offensive (1968) a turning point?', 'A military failure for the Vietcong, but it convinced many Americans the war could not be won'],
+        ['What was Vietnamisation?', 'Nixon\'s policy of handing the fighting to South Vietnam while withdrawing US troops'], ['When did Saigon fall?', '1975'],
+        ['Name two Vietcong tactics', 'Guerrilla warfare, tunnels, booby traps, the Ho Chi Minh Trail']],
+      ex: 'Answer: "Explain why the USA withdrew from Vietnam" — military, political and public-opinion factors.' },
+
+    /* ---------- PAPER 1: USA 1919–1948 ---------- */
+    { id: 'h-usa-20s', n: 'USA 1920s: economy & women', p: ['h1'], w: 3, from: '2026-09-02',
+      pts: ['Republican policies and ideology: laissez-faire, low taxes, high tariffs (Fordney–McCumber, 1922), "rugged individualism".',
+        'Industries and groups that prospered: cars (Ford\'s assembly line, the Model T), electrical goods, construction, advertising, hire purchase, the stock market.',
+        'Industries and groups that did not: farmers (overproduction, falling prices), coal and textiles, African Americans, many immigrants.',
+        'Women: the vote (19th Amendment, 1920), flappers and new jobs — but change was limited for most women.',
+        'The Sheppard-Towner Act (1921) gave federal money for maternity and infant health care. Women\'s rights movements continued campaigning (e.g. for an Equal Rights Amendment).'],
+      cards: [['Why did farmers not share in the boom?', 'Overproduction after WW1 led to falling prices'], ['Two causes of the 1920s boom', 'Mass production and hire purchase (also advertising, Republican policies)'],
+        ['What was the Sheppard-Towner Act (1921)?', 'Federal funding for maternity and infant health care'], ['What did the 19th Amendment (1920) do?', 'Gave women the vote'],
+        ['What was laissez-faire?', 'Government stays out of business and the economy']],
       ex: 'Answer: "Explain why the US economy boomed in the 1920s" (2–3 developed factors).' },
-    { id: 'h-usa-30s', n: 'USA 1929–1941: Crash, Depression & New Deal', p: ['h1'], w: 3, from: '2026-10-05',
-      pts: ['Wall Street Crash, October 1929 (Black Tuesday, 29 October). Causes: overproduction, unequal wealth, speculation on the margin, weak banks.',
-        'Depression: unemployment reached about a quarter of workers by 1933, plus Hoovervilles, the Dust Bowl, and the Bonus Army (1932). Hoover was seen as doing too little.',
-        'FDR elected in 1932: the "New Deal" — relief, recovery, reform. The Hundred Days: Emergency Banking Act, fireside chats, "alphabet agencies" (CCC, AAA, TVA, NRA, PWA).',
-        'Second New Deal (1935): WPA, Social Security Act, Wagner Act (union rights).',
-        'Opposition: the Supreme Court struck down the NRA and AAA, and FDR\'s court-packing plan failed (1937). Critics said it did too much (Republicans, business) or too little (Huey Long, Father Coughlin, Dr Townsend).',
-        'The recession of 1937–38 hit. Full recovery only came with WW2 rearmament.'],
-      cards: [['Date of Black Tuesday', '29 October 1929'], ['What did the TVA do?', 'Built dams — jobs, electricity and flood control in the Tennessee Valley'],
+    { id: 'h-usa-prej', n: 'USA 1920s: Prohibition & prejudice', p: ['h1'], w: 3, from: '2026-09-02',
+      pts: ['Prohibition: causes (temperance movements such as the Anti-Saloon League, anti-German feeling in WW1), aims (reduce crime and family breakdown), implementation (18th Amendment, Volstead Act, from 1920).',
+        'Failure: speakeasies, bootlegging, organised crime (Al Capone, St Valentine\'s Day Massacre 1929) and corruption. Repealed by the 21st Amendment (1933).',
+        'Prejudice: the Jim Crow laws segregated the South. The Ku Klux Klan revived, with millions of members by the mid-1920s.',
+        'The Red Scare: the Palmer Raids (1919–20) and Sacco and Vanzetti (executed 1927).',
+        'Immigration restrictions through the 1920s: the quota acts of 1921 and 1924.',
+        'Fighting prejudice: the NAACP (campaigned through the courts and against lynching) and Marcus Garvey\'s UNIA (Black pride and self-reliance).'],
+      cards: [['Which amendment introduced Prohibition?', '18th (repealed by the 21st in 1933)'], ['Who were Sacco and Vanzetti?', 'Italian immigrant anarchists executed in 1927 after a controversial trial'],
+        ['What were the Jim Crow laws?', 'Laws enforcing racial segregation in the southern states'], ['What was the NAACP?', 'An organisation that fought racial discrimination through the courts and campaigns'],
+        ['What was the UNIA?', 'Marcus Garvey\'s organisation promoting Black pride and self-reliance'], ['Name two 1920s laws restricting immigration', 'The quota acts of 1921 and 1924']],
+      ex: 'Essay: "Prohibition failed mainly because of organised crime." How far do you agree?' },
+    { id: 'h-usa-30s', n: 'USA 1930s: Depression & the New Deals', p: ['h1'], w: 3, from: '2026-10-05',
+      pts: ['Wall Street Crash (October 1929). Economic and social effects: unemployment around a quarter of workers by 1933, Hoovervilles, the Dust Bowl. Hoover\'s response was seen as too little.',
+        'The 1932 election campaigns: Hoover vs Roosevelt, who promised a "New Deal". The Bonus Army (1932) damaged Hoover.',
+        'The First New Deal — the Hundred Days: the Emergency Banking Act, fireside chats, and the Alphabet Agencies: AAA, CCC, FERA, NRA, TVA.',
+        'The Second New Deal: the WPA, the Social Security Act, the Wagner Act, the Resettlement Administration and the Farm Security Administration.',
+        'Reactions: the Supreme Court struck down the NRA and AAA, and FDR\'s plan to "pack" the Court (1937) failed. Critics said it did too much (Republicans, business) or too little (Huey Long, Father Coughlin, Dr Townsend).',
+        'Impact: confidence and relief restored, but unemployment stayed high (recession in 1937–38) and many African Americans and women gained less.'],
+      cards: [['What did the TVA do?', 'Built dams — jobs, electricity and flood control in the Tennessee Valley'], ['What did the CCC do?', 'Gave young unemployed men work on conservation projects'],
+        ['Name three Second New Deal measures', 'WPA, Social Security Act, Wagner Act (also Resettlement Administration, Farm Security Administration)'],
         ['Why did the Supreme Court oppose the New Deal?', 'Ruled agencies like the NRA unconstitutional — too much federal power'], ['Who was Huey Long?', 'Critic who said the New Deal didn\'t go far enough; "Share Our Wealth"']],
-      ex: 'Essay: "The New Deal was a success. How far do you agree?" — judge by different groups.' },
-    { id: 'h-usa-war', n: 'USA 1941–1948: war & its aftermath', p: ['h1'], w: 2, from: '2026-11-02',
-      pts: ['Lend-Lease (1941) aided Britain. Pearl Harbor (7 December 1941) brought the USA into the war.',
-        'The war economy ended unemployment. Women entered war work ("Rosie the Riveter").',
-        'African Americans: the "Double V" campaign, migration north, segregated armed forces, and Executive Order 8802 (1941) banning discrimination in defence industries.',
-        'Japanese Americans (about 120,000) were interned under Executive Order 9066 (1942).',
-        'After the war: the GI Bill (1944), strikes (1946), the Taft–Hartley Act (1947), and the start of the second Red Scare (loyalty checks, HUAC and the Hollywood Ten, 1947).'],
+      ex: 'Essay: "The New Deal was a success." How far do you agree? Judge it by different groups.' },
+    { id: 'h-usa-war', n: 'USA 1941–1948: the impact of the Second World War', p: ['h1'], w: 3, from: '2026-11-02',
+      pts: ['Mobilisation: propaganda campaigns, massive war production and the end of the Depression.',
+        'Increased government and presidential power: control of wages and prices, rationing, and taxes on luxuries.',
+        'Social impact: rationing, housing shortages near war factories, and a rise in divorce.',
+        'Women and the war effort: millions took war jobs ("Rosie the Riveter"), though many were pushed out after 1945.',
+        'Japanese internment: about 120,000 Japanese Americans were forced into camps (Executive Order 9066, 1942).',
+        'Foundations of the Civil Rights movement: the Double V campaign, Executive Order 8802 (1941, no discrimination in defence industries), segregation in the military, the Detroit Race Riots (1943), and the desegregation of the armed forces (1948).'],
       cards: [['What was the "Double V" campaign?', 'Victory against fascism abroad and racism at home'], ['What did Executive Order 9066 do?', 'Allowed the internment of Japanese Americans'],
-        ['What was the GI Bill?', 'Benefits for veterans — education, loans for homes and businesses']],
+        ['What did Executive Order 8802 (1941) do?', 'Banned racial discrimination in defence industries'], ['When were the US armed forces desegregated?', '1948'],
+        ['What happened in Detroit in 1943?', 'Race riots — tension over jobs and housing in a war-production city']],
       ex: 'Source question: "How useful is this poster for studying women in WW2 America?"' },
-    { id: 'h-mig-med', n: 'Migration c.1000–c.1500', p: ['h2'], w: 2,
-      pts: ['Normans after 1066: a new ruling class, language and castles.',
-        'Jews: came from Rouen under William I, worked as moneylenders, faced persecution (the York massacre at Clifford\'s Tower, 1190), and were expelled by Edward I in 1290.',
-        'Flemish weavers were encouraged by Edward III (14th century). They were attacked in the Peasants\' Revolt (1381).',
-        'Hanseatic merchants had a base at the Steelyard in London. Italian (Lombard) bankers also settled.',
-        'The alien subsidy tax of 1440 recorded migrants across England.'],
-      cards: [['When were Jews expelled from England?', '1290 (Edward I)'], ['Which king encouraged Flemish weavers?', 'Edward III'],
-        ['Where was the Hanseatic base in London?', 'The Steelyard']],
-      ex: 'Explain two reasons why migrants came to England in the Middle Ages.' },
+
+    /* ---------- PAPER 2: Migration to Britain c.1000–c.2010 ---------- */
+    { id: 'h-mig-med', n: 'Migration c.1000–1500', p: ['h2'], w: 2,
+      pts: ['Population diversity before 1066: Britain already contained Anglo-Saxon, Scandinavian (Viking) and other settlers.',
+        'The Norman Conquest: a new French-speaking ruling class, castles and cathedrals, land taken from English lords. Resistance in William\'s reign was crushed (e.g. the Harrying of the North, 1069–70).',
+        'Jews: first arrived in 1066 with the Normans (from Rouen). They were moneylenders under royal protection and heavily taxed, then faced growing persecution (York massacre, 1190) and expulsion by Edward I (1290).',
+        'Resident "aliens" in the Middle Ages: Flemish weavers, Italian bankers, Hanseatic merchants. The authorities taxed them (the alien subsidy of 1440). Most integrated, but some faced violence — Flemings were killed in the Peasants\' Revolt (1381).'],
+      cards: [['When were Jews expelled from England?', '1290 (Edward I)'], ['When did Jews first arrive in England?', 'After 1066, with the Normans'],
+        ['What was the alien subsidy (1440)?', 'A tax on foreigners living in England — a record of medieval migrants'], ['Which migrants were attacked in the Peasants\' Revolt?', 'Flemings (Flemish people)']],
+      ex: 'Explain two ways the treatment of migrants in medieval England changed or stayed the same.' },
     { id: 'h-mig-early', n: 'Migration c.1500–c.1700', p: ['h2'], w: 2,
-      pts: ['Africans in Tudor England, e.g. John Blanke, trumpeter to Henry VII and Henry VIII.',
-        'Protestant refugees: Dutch and Flemish "Strangers" (e.g. Norwich, 1560s) and Huguenots after the Edict of Nantes was revoked in 1685 — many settled in Spitalfields as silk weavers.',
-        'Jews were readmitted under Cromwell (1656).',
-        'Lascars (Indian sailors) arrived with the East India Company. Gypsies faced harsh laws.',
-        'Emigration: colonies in America (Jamestown 1607) and the plantations in Ireland.'],
-      cards: [['Why did Huguenots come to England?', 'Persecution of Protestants in France after 1685'], ['When were Jews readmitted?', '1656 under Cromwell'],
+      pts: ['Africans in 16th-century England: they arrived through trade and links with Spain and Portugal, as servants, musicians and sailors (e.g. John Blanke, trumpeter at the Tudor court).',
+        'The East India Company (founded 1600) brought Lascars and other Asian seamen, plus child servants and ayahs (nannies) who came with families returning from India.',
+        'The readmission of Jews (1656, under Cromwell) and their experiences.',
+        'Protestant refugees from the 1670s: the Huguenots (French Protestants, especially after 1685) — many became silk weavers in Spitalfields; and the Palatines (1709, from Germany), who got a much poorer reception.',
+        'Think about reasons (religious persecution, trade, empire), reception, impact and how far they assimilated.'],
+      cards: [['Why did Huguenots come to England?', 'Persecution of Protestants in France (especially after 1685)'], ['When were Jews readmitted?', '1656, under Cromwell'],
+        ['Who were Lascars?', 'Indian and other Asian sailors who worked on East India Company ships'], ['Who were the Palatines?', 'German Protestant refugees who arrived in 1709'],
         ['Who was John Blanke?', 'A Black trumpeter at the Tudor court']],
-      ex: 'Compare the experiences of Huguenots and Jews in England 1500–1700.' },
+      ex: 'Compare the reception of the Huguenots and the Palatines.' },
     { id: 'h-mig-modern', n: 'Migration c.1700–c.1900', p: ['h2'], w: 2,
-      pts: ['Empire and slavery brought Black people to Britain (e.g. Olaudah Equiano, Ignatius Sancho). The Somerset case (1772) ruled a slave could not be forcibly removed from England.',
-        'Irish migration, especially after the Great Famine (1845–52): navvies, and communities in Liverpool, Manchester and London. They faced prejudice.',
-        'Eastern European Jews fled pogroms from the 1880s and settled in the East End (Spitalfields and Whitechapel).',
-        'Indian ayahs and lascars, Chinese communities (Limehouse), Italians and Germans also settled.',
-        'Emigration: to America, Canada and Australia (including convict transportation).'],
+      pts: ['Growth of African communities: the Royal African Company and the slave trade, the loss of the American colonies (Black Loyalists came to Britain after 1783) and the expansion of the Empire.',
+        'Migrants in political movements: Black writers such as Olaudah Equiano campaigned for Abolition; William Cuffay, a Black Chartist leader, was transported in 1849.',
+        'The Industrial Revolution: Irish and Scottish migrants came for work, especially after the Irish Famine (1845–52), and faced prejudice.',
+        'Eastern European Jews fled pogroms from the 1880s and settled in the East End.',
+        'Naturalisation and denization: ways for foreigners to gain rights. The Naturalisation Act of 1870 made naturalisation easier (after 5 years\' residence).'],
       cards: [['What caused mass Irish migration in the 1840s?', 'The Great Famine (1845–52)'], ['Why did Eastern European Jews migrate after 1881?', 'Pogroms (violent persecution) in the Russian Empire'],
-        ['Who was Olaudah Equiano?', 'Formerly enslaved writer and abolitionist in 18th-century Britain']],
+        ['Who was Olaudah Equiano?', 'Formerly enslaved writer and abolitionist in 18th-century Britain'], ['Who was William Cuffay?', 'A Black Chartist leader, transported in 1849'],
+        ['What did the Naturalisation Act 1870 do?', 'Made it easier for foreigners to become British subjects (after 5 years\' residence)']],
       ex: 'Essay: "Economic reasons were the main cause of migration to Britain 1700–1900." How far do you agree?' },
-    { id: 'h-mig-20c', n: 'Migration c.1900–c.2010', p: ['h2'], w: 3,
-      pts: ['Aliens Act (1905): the first major restriction, aimed at poor Jewish migrants. Belgian refugees came in WW1. The Kindertransport (1938–39) brought about 10,000 Jewish children.',
-        'Empire Windrush (June 1948) and the British Nationality Act (1948): Commonwealth migration to fill labour shortages (NHS, transport).',
-        'Racism: the Notting Hill riots (1958). Commonwealth Immigrants Act (1962) introduced work vouchers. Race Relations Acts (1965, 1968, 1976). Enoch Powell\'s "Rivers of Blood" speech (1968).',
-        'Ugandan Asians expelled by Idi Amin (1972). Immigration Act (1971). Bangladeshi community in Spitalfields and Brick Lane (Altab Ali murdered in 1978).',
-        'Eastern European migration after EU enlargement (2004). Asylum seekers.'],
-      cards: [['Why was the Aliens Act of 1905 significant?', 'First major law restricting immigration'], ['When did the Empire Windrush arrive?', 'June 1948'],
-        ['What did the 1962 Commonwealth Immigrants Act do?', 'Restricted Commonwealth migration with work vouchers'], ['What happened in 1972 to Ugandan Asians?', 'Expelled by Idi Amin; many came to Britain']],
+    { id: 'h-mig-20c', n: 'Migration 1900–c.2010', p: ['h2'], w: 3,
+      pts: ['Diverse port communities grew in the early 1900s (e.g. Cardiff, Liverpool, London).',
+        'Laws: the Aliens Act 1905 (first major restriction, aimed at poor Jewish migrants), the Status of Aliens Act 1914, the British Nationality Act 1948 (Commonwealth citizens could settle in Britain).',
+        'The 1930s: Jewish refugees (e.g. the Kindertransport) met mixed attitudes, including fascist hostility. The world wars: German migrants faced riots and internment, and "enemy aliens" were interned in 1940. Poles settled after WW2 (Polish Resettlement Act 1947).',
+        'Commonwealth migration after WW2 (e.g. the Empire Windrush, 1948): the reasons, the impact, and the experiences, including racism (e.g. the Notting Hill riots, 1958).',
+        'Political racism and antiracism: race relations laws (1965, 1968, 1976) and immigration controls (Commonwealth Immigrants Act 1962, British Nationality Act 1981).',
+        'c.1990–2010: debate over a "multicultural society", attitudes to refugees and asylum seekers, and EU "open borders" after 2004.'],
+      cards: [['Why was the Aliens Act of 1905 significant?', 'First major law restricting immigration'], ['What did the British Nationality Act 1948 do?', 'Gave Commonwealth citizens the right to live in Britain'],
+        ['What did the 1962 Commonwealth Immigrants Act do?', 'Restricted Commonwealth migration with work vouchers'], ['What did the 1981 British Nationality Act do?', 'Tightened the rules on who is a British citizen'],
+        ['When did the Empire Windrush arrive?', 'June 1948'], ['Which group settled under a 1947 Act after WW2?', 'Poles (Polish Resettlement Act 1947)']],
       ex: 'Timed 1-hour Paper 2 past paper — then compare your judgement paragraphs with the mark scheme.' },
-    { id: 'h-empire', n: 'Impact of Empire on Britain 1688–c.1730', p: ['h3'], w: 3,
-      pts: ['Glorious Revolution (1688): William III and Mary replaced James II. The Bill of Rights (1689) and wars with France followed.',
-        'Financial Revolution: the Bank of England (1694) and the national debt paid for war and expansion.',
-        'Union: the failed Darien Scheme (1698–1700) weakened Scotland → Act of Union (1707). Ireland: the Battle of the Boyne (1690) and Protestant domination. Jacobite rising (1715).',
-        'Treaty of Utrecht (1713): Britain gained Gibraltar, Minorca, Newfoundland, Nova Scotia and the Asiento (the right to supply enslaved Africans to Spanish colonies).',
-        'Trade: the East India Company (textiles, tea), the Royal African Company and the transatlantic slave trade, and Caribbean sugar and American tobacco colonies. The South Sea Bubble burst in 1720.',
-        'Impact on Britain: new consumer goods (tea, coffee, sugar, calico), coffee houses, the wealth of port cities (Bristol, London, Liverpool), and Black and Asian people living in Britain.'],
-      cards: [['When was the Bank of England founded?', '1694'], ['Why did the Darien Scheme matter?', 'Its failure bankrupted many Scots, helping push Scotland into the 1707 Union'],
-        ['What was the Asiento?', 'Right to supply enslaved Africans to Spanish colonies (gained at Utrecht, 1713)'], ['When did the South Sea Bubble burst?', '1720']],
+
+    /* ---------- PAPER 3: Impact of Empire 1688–c.1730 ---------- */
+    { id: 'h-empire', n: 'Empire 1688–c.1730: impact on the British Isles', p: ['h3'], w: 3,
+      pts: ['The Glorious Revolution (1688): William III and Mary replaced James II. The Hanoverian succession (George I, 1714) secured a Protestant monarchy.',
+        'Ireland 1688–91: military campaigns (e.g. the Battle of the Boyne, 1690), then a settlement that gave power to Protestants and imposed penal laws on Catholics.',
+        'England and Scotland after 1688: Jacobite opposition and the Massacre of Glencoe (1692). The failed Darien Scheme (1698–1700) weakened Scotland → the Act of Union (1707). The Jacobite Rebellion (1715).',
+        'Emigration from the British Isles to the Americas, including forced emigration (transported convicts, indentured servants).'],
+      cards: [['What was the Glorious Revolution?', 'William III and Mary replaced James II in 1688'], ['Why did the Darien Scheme matter?', 'Its failure bankrupted many Scots, helping push Scotland into the 1707 Union'],
+        ['What was the Massacre of Glencoe (1692)?', 'Government troops killed members of the MacDonald clan — linked to fears of Jacobitism'], ['When was the Jacobite Rebellion?', '1715'],
+        ['What was the Hanoverian succession?', 'George I became king in 1714, keeping a Protestant monarchy']],
+      ex: 'Explain two ways English expansion affected Ireland or Scotland 1688–1730.' },
+    { id: 'h-empire-econ', n: 'Empire 1688–c.1730: economic impact', p: ['h3'], w: 3,
+      pts: ['War and imperial expansion changed the economy. The Bank of England (1694) and the national debt paid for war.',
+        'Trade with India and China grew. The East India Company set up in Kolkata (Calcutta) and traded textiles and tea.',
+        'The Royal African Company\'s monopoly was lifted in 1698, so private traders joined the slave trade — it expanded rapidly.',
+        'The Treaty of Utrecht (1713): Britain gained territory (e.g. Gibraltar, Newfoundland) and the Asiento — the right to supply enslaved Africans to Spanish colonies.',
+        'The South Sea Bubble (1719–20): speculation in the South Sea Company collapsed.',
+        'Colonies in North America (tobacco) and the Caribbean (sugar) were economically vital, built on the origins and growth of a slave-based economy.'],
+      cards: [['When was the Bank of England founded?', '1694'], ['What was the Asiento?', 'Right to supply enslaved Africans to Spanish colonies (gained at Utrecht, 1713)'],
+        ['What changed in 1698?', 'The Royal African Company lost its monopoly — private traders joined the slave trade'], ['What was the South Sea Bubble?', 'A collapse in South Sea Company shares after wild speculation (1719–20)'],
+        ['Where did the East India Company establish itself in Bengal?', 'Kolkata (Calcutta)']],
+      ex: 'Essay: "The slave trade was the most important economic effect of empire 1688–1730." How far do you agree?' },
+    { id: 'h-empire-soc', n: 'Empire 1688–c.1730: political & social impact', p: ['h3'], w: 2,
+      pts: ['The emergence of consumerism: tea, coffee, sugar, tobacco and calico became popular, with wider political and economic effects.',
+        'Involvement of the British population in the slave trade: the "slave ports" of Bristol, Liverpool and London, plus smaller ports.',
+        'The growth of ideas of a racial hierarchy, and their impact on the Black and Asian people already living in Britain.',
+        'Opposition to slavery and the slave trade, including resistance by enslaved people themselves.',
+        'Developing political activism: coffee houses became places for news, debate and business.'],
+      cards: [['Name the three main "slave ports"', 'Bristol, Liverpool and London'], ['Why were coffee houses politically important?', 'Places to read news, debate politics and do business'],
+        ['What is meant by consumerism in this period?', 'Growing demand for imported goods like tea, sugar, tobacco and calico'], ['How did empire affect ideas about race?', 'Ideas of a racial hierarchy grew, affecting minority communities in Britain']],
       ex: 'Explain two ways the growth of empire changed everyday life in Britain by c.1730.' },
-    { id: 'h-spitalfields', n: 'Historic environment — Spitalfields & patterns of migration', p: ['h3'], w: 2,
-      pts: ['Urban Environments: Patterns of Migration — an area shaped by waves of migrants. Your class site is Spitalfields in London\'s East End.',
-        'Huguenot silk weavers (from 1685): tall weavers\' houses with large top-floor windows for light (e.g. Fournier Street).',
-        '59 Brick Lane: built in 1743 as a Huguenot chapel, later a Methodist chapel, a synagogue (from 1898), and a mosque (from 1976). One building shows three centuries of migration.',
+    { id: 'h-spitalfields', n: 'Historic environment — Spitalfields', p: ['h3'], w: 2,
+      pts: ['The spec asks: when immigrant groups arrived, why and from where; how they were received; their daily lives and occupations; key events; and the impact of migration on the area.',
+        'Huguenot silk weavers (from the late 1600s): tall weavers\' houses with large top-floor windows for light (e.g. Fournier Street).',
+        '59 Brick Lane: built in 1743 as a Huguenot chapel, later a Methodist chapel, a synagogue (from 1898) and a mosque (from 1976) — one building shows three centuries of migration.',
         'Irish (19th century), Jewish (1880s–1914: synagogues, soup kitchens, the Jews\' Free School) and Bangladeshi (from the 1970s: "Banglatown", Altab Ali Park) communities.',
-        'Evidence types: maps (Charles Booth\'s poverty maps from the 1880s–90s), census records, photographs, buildings and street names. Judge what each can and cannot tell you.'],
+        'Evidence: buildings, street names and signs, monuments, maps (e.g. Charles Booth\'s poverty maps), census records, oral histories. Judge what each can and cannot tell you, and what is missing.'],
       cards: [['Why did Huguenot houses have large top-floor windows?', 'To give light for silk weaving'], ['What does 59 Brick Lane show?', 'Chapel → synagogue → mosque: successive migrant communities'],
-        ['What were Booth\'s maps?', 'Late-19th-century maps of London colour-coded by poverty/wealth']],
+        ['What were Booth\'s maps?', 'Late-19th-century maps of London colour-coded by poverty/wealth'], ['Name four types of evidence at a site', 'Buildings, street names/signs, monuments, maps (also census, oral histories)']],
       ex: 'Using a picture or map of Spitalfields, write how useful it is for studying migration (content + provenance + own knowledge).' },
     { id: 'h-skills', n: 'Source, interpretation & essay skills', p: ['h1', 'h2', 'h3'], w: 2,
       pts: ['Utility: What does it show (content)? Who made it, when and why (provenance)? What is missing? Use your own knowledge to test it.',
@@ -1402,9 +1510,9 @@ RG.subjects.push({
   structure: [
     'Four papers, 25% each. Tier (Foundation or Higher) is the same for all four.',
     'Listening: F 35 min / H 45 min, including a dictation section. Reading: F 45 min / H 1 hour, including translation into English. Both are on Monday 10 May (pm).',
-    'Writing: F 1h 10m / H 1h 15m, including translation into German. Higher has a translation, a ~90-word task and a ~150-word task (with choices).',
-    'Speaking: role-play, reading aloud + short conversation, and photo card + conversation, after supervised preparation. Conducted by the school before 24 May 2027 — the date shown here is a placeholder.',
-    'Themes: 1 People & lifestyle · 2 Popular culture · 3 Communication & the world around us. AQA publishes a defined vocabulary list — it is worth learning.'
+    'Writing: F 1h 10m / H 1h 15m. Foundation: 5 sentences about a photo, ~50-word task, 5 grammar tasks, translation into German (35+ words), ~90-word task. Higher: translation into German (50+ words), ~90-word task, ~150-word task (choices on the longer tasks).',
+    'Speaking: role-play (10 marks), reading aloud + short conversation (15), photo card + unprepared conversation (25), after 15 minutes\' supervised preparation. F 7–9 min, H 10–12 min. Conducted by the school before 24 May 2027 — the date shown here is a placeholder.',
+    'Themes: 1 People & lifestyle · 2 Popular culture · 3 Communication & the world around us. Exams are based on AQA\'s prescribed vocabulary list (Appendix 2 of the spec) — the flashcards here only use words from that list.'
   ],
   technique: [
     'Vocabulary is the single biggest lever: 10–15 minutes of flashcards every day beats a weekly cram.',
@@ -1420,77 +1528,85 @@ RG.subjects.push({
   topics: [
     { id: 'de-rel', n: 'Theme 1 · Identity & relationships', p: ['de-ls', 'de-w', 'de-s'], w: 3,
       pts: ['Describe family and friends: Ich verstehe mich gut mit meiner Mutter, weil sie geduldig ist.',
-        'Relationships and conflict: Mein Bruder geht mir auf die Nerven. Wir streiten uns oft über …',
-        'Role models: Mein Vorbild ist …, weil er/sie hilfsbereit und selbstbewusst ist.',
-        'Future: Ich möchte (nicht) heiraten / Kinder haben, weil …'],
-      cards: [['sich verstehen mit (+ dative)', 'to get on with'], ['auf die Nerven gehen', 'to get on (someone\'s) nerves'], ['das Vorbild', 'role model'],
-        ['geduldig', 'patient'], ['zuverlässig', 'reliable'], ['eifersüchtig', 'jealous'], ['geschieden', 'divorced'], ['ledig', 'single (unmarried)'],
-        ['der Stiefvater', 'stepfather'], ['sich streiten', 'to argue'], ['I get on well with my sister', 'Ich verstehe mich gut mit meiner Schwester'], ['selbstbewusst', 'self-confident']],
+        'Relationships and conflict: Mein Bruder geht mir auf die Nerven. Wir streiten uns oft.',
+        'Role models (H): Mein Vorbild ist …, weil er/sie hilfsbereit und ehrlich ist.',
+        'Future: Ich möchte (nicht) heiraten / Kinder haben, weil …',
+        'Every word on these cards is on AQA\'s official 8662 vocabulary list. (H) = Higher tier only.'],
+      cards: [['sich verstehen mit (+ dative)', 'to get on with'], ['jdm auf die Nerven gehen', 'to get on someone\'s nerves'], ['das Vorbild (H)', 'role model'],
+        ['geduldig', 'patient'], ['hilfsbereit', 'helpful'], ['eifersüchtig (H)', 'jealous'], ['geschieden', 'divorced'], ['ledig', 'single (unmarried)'],
+        ['der Stiefvater (Stief- = step-)', 'stepfather'], ['streiten', 'to argue'], ['die Beziehung', 'relationship'], ['vertrauen (H)', 'to trust'],
+        ['I get on well with my sister', 'Ich verstehe mich gut mit meiner Schwester']],
       ex: 'Write 90 words on your family and a role model, using three tenses. Then say it aloud without notes.' },
     { id: 'de-health', n: 'Theme 1 · Healthy living & lifestyle', p: ['de-ls', 'de-w', 'de-s'], w: 2,
-      pts: ['Diet and exercise: Ich esse gesund / Ich treibe jeden Tag Sport, um fit zu bleiben.',
-        'Unhealthy habits: rauchen, Alkohol trinken, Drogen nehmen, zu wenig schlafen, der Stress.',
-        'Resolutions with the future: Ich werde mehr Obst essen. Ich sollte früher ins Bett gehen.',
+      pts: ['Diet and exercise: Ich esse gesund. Ich treibe jeden Tag Sport, um gesund zu bleiben.',
+        'Unhealthy habits: rauchen, Alkohol trinken, Drogen nehmen, zu wenig schlafen.',
+        'Resolutions with the future: Ich werde mehr Gemüse essen. Man sollte früher ins Bett gehen.',
         'Use um … zu (in order to) and man sollte (one should).'],
-      cards: [['gesund / ungesund', 'healthy / unhealthy'], ['sich fit halten', 'to keep fit'], ['die Ernährung', 'diet / nutrition'], ['das Rauchen aufgeben', 'to give up smoking'],
-        ['die Sucht', 'addiction'], ['abnehmen', 'to lose weight'], ['zunehmen', 'to gain weight'], ['der Stress', 'stress'],
-        ['I do sport in order to stay fit', 'Ich treibe Sport, um fit zu bleiben'], ['You should sleep more', 'Man sollte mehr schlafen']],
+      cards: [['gesund', 'healthy'], ['die Gesundheit', 'health'], ['die Ernährung (H)', 'diet / nutrition'], ['rauchen', 'to smoke'], ['die Zigarette', 'cigarette'],
+        ['aufgeben (H)', 'to give up'], ['abnehmen', 'to lose weight'], ['zunehmen', 'to gain weight'], ['die Droge', 'drug'], ['krank', 'ill'], ['die Krankheit', 'illness'],
+        ['I do sport in order to stay healthy', 'Ich treibe Sport, um gesund zu bleiben'], ['You should sleep more', 'Man sollte mehr schlafen']],
       ex: 'Translate 5 English sentences about health into German, including one um … zu and one past tense.' },
     { id: 'de-school', n: 'Theme 1 · Education & work', p: ['de-ls', 'de-w', 'de-s'], w: 3, from: '2026-11-02',
       pts: ['School: Mein Lieblingsfach ist …, weil der Lehrer lustig ist. Wir müssen eine Uniform tragen.',
-        'Opinions on rules and pressure: Ich finde die Schulregeln zu streng. Die Prüfungen sind stressig.',
-        'Future plans: Nächstes Jahr werde ich in die Oberstufe gehen / an die Uni gehen / eine Lehre machen.',
-        'Jobs: Ich möchte Arzt/Ärztin werden, weil … Ich habe ein Praktikum bei … gemacht. Job titles take no article: Ich bin Lehrer.'],
-      cards: [['das Lieblingsfach', 'favourite subject'], ['die Prüfung', 'exam'], ['streng', 'strict'], ['das Praktikum', 'work experience / internship'],
-        ['sich bewerben um', 'to apply for'], ['verdienen', 'to earn'], ['der Nebenjob', 'part-time job'], ['die Stelle', 'post / position'],
-        ['arbeitslos', 'unemployed'], ['die Oberstufe', 'sixth form'], ['I would like to become a doctor', 'Ich möchte Arzt/Ärztin werden'], ['We have to wear a uniform', 'Wir müssen eine Uniform tragen']],
+        'Opinions on rules and pressure: Die Regeln sind zu streng. Die Prüfungen (H) sind schwierig.',
+        'Future plans: Nächstes Jahr werde ich in die Oberstufe (H) gehen / an die Universität gehen / eine Lehre (H) machen.',
+        'Jobs: Ich möchte Arzt/Ärztin werden, weil … Ich möchte bei einer großen Firma arbeiten. Job titles take no article: Ich bin Lehrer.'],
+      cards: [['Lieblings- (+ noun)', 'favourite … (e.g. das Lieblingsfach)'], ['die Prüfung (H)', 'exam'], ['streng', 'strict'], ['verdienen', 'to earn'],
+        ['die Stelle', 'post / position'], ['arbeitslos', 'unemployed'], ['die Oberstufe (H)', 'sixth form'], ['die Lehre (H)', 'apprenticeship'], ['der Beruf', 'job / profession'],
+        ['die Erfahrung', 'experience'], ['die Firma', 'company'], ['der Kollege', 'colleague'],
+        ['I would like to become a doctor', 'Ich möchte Arzt/Ärztin werden'], ['We have to wear a uniform', 'Wir müssen eine Uniform tragen']],
       ex: 'Answer 5 conversation questions on school and future plans aloud (record yourself), then write the best answer out.' },
     { id: 'de-free', n: 'Theme 2 · Free-time activities', p: ['de-ls', 'de-w', 'de-s'], w: 2,
       pts: ['Hobbies with frequency and word order: Am Wochenende gehe ich oft mit Freunden ins Kino.',
         'Separable verbs: fernsehen → Ich sehe fern. ausgehen → Ich gehe aus.',
-        'Past: Letztes Wochenende habe ich Fußball gespielt und bin ins Schwimmbad gegangen.',
+        'Past: Letztes Wochenende habe ich Fußball gespielt und bin schwimmen gegangen.',
         'Opinions: Das macht Spaß. Ich interessiere mich für Musik.'],
-      cards: [['Sport treiben', 'to do sport'], ['die Mannschaft', 'team'], ['der Verein', 'club'], ['faulenzen', 'to laze around'],
-        ['sich interessieren für', 'to be interested in'], ['Das macht Spaß', 'That\'s fun'], ['ausgehen', 'to go out'], ['Last weekend I went to the cinema', 'Letztes Wochenende bin ich ins Kino gegangen']],
+      cards: [['Sport treiben', 'to do sport'], ['die Mannschaft', 'team'], ['der Verein', 'club'], ['die Freizeit', 'free time'],
+        ['sich interessieren für', 'to be interested in'], ['Das macht Spaß', 'That\'s fun'], ['ausgehen', 'to go out'], ['fernsehen', 'to watch TV'], ['das Konzert', 'concert'],
+        ['Last weekend I went to the cinema', 'Letztes Wochenende bin ich ins Kino gegangen']],
       ex: 'Write a 150-word account of a great weekend (past), your usual week (present) and next weekend (future).' },
     { id: 'de-fest', n: 'Theme 2 · Customs, festivals & celebrations', p: ['de-ls', 'de-w', 'de-s'], w: 2,
-      pts: ['German festivals: Weihnachten (Heiligabend on 24 December, the Adventskranz, Weihnachtsmärkte), Ostern, Silvester, Karneval/Fasching, das Oktoberfest.',
+      pts: ['German festivals: Weihnachten (presents on Heiliger Abend, 24 December), Ostern, Silvester, Karneval (H).',
         'Describe a celebration: Wir haben Geburtstag gefeiert. Ich habe viele Geschenke bekommen.',
-        'Compare traditions: In Deutschland bekommt man die Geschenke am Heiligabend, aber in England am 25. Dezember.'],
-      cards: [['das Fest', 'festival / celebration'], ['feiern', 'to celebrate'], ['Heiligabend', 'Christmas Eve'], ['Silvester', 'New Year\'s Eve'],
-        ['das Geschenk', 'present'], ['die Hochzeit', 'wedding'], ['der Weihnachtsmarkt', 'Christmas market'], ['We celebrated my birthday', 'Wir haben meinen Geburtstag gefeiert']],
-      ex: 'Describe the photo of a festival aloud for 1 minute, then answer "Was hast du letztes Weihnachten gemacht?"' },
+        'Compare traditions: In Deutschland bekommt man die Geschenke am Heiligen Abend, aber in England am 25. Dezember.'],
+      cards: [['das Fest', 'festival / celebration'], ['die Feier', 'party / celebration'], ['feiern', 'to celebrate'], ['der Heilige Abend', 'Christmas Eve'], ['Silvester', 'New Year\'s Eve'],
+        ['das Geschenk', 'present'], ['die Hochzeit', 'wedding'], ['die Tradition', 'tradition'], ['der Karneval (H)', 'carnival'],
+        ['We celebrated my birthday', 'Wir haben meinen Geburtstag gefeiert']],
+      ex: 'Describe a photo of a festival aloud for 1 minute, then answer "Was hast du letztes Weihnachten gemacht?"' },
     { id: 'de-celeb', n: 'Theme 2 · Celebrity culture', p: ['de-ls', 'de-w', 'de-s'], w: 1,
-      pts: ['Opinions on celebrities: Promis sind (keine) gute Vorbilder, weil …',
-        'Influence of social media: Viele Jugendliche folgen Influencern in den sozialen Medien.',
+      pts: ['Opinions on celebrities: Stars sind gute Vorbilder (H) / keine guten Vorbilder, weil …',
+        'Influence (H) of the media: Viele junge Leute folgen Stars in den sozialen Medien.',
         'Use relative clauses: Ein Star, der viel Geld verdient, sollte anderen helfen.'],
-      cards: [['der Promi', 'celebrity'], ['berühmt', 'famous'], ['der Einfluss', 'influence'], ['die Sendung', 'programme / show'], ['der Schauspieler', 'actor'],
-        ['A celebrity who earns a lot should help others', 'Ein Promi, der viel verdient, sollte anderen helfen']],
-      ex: 'Write 90 words: "Sind Promis gute Vorbilder?" — both sides and your conclusion.' },
+      cards: [['berühmt', 'famous'], ['der Star', 'star / celebrity'], ['der Einfluss (H)', 'influence'], ['die Sendung', 'programme / show'], ['der Schauspieler', 'actor'],
+        ['der Sänger', 'singer'], ['der Fan (H)', 'fan'], ['die sozialen Medien', 'social media'],
+        ['A star who earns a lot should help others', 'Ein Star, der viel verdient, sollte anderen helfen']],
+      ex: 'Write 90 words: "Sind Stars gute Vorbilder?" — both sides and your conclusion.' },
     { id: 'de-travel', n: 'Theme 3 · Travel & tourism', p: ['de-ls', 'de-w', 'de-s'], w: 3,
-      pts: ['Past holiday (perfect with sein for movement): Letzten Sommer bin ich nach Spanien gefahren/geflogen.',
+      pts: ['Past holiday (perfect with sein for movement): Letzten Sommer bin ich nach Spanien geflogen.',
         'Imperfect for descriptions: Das Wetter war sonnig. Es gab viel zu tun. Das Hotel hatte einen Pool.',
         'Future and conditional: Nächstes Jahr werde ich … Wenn ich reich wäre, würde ich nach Australien reisen.',
-        'Places of interest: Sehenswürdigkeiten besichtigen, einen Ausflug machen, übernachten, die Unterkunft.'],
-      cards: [['die Unterkunft', 'accommodation'], ['die Jugendherberge', 'youth hostel'], ['die Sehenswürdigkeit', 'sight / tourist attraction'], ['besichtigen', 'to visit (a sight)'],
-        ['übernachten', 'to stay overnight'], ['im Ausland', 'abroad'], ['der Ausflug', 'trip / excursion'], ['es regnete', 'it was raining'],
+        'Places of interest: ein Schloss / ein Museum besuchen, einen Ausflug (H) machen, am Strand liegen.'],
+      cards: [['der Urlaub', 'holiday'], ['die Ferien', 'holidays (school)'], ['das Ausland (H)', 'abroad (im Ausland)'], ['der Ausflug (H)', 'trip / excursion'],
+        ['das Hotel', 'hotel'], ['das Zelt (H)', 'tent'], ['das Schloss', 'castle'], ['das Museum', 'museum'], ['besuchen', 'to visit'], ['der Strand', 'beach'],
         ['Last summer I flew to Spain', 'Letzten Sommer bin ich nach Spanien geflogen'], ['If I were rich, I would travel to Australia', 'Wenn ich reich wäre, würde ich nach Australien reisen']],
       ex: 'Speaking practice: a holiday role-play (booking a room, asking for directions) + 4 conversation questions.' },
     { id: 'de-media', n: 'Theme 3 · Media & technology', p: ['de-ls', 'de-w', 'de-s'], w: 2,
-      pts: ['Uses: Ich benutze mein Handy, um mit Freunden zu chatten / Musik herunterzuladen.',
-        'Dangers: Cybermobbing, Datenschutz, Sucht, zu viel Zeit vor dem Bildschirm.',
-        'Balanced view: Einerseits … andererseits … Meiner Meinung nach …'],
-      cards: [['herunterladen', 'to download'], ['die Gefahr', 'danger'], ['das Cybermobbing', 'cyberbullying'], ['soziale Netzwerke', 'social networks'],
-        ['die Werbung', 'advertising'], ['einerseits … andererseits', 'on the one hand … on the other hand'], ['I use my phone to chat with friends', 'Ich benutze mein Handy, um mit Freunden zu chatten']],
+      pts: ['Uses: Ich benutze mein Handy, um Nachrichten zu schicken und Musik herunterzuladen.',
+        'Dangers: Mobbing, zu viel Zeit online, Gefahren im Internet.',
+        'Balanced view: Ein Vorteil ist, dass … Ein Nachteil ist, dass … Meiner Meinung nach …'],
+      cards: [['herunterladen', 'to download'], ['die Gefahr', 'danger'], ['das Mobbing', 'bullying'], ['die sozialen Medien', 'social media'], ['die Werbung (H)', 'advertising'],
+        ['das Gerät (H)', 'device'], ['die Nachricht', 'message / news'], ['benutzen', 'to use'], ['der Vorteil / der Nachteil', 'advantage / disadvantage'],
+        ['I use my phone to send messages', 'Ich benutze mein Handy, um Nachrichten zu schicken']],
       ex: 'Translate a 50-word paragraph on technology into German (Higher translation style).' },
     { id: 'de-env', n: 'Theme 3 · Environment & where people live', p: ['de-ls', 'de-w', 'de-s'], w: 3, from: '2027-01-04',
-      pts: ['Where you live: Ich wohne in einer Stadt in Ostengland. Es gibt … aber es gibt keinen/keine/kein …',
+      pts: ['Where you live: Ich wohne in einer Stadt in England. Es gibt … aber es gibt keinen/keine/kein …',
         'Pros and cons: Der Vorteil ist, dass … Der Nachteil ist, dass … (verb to the end after dass).',
-        'Environment: Man sollte mehr recyceln, Energie sparen und öffentliche Verkehrsmittel benutzen.',
-        'Social issues: Armut, Obdachlosigkeit. Global events and helping others: Ich würde gern freiwillig arbeiten.'],
-      cards: [['die Umwelt', 'environment'], ['der Umweltschutz', 'environmental protection'], ['die Verschmutzung', 'pollution'], ['der Müll', 'rubbish'],
-        ['Energie sparen', 'to save energy'], ['öffentliche Verkehrsmittel', 'public transport'], ['die Armut', 'poverty'], ['die Obdachlosigkeit', 'homelessness'],
-        ['auf dem Land', 'in the countryside'], ['die Gegend', 'area / region'], ['There is no cinema', 'Es gibt kein Kino'], ['The advantage is that it is quiet', 'Der Vorteil ist, dass es ruhig ist']],
+        'Environment: Man sollte mehr recyceln, Energie sparen und mit dem Bus fahren, um die Umwelt zu schützen.',
+        'Helping others: Ich würde gern freiwillig arbeiten, um armen (H) Leuten zu helfen.'],
+      cards: [['die Umwelt', 'environment'], ['die Umwelt schützen', 'to protect the environment'], ['verschmutzen', 'to pollute'], ['der Müll', 'rubbish'], ['recyceln', 'to recycle'],
+        ['Energie sparen', 'to save energy'], ['der Klimawandel (H)', 'climate change'], ['der Verkehr', 'traffic'], ['arm (H)', 'poor'], ['freiwillig', 'voluntary / voluntarily'],
+        ['auf dem Land', 'in the countryside'], ['die Gegend', 'area / region'], ['das Dorf', 'village'], ['There is no cinema', 'Es gibt kein Kino'],
+        ['The advantage is that it is quiet', 'Der Vorteil ist, dass es ruhig ist']],
       ex: 'Write 150 words on your town and the environment: what you did, what you do and what you will do.' },
     { id: 'de-tenses', n: 'Grammar · Tenses', p: ['de-ls', 'de-w', 'de-s'], w: 3,
       pts: ['Present: irregular stem changes in du/er (fahren → fährt, essen → isst, lesen → liest).',
@@ -1528,6 +1644,70 @@ RG.subjects.push({
       ex: 'Do one read-aloud text and one photo card aloud, timing yourself. Then do one dictation from a sample paper.' }
   ]
 });
+
+/* Where each topic sits in the official specification (checked against the board spec PDFs, Sept 2026).
+   Maths: Pearson Edexcel 1MA1 Issue 2 · Science: AQA 8464 v1.1 · Eng Lang: AQA 8700 · Eng Lit: OCR J352
+   Geography: AQA 8035 v1.1 · History: OCR J410 v1.9 · German: AQA 8662 (first exams 2026) */
+RG.spec = {
+  // Maths — Edexcel 1MA1 subject content (N number, A algebra, R ratio, G geometry, P probability, S statistics)
+  'm-num': '1MA1 Number N4, N6, N7', 'm-frac': '1MA1 Number N2, N8, N10, N12 · Ratio R9–R16', 'm-bounds': '1MA1 Number N9, N14, N15, N16',
+  'm-surds': '1MA1 Number N8 (Higher)', 'm-alg': '1MA1 Algebra A4', 'm-eq': '1MA1 Algebra A5, A17, A22', 'm-quad': '1MA1 Algebra A11, A18',
+  'm-simul': '1MA1 Algebra A19, A21', 'm-seq': '1MA1 Algebra A23–A25', 'm-lines': '1MA1 Algebra: graphs (y = mx + c)', 'm-graphs': '1MA1 Algebra A7, A12–A16 (graphs & functions)',
+  'm-ratio': '1MA1 Ratio R4–R8, R10', 'm-rates': '1MA1 Ratio R1, R11 · Number N13', 'm-angles': '1MA1 Geometry G1, G3, G4 · bearings',
+  'm-area': '1MA1 Geometry: mensuration (G14–G18) · Appendix 3 formulae', 'm-trig': '1MA1 Geometry G6, G20–G23 (Pythagoras & trigonometry)',
+  'm-transf': '1MA1 Geometry G2, G5, G7, G19', 'm-circle': '1MA1 Geometry G10 (Higher)', 'm-vectors': '1MA1 Geometry G24, G25',
+  'm-prob': '1MA1 Probability P1–P9', 'm-stats': '1MA1 Statistics S1–S6', 'm-proof': '1MA1 Algebra A6, A20', 'm-exam': '1MA1 AO2 & AO3 (reasoning & problem solving)',
+  // Combined Science — AQA 8464
+  'b-cells': 'AQA 8464 4.1.1 Cell structure', 'b-div': 'AQA 8464 4.1.2 Cell division', 'b-transport': 'AQA 8464 4.1.3 Transport in cells',
+  'b-digest': 'AQA 8464 4.2.1–4.2.2 (digestive system, enzymes)', 'b-heart': 'AQA 8464 4.2.2 (heart, blood vessels, blood, lungs)',
+  'b-disease': 'AQA 8464 4.2.2 (health, non-communicable disease, cancer) · 4.2.3 Plant tissues', 'b-infection': 'AQA 8464 4.3.1 Communicable diseases',
+  'b-energy': 'AQA 8464 4.4.1 Photosynthesis · 4.4.2 Respiration', 'b-nerves': 'AQA 8464 4.5.1 Homeostasis · 4.5.2 Nervous system',
+  'b-hormones': 'AQA 8464 4.5.3 Hormonal coordination', 'b-genetics': 'AQA 8464 4.6.1 Reproduction',
+  'b-evolution': 'AQA 8464 4.6.2 Variation & evolution · 4.6.3 · 4.6.4 Classification', 'b-ecology': 'AQA 8464 4.7.1–4.7.3 Ecology',
+  'c-atoms': 'AQA 8464 5.1 Atomic structure & the periodic table', 'c-bonding': 'AQA 8464 5.2 Bonding, structure & properties',
+  'c-quant': 'AQA 8464 5.3 Quantitative chemistry', 'c-changes': 'AQA 8464 5.4 Chemical changes', 'c-energy': 'AQA 8464 5.5 Energy changes',
+  'c-rates': 'AQA 8464 5.6 Rate & extent of chemical change', 'c-organic': 'AQA 8464 5.7 Organic chemistry', 'c-analysis': 'AQA 8464 5.8 Chemical analysis',
+  'c-atmos': 'AQA 8464 5.9 Chemistry of the atmosphere', 'c-resources': 'AQA 8464 5.10 Using resources',
+  'p-energy': 'AQA 8464 6.1 Energy', 'p-elec': 'AQA 8464 6.2 Electricity', 'p-particles': 'AQA 8464 6.3 Particle model of matter',
+  'p-atomic': 'AQA 8464 6.4 Atomic structure', 'p-forces': 'AQA 8464 6.5 Forces', 'p-waves': 'AQA 8464 6.6 Waves',
+  'p-magnet': 'AQA 8464 6.7 Magnetism & electromagnetism', 'p-equations': 'AQA 8464 Appendix B: Physics equations',
+  'p-skills': 'AQA 8464 Working scientifically · 21 required practicals',
+  // English Language — AQA 8700
+  'el-p1q1': 'AQA 8700 Paper 1 Q1 & Paper 2 Q1 (AO1)', 'el-lang': 'AQA 8700 P1 Q2 & P2 Q3 (AO2)', 'el-struct': 'AQA 8700 P1 Q3 (AO2)',
+  'el-eval': 'AQA 8700 P1 Q4 (AO4)', 'el-compare': 'AQA 8700 P2 Q2 (AO1) & Q4 (AO3)', 'el-creative': 'AQA 8700 P1 Section B (AO5, AO6)',
+  'el-viewpoint': 'AQA 8700 P2 Section B (AO5, AO6)', 'el-spag': 'AQA 8700 AO6 technical accuracy',
+  // English Literature — OCR J352
+  'aic-plot': 'OCR J352/01 Section A: modern drama (An Inspector Calls)', 'aic-chars': 'OCR J352/01 Section A: modern drama (An Inspector Calls)',
+  'jh-plot': 'OCR J352/01 Section B: 19th-century prose (Jekyll and Hyde)', 'jh-themes': 'OCR J352/01 Section B: 19th-century prose (Jekyll and Hyde)',
+  'rj-plot': 'OCR J352/02 Section B: Shakespeare (Romeo and Juliet)', 'rj-themes': 'OCR J352/02 Section B: Shakespeare (Romeo and Juliet)',
+  'poem-heritage': 'OCR J352/02 Section A: Poetry Anthology — Conflict cluster', 'poem-war': 'OCR J352/02 Section A: Poetry Anthology — Conflict cluster',
+  'poem-modern': 'OCR J352/02 Section A: Poetry Anthology — Conflict cluster', 'lit-unseen': 'OCR J352/01 A(a) unseen extract · J352/02 A(a) unseen poem',
+  // Geography — AQA 8035
+  'g-tect': 'AQA 8035 3.1.1.1 Natural hazards · 3.1.1.2 Tectonic hazards', 'g-weather': 'AQA 8035 3.1.1.3 Weather hazards', 'g-climate': 'AQA 8035 3.1.1.4 Climate change',
+  'g-eco': 'AQA 8035 3.1.2.1 Ecosystems · 3.1.2.2 Tropical rainforests', 'g-desert': 'AQA 8035 3.1.2.3 Hot deserts',
+  'g-coast': 'AQA 8035 3.1.3.1 UK physical landscapes · 3.1.3.2 Coastal landscapes', 'g-river': 'AQA 8035 3.1.3.3 River landscapes',
+  'g-urban-rio': 'AQA 8035 3.2.1 Urban issues (LIC/NEE city case study)', 'g-urban-cam': 'AQA 8035 3.2.1 Urban issues (UK city case study, sustainability)',
+  'g-dev': 'AQA 8035 3.2.2 Changing economic world (development gap)', 'g-nigeria': 'AQA 8035 3.2.2 (LIC/NEE case study)', 'g-ukecon': 'AQA 8035 3.2.2 (economic futures in the UK)',
+  'g-resources': 'AQA 8035 3.2.3.1 Resource management · 3.2.3.2 Food', 'g-fieldwork': 'AQA 8035 3.3.2 Fieldwork', 'g-issue': 'AQA 8035 3.3.1 Issue evaluation · 3.4 Geographical skills',
+  // History — OCR J410
+  'h-ir-peace': 'OCR J410 period study: Conflict and co-operation 1918–1939', 'h-ir-war': 'OCR J410 period study: Conflict and co-operation 1918–1939 (1930s)',
+  'h-ir-interp': 'OCR J410 period study: historical controversy (interpretations)', 'h-ir-cw1': 'OCR J410 period study: The Cold War in Europe 1945–1961',
+  'h-ir-cw2': 'OCR J410 period study: Cold War confrontations 1954–1975 (Cuba, Vietnam origins)', 'h-ir-vietnam': 'OCR J410 period study: Cold War confrontations 1954–1975 (Vietnam War)',
+  'h-usa-20s': 'OCR J410/06 The \'Roaring Twenties\'', 'h-usa-prej': 'OCR J410/06 The \'Roaring Twenties\' (prohibition, prejudice)',
+  'h-usa-30s': 'OCR J410/06 The 1930s and the New Deal', 'h-usa-war': 'OCR J410/06 The impact of the Second World War on US society',
+  'h-mig-med': 'OCR J410/08 Migration c.1000–1500', 'h-mig-early': 'OCR J410/08 Migration c.1500–1900 (to c.1700)', 'h-mig-modern': 'OCR J410/08 Migration c.1500–1900 (industrial era)',
+  'h-mig-20c': 'OCR J410/08 Migration 1900–c.2010', 'h-empire': 'OCR J410/11 English expansion and its impact on the British Isles c.1688–c.1730',
+  'h-empire-econ': 'OCR J410/11 Economic impact of empire on Britain 1688–c.1730', 'h-empire-soc': 'OCR J410/11 Political and social impact of empire on Britain 1688–c.1730',
+  'h-spitalfields': 'OCR J410/11 Urban Environments: Patterns of Migration (set site: Spitalfields)', 'h-skills': 'OCR J410 AO1–AO4 (sources & interpretations)',
+  // German — AQA 8662
+  'de-rel': 'AQA 8662 Theme 1 Topic 1: Identity and relationships with others', 'de-health': 'AQA 8662 Theme 1 Topic 2: Healthy living and lifestyle',
+  'de-school': 'AQA 8662 Theme 1 Topic 3: Education and work', 'de-free': 'AQA 8662 Theme 2 Topic 1: Free-time activities',
+  'de-fest': 'AQA 8662 Theme 2 Topic 2: Customs, festivals and celebrations', 'de-celeb': 'AQA 8662 Theme 2 Topic 3: Celebrity culture',
+  'de-travel': 'AQA 8662 Theme 3 Topic 1: Travel and tourism, including places of interest', 'de-media': 'AQA 8662 Theme 3 Topic 2: Media and technology',
+  'de-env': 'AQA 8662 Theme 3 Topic 3: The environment and where people live', 'de-tenses': 'AQA 8662 3.2 Grammar (verbs & tenses)',
+  'de-wordorder': 'AQA 8662 3.2 Grammar (word order, conjunctions)', 'de-cases': 'AQA 8662 3.2 Grammar (cases, prepositions, adjectives)',
+  'de-exam': 'AQA 8662 Papers 1–4 assessment structure'
+};
 
 </script>
 <script>
@@ -1620,7 +1800,9 @@ let state = readLocal();
 function applySettings() { PAPER['de-s'].date = state.settings.speakingDate || '2027-04-26'; sortPapers(); }
 applySettings();
 
-const cloud = { ref: null, status: 'local', writing: false, pending: false };
+// cloud.backend: { uid?, load() → {s, at} | null, save({s, at}), watch(cb) → unsubscribe }
+// Two backends: the Claude artifact's per-user db, or Firebase (GitHub Pages build, after sign-in).
+const cloud = { backend: null, unsub: null, status: 'local', writing: false, pending: false };
 let saveTimer = null;
 function prune() {
   const cut = D.add(D.today(), -28);
@@ -1635,40 +1817,106 @@ function save() {
 }
 function saveQuiet() { prune(); writeLocal(); }
 async function pushCloud() {
-  if (!cloud.ref) return;
+  if (!cloud.backend) return;
   if (cloud.writing) { cloud.pending = true; return; }
   cloud.writing = true;
-  try { await cloud.ref.set({ s: JSON.stringify(state), at: state.at }); cloud.status = 'synced'; }
-  catch (e) { cloud.status = e && e.code === 'invalid_argument' ? 'readonly' : 'error'; }
+  const be = cloud.backend;
+  try { await be.save({ s: JSON.stringify(state), at: state.at }); if (cloud.backend === be) cloud.status = 'synced'; }
+  catch (e) { cloud.status = e && (e.code === 'invalid_argument' || e.code === 'permission-denied') ? 'readonly' : 'error'; }
   cloud.writing = false; updateSync();
   if (cloud.pending) { cloud.pending = false; pushCloud(); }
 }
 function adoptRemote(d) {
   try { state = migrate(JSON.parse(d.s)); applySettings(); writeLocal(); if (!sess) render(); } catch (e) { /* bad remote body */ }
 }
-async function initCloud(tries) {
+async function connectBackend(be) {
+  disconnectBackend();
+  cloud.backend = be; cloud.status = 'connecting'; updateSync();
+  try {
+    const d = await be.load();
+    if (cloud.backend !== be) return;
+    const otherOwner = be.uid && state.owner && state.owner !== be.uid;
+    if (d && (otherOwner || (!hadLocal && !state.at) || d.at > (state.at || 0))) adoptRemote(d);
+    else if (otherOwner) { state = defaultState(); applySettings(); render(); }
+    if (be.uid && state.owner !== be.uid) { state.owner = be.uid; writeLocal(); }
+    if (!d || d.at < state.at) { if (state.at) pushCloud(); }
+    cloud.status = 'synced'; updateSync();
+    cloud.unsub = be.watch((r) => { if (r && r.at > (state.at || 0)) adoptRemote(r); }, () => { cloud.status = 'error'; updateSync(); });
+  } catch (e) { if (cloud.backend === be) { cloud.status = 'error'; updateSync(); } }
+}
+function disconnectBackend() {
+  if (cloud.unsub) { try { cloud.unsub(); } catch (e) { /* already closed */ } }
+  cloud.backend = null; cloud.unsub = null; cloud.status = 'local';
+}
+// Claude artifact: progress lives in this viewer's private db subtree.
+async function initClaudeCloud(tries) {
+  if (window.RGAuth) return; // Firebase build handles sync itself
   const c = window.claude;
-  if (!c || typeof c.use !== 'function') { if ((tries || 0) < 10) setTimeout(() => initCloud((tries || 0) + 1), 400); return; }
+  if (!c || typeof c.use !== 'function') { if ((tries || 0) < 10) setTimeout(() => initClaudeCloud((tries || 0) + 1), 400); return; }
   try {
     const [db, user] = await Promise.all([c.use('db'), c.use('user')]);
     if (!db || !user) { updateSync(); return; }
     const uid = await user.id();
     if (!uid) { updateSync(); return; }
-    cloud.ref = db.doc('data/users/' + uid + '/progress');
-    cloud.status = 'connecting'; updateSync();
-    const snap = await cloud.ref.get();
-    if (snap.exists) {
-      const d = snap.data();
-      if (d && (!hadLocal && !state.at || d.at > (state.at || 0))) adoptRemote(d);
-      else if (d && d.at < state.at) pushCloud();
-    } else if (state.at) pushCloud();
-    cloud.status = 'synced'; updateSync();
-    cloud.ref.onSnapshot((s) => {
-      if (!s.exists || s.metadata.hasPendingWrites) return;
-      const d = s.data();
-      if (d && d.at > (state.at || 0)) adoptRemote(d);
-    }, () => { cloud.status = 'error'; updateSync(); });
+    const ref = db.doc('data/users/' + uid + '/progress');
+    connectBackend({
+      load: async () => { const s = await ref.get(); return s.exists ? s.data() : null; },
+      save: (d) => ref.set(d),
+      watch: (cb, err) => ref.onSnapshot((s) => { if (s.exists && !s.metadata.hasPendingWrites) cb(s.data()); }, err),
+    });
   } catch (e) { cloud.status = 'local'; updateSync(); }
+}
+// Firebase (GitHub Pages build): accounts via email/password or Google.
+const auth = { available: false, checked: false, user: null, error: '', busy: false };
+const SKIP_KEY = 'gcse27.skipLogin';
+let skipMem = false;
+function skipLogin() { if (skipMem) return true; try { return localStorage.getItem(SKIP_KEY) === '1'; } catch (e) { return false; } }
+function setSkipLogin(v) { skipMem = !!v; try { if (v) localStorage.setItem(SKIP_KEY, '1'); else localStorage.removeItem(SKIP_KEY); } catch (e) { /* storage unavailable */ } }
+function initFirebaseAuth() {
+  const A = window.RGAuth;
+  if (!A || auth.available) return;
+  auth.available = true;
+  A.onChange((user) => {
+    auth.checked = true; auth.user = user || null;
+    if (user) { setSkipLogin(false); connectBackend(A.backend(user.uid)); }
+    else disconnectBackend();
+    if (!sess) render();
+  });
+}
+function needsLogin() { return auth.available && auth.checked && !auth.user && !skipLogin(); }
+// Pages build with a Firebase config: hold a loading screen until we know whether you're signed in (max 5s).
+let authGaveUp = false;
+function authPending() { const c = window.FIREBASE_CONFIG; return !!(c && c.apiKey) && !auth.checked && !authGaveUp; }
+setTimeout(() => { if (!auth.checked) { authGaveUp = true; if (!sess) render(); } }, 5000);
+const AUTH_ERR = {
+  'auth/invalid-credential': 'Email or password is wrong.', 'auth/wrong-password': 'Email or password is wrong.', 'auth/user-not-found': 'No account with that email — tap "Create account".',
+  'auth/email-already-in-use': 'There\'s already an account with that email — sign in instead.', 'auth/weak-password': 'Use a password of at least 6 characters.',
+  'auth/invalid-email': 'That email address doesn\'t look right.', 'auth/missing-password': 'Type your password.', 'auth/network-request-failed': 'No internet connection — try again.',
+  'auth/popup-closed-by-user': 'The Google window was closed before signing in.', 'auth/popup-blocked': 'Your browser blocked the Google window — use email and password instead.',
+  'auth/operation-not-allowed': 'This sign-in method isn\'t switched on in Firebase yet.', 'auth/too-many-requests': 'Too many attempts — wait a minute and try again.',
+  'auth/unauthorized-domain': 'This web address isn\'t authorised in Firebase yet (add it under Authentication → Settings → Authorised domains).',
+};
+async function authDo(kind) {
+  const A = window.RGAuth; if (!A) return;
+  const email = ($('#login-email') || {}).value || '', pass = ($('#login-pass') || {}).value || '';
+  auth.error = ''; auth.busy = true; render();
+  try {
+    if (kind === 'signin') await A.signIn(email.trim(), pass);
+    else if (kind === 'signup') await A.signUp(email.trim(), pass);
+    else if (kind === 'google') await A.google();
+    else if (kind === 'reset') { if (!email.trim()) throw { code: 'auth/invalid-email' }; await A.reset(email.trim()); auth.error = 'Password reset email sent to ' + email.trim() + '.'; }
+  } catch (e) { auth.error = AUTH_ERR[e && e.code] || ((e && e.message) || 'Something went wrong — try again.'); }
+  auth.busy = false;
+  if (!sess) { render(); const f = $('#login-email'); if (f && !f.value) f.value = email; }
+}
+async function authSignOut() {
+  const A = window.RGAuth; if (!A) return;
+  disconnectBackend();
+  try { await A.signOut(); } catch (e) { /* ignore */ }
+  // your progress is safe in your account; clear this device's copy
+  state = defaultState(); applySettings(); hadLocal = false;
+  try { localStorage.removeItem(KEY); } catch (e) { /* storage unavailable */ }
+  go('today'); toast('Signed out');
 }
 
 /* ---------- calendar model ---------- */
@@ -1999,6 +2247,9 @@ function rate5(id, cur) {
 let route = 'today', sub = null, planTab = 'days', cardsSubj = null;
 function render() {
   const v = $('#view');
+  if (authPending()) { v.innerHTML = '<div class="empty" style="padding-top:80px">Loading your plan…</div>'; $('#nav').hidden = true; return; }
+  if (needsLogin()) { v.innerHTML = viewLogin(); $('#nav').hidden = true; $('#count').textContent = ''; return; }
+  $('#nav').hidden = false;
   const map = { today: viewToday, plan: viewPlan, subjects: viewSubjects, cards: viewCards, more: viewMore, rate: viewRate };
   const fn = map[route] || viewToday;
   v.innerHTML = fn();
@@ -2009,6 +2260,32 @@ function render() {
 }
 function go(r, s) { route = r; sub = s || null; const h = s ? r + '-' + s : r; if (location.hash.slice(1) !== h) history.replaceState(null, '', '#' + h); render(); window.scrollTo(0, 0); }
 
+const SPEC_PDF = {
+  maths: 'https://qualifications.pearson.com/content/dam/pdf/GCSE/mathematics/2015/specification-and-sample-assesment/gcse-maths-2015-specification.pdf',
+  science: 'https://filestore.aqa.org.uk/resources/science/specifications/AQA-8464-SP-2016.PDF',
+  englang: 'https://filestore.aqa.org.uk/resources/english/specifications/AQA-8700-SP-2015.PDF',
+  englit: 'https://www.ocr.org.uk/Images/168995-specification-accredited-gcse-english-literature-j352.pdf',
+  geog: 'https://filestore.aqa.org.uk/resources/geography/specifications/AQA-8035-SP-2016.PDF',
+  hist: 'https://www.ocr.org.uk/Images/207163-specification-accredited-gcse-history-a-first-teaching-2019-with-first-assessment-2021-j410.pdf',
+  german: 'https://filestore.aqa.org.uk/resources/german/specifications/AQA-8662-SP-2024.PDF',
+};
+function specLine(t) {
+  const ref = (RG.spec || {})[t.id];
+  return ref ? `<div class="spec-ref"><span class="eyebrow">Official spec</span> <a href="${esc(SPEC_PDF[t.subj.id])}" target="_blank" rel="noopener">${esc(ref)}</a></div>` : '';
+}
+function viewLogin() {
+  const standalone = window.navigator.standalone === true;
+  return `<div class="login"><div class="hero"><div class="date">Max's GCSE Plan · Summer 2027</div><h1>Sign in to your plan</h1>
+    <p class="muted">Your ratings, flashcards and daily plan save to your account, so they follow you between your phone and your computer.</p></div>
+    <form class="card stack" id="login-form" autocomplete="on" novalidate>
+      <label class="stack" style="gap:6px"><span class="l">Email</span><input id="login-email" name="email" type="email" autocomplete="username" inputmode="email" required></label>
+      <label class="stack" style="gap:6px"><span class="l">Password</span><input id="login-pass" name="password" type="password" autocomplete="current-password" minlength="6" required></label>
+      ${auth.error ? `<p class="small" role="alert" style="color:var(--c1)">${esc(auth.error)}</p>` : ''}
+      <div class="row" style="flex-wrap:wrap"><button class="btn primary" type="submit" ${auth.busy ? 'disabled' : ''}>Sign in</button><button class="btn" type="button" data-act="login-signup" ${auth.busy ? 'disabled' : ''}>Create account</button><button class="linkbtn" type="button" data-act="login-reset">Forgot password?</button></div>
+      ${standalone ? '<p class="small muted">On the home-screen app, use email and password — Google sign-in only works in Safari itself.</p>' : `<div class="or small muted">or</div><button class="btn" type="button" data-act="login-google" ${auth.busy ? 'disabled' : ''}>Continue with Google</button>`}
+    </form>
+    <div class="sect"><button class="linkbtn" data-act="login-skip">Use without an account (saves on this device only)</button></div></div>`;
+}
 function viewToday() {
   const d = D.today(), info = dayInfo(d), plan = ensurePlan(d);
   const ph = info.phase, nx = nextExam(d);
@@ -2206,13 +2483,14 @@ function viewSubject(s) {
     h += '</div>';
   }
   h += '</div>';
-  h += `<div class="sect"><h2>Where to practise</h2><div class="card"><ul class="pts">${s.resources.map((r) => `<li><a href="${esc(r[1])}" target="_blank" rel="noopener">${esc(r[0])}</a></li>`).join('')}</ul></div></div>`;
+  h += `<div class="sect"><h2>Where to practise</h2><div class="card"><ul class="pts"><li><a href="${esc(SPEC_PDF[s.id])}" target="_blank" rel="noopener">Official ${esc(s.board + ' ' + s.spec)} specification (PDF)</a> — the exact list of what can be examined</li>${s.resources.map((r) => `<li><a href="${esc(r[1])}" target="_blank" rel="noopener">${esc(r[0])}</a></li>`).join('')}</ul></div></div>`;
   return h;
 }
 function viewTopic(t) {
   const s = t.subj, x = st(t.id), d = D.today(), np = nextPaper(t, d);
   let h = `<a class="back" href="#subjects-${s.id}">← ${esc(s.name)}</a><div class="hero" style="padding-top:8px"><div class="eyebrow" style="color:${scol(s.id)}">${esc(s.name)} · ${esc(t.paperIds.map((id) => PAPER[id].code).join(', '))}</div><h1>${esc(t.n)}</h1>
     <div class="wrap-row">${t.h ? '<span class="chip">Higher tier only</span>' : ''}<span class="chip"><i class="dot" style="background:${ccol(x.c)}"></i>${esc(CONF_WORD[x.c || 0])}</span>${x.due ? '<span class="chip">Next review ' + esc(D.short(x.due)) + '</span>' : ''}${np ? '<span class="chip">Exam ' + esc(D.short(np.date)) + '</span>' : ''}</div></div>`;
+  h += specLine(t);
   h += `<div class="sect"><div class="row" style="flex-wrap:wrap"><button class="btn primary" data-act="revise" data-t="${t.id}">Revise this now (25 min)</button>${rate5(t.id, x.c || 0)}</div></div>`;
   h += `<div class="sect"><h2>Key knowledge</h2><div class="card"><ul class="pts">${t.pts.map((p) => '<li>' + esc(p) + '</li>').join('')}</ul></div></div>`;
   if (t.cards && t.cards.length) h += `<div class="sect"><h2>Flashcards (${t.cards.length})</h2><div class="card"><ul class="pts">${t.cards.map((c) => '<li><b>' + esc(c[0]) + '</b><br><span class="muted">' + esc(c[1]) + '</span></li>').join('')}</ul></div></div>`;
@@ -2246,6 +2524,11 @@ function viewCards() {
 function viewMore() {
   const s = state.settings;
   let h = '<div class="hero"><div class="date">Settings</div><h1>Tune your plan</h1></div>';
+  if (auth.available) {
+    h += `<div class="sect"><h2>Account</h2><div class="card stack">${auth.user
+      ? `<p>Signed in as <b>${esc(auth.user.email || 'your Google account')}</b>. Your progress syncs to every device you sign in on.</p><div><button class="btn small" data-act="signout">Sign out</button></div>`
+      : '<p>You\'re using the app without an account, so progress is saved on this device only.</p><div><button class="btn small primary" data-act="signin-now">Sign in or create an account</button></div>'}</div></div>`;
+  }
   h += '<div class="sect"><h2>Tiers</h2><div class="card" style="padding-block:4px">';
   for (const id of ['maths', 'science', 'german']) {
     h += `<div class="field"><div><div class="l">${esc(SUBJ[id].name)}</div><div class="s">Higher-only topics are hidden on Foundation</div></div>
@@ -2261,7 +2544,7 @@ function viewMore() {
   h += `<div class="sect"><h2>Workload</h2><div class="card" style="padding-block:4px">
     <div class="field"><div><div class="l">Intensity</div><div class="s">Scales every day's time</div></div><select id="intensity" data-intensity><option value="0.75" ${s.intensity == 0.75 ? 'selected' : ''}>Light (−25%)</option><option value="1" ${s.intensity == 1 ? 'selected' : ''}>Standard</option><option value="1.25" ${s.intensity == 1.25 ? 'selected' : ''}>Intense (+25%)</option></select></div>
     <div class="field"><div><div class="l">Light day each week</div><div class="s">Flashcards only, until Easter</div></div><select id="restday" data-restday>${['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map((n, i) => `<option value="${i}" ${Number(s.restDay) === i ? 'selected' : ''}>${n}</option>`).join('')}<option value="-1" ${Number(s.restDay) === -1 ? 'selected' : ''}>None</option></select></div></div></div>`;
-  h += `<div class="sect"><h2>Your progress is saved</h2><div class="card stack"><div id="sync"></div>
+  h += `<div class="sect"><h2>Backup</h2><div class="card stack"><div id="sync"></div>
     <p class="small muted">Copy your progress as a backup, or paste a backup to restore it.</p>
     <div class="row" style="flex-wrap:wrap"><button class="btn small" data-act="export">Copy backup</button><button class="btn small" data-act="import">Restore from box below</button></div>
     <textarea id="backup" placeholder="Paste a backup here to restore" aria-label="Backup data"></textarea>
@@ -2274,7 +2557,8 @@ function viewMore() {
     <li><b>Short blocks with breaks</b> (25 + 5 minutes) keep your focus high. Sleep consolidates what you revised that day.</li></ul></div></div>`;
   h += `<div class="sect"><h2>Sources</h2><div class="card small"><ul class="pts">
     <li>Exam boards: <a href="https://ccc.tela.org.uk/information/examinations/" target="_blank" rel="noopener">Chesterton Community College — Examinations</a> (Maths Edexcel 1MA1; English Language AQA 8700; English Literature OCR J352; Combined Science AQA 8464; Geography AQA 8035; German AQA 8662; History OCR J410).</li>
-    <li>Topic options and teaching order: Chesterton KS4 curriculum documents for English, Geography, History, German and Science.</li>
+    <li><b>Content checked against the official specifications</b> (September 2026): every topic shows the section of the spec it comes from. <a href="${SPEC_PDF.maths}" target="_blank" rel="noopener">Edexcel 1MA1</a> · <a href="${SPEC_PDF.science}" target="_blank" rel="noopener">AQA 8464</a> · <a href="${SPEC_PDF.englang}" target="_blank" rel="noopener">AQA 8700</a> · <a href="${SPEC_PDF.englit}" target="_blank" rel="noopener">OCR J352</a> · <a href="${SPEC_PDF.geog}" target="_blank" rel="noopener">AQA 8035</a> · <a href="${SPEC_PDF.hist}" target="_blank" rel="noopener">OCR J410</a> · <a href="${SPEC_PDF.german}" target="_blank" rel="noopener">AQA 8662</a> (German flashcards use only the AQA vocabulary list).</li>
+    <li>Topic options and teaching order: Chesterton KS4 curriculum documents for English, Geography, History, German and Science. Where a topic needs your own class example (e.g. a case study), the app says so.</li>
     <li>Term dates: <a href="https://ccc.tela.org.uk/about/term-dates/" target="_blank" rel="noopener">Chesterton term dates 2026–27</a>.</li>
     <li>Exam dates: AQA provisional timetable May/June 2027, OCR final timetable June 2027, Pearson Edexcel Maths dates. Always check your personal timetable from school.</li></ul></div></div>`;
   return h;
@@ -2282,11 +2566,11 @@ function viewMore() {
 function updateSync() {
   const el = $('#sync'); if (!el) return;
   const map = {
-    synced: ['ok', 'Synced to your Claude account — progress follows you between phone and computer.'],
+    synced: ['ok', auth.available ? 'Synced to your account — progress follows you to every device you sign in on.' : 'Synced to your Claude account — progress follows you between phone and computer.'],
     connecting: ['', 'Connecting…'],
     readonly: ['warn', 'Saved on this device only (you can view but not save to the shared copy).'],
     error: ['warn', 'Saved on this device. Cloud sync hit a problem — it will retry on your next change.'],
-    local: ['', 'Saved on this device only. Open it through your Claude link to sync between devices.'],
+    local: ['', auth.available ? 'Saved on this device only. Sign in (above) to sync between devices.' : 'Saved on this device only.'],
   };
   const [cls, txt] = map[cloud.status] || map.local;
   el.innerHTML = `<span class="sync ${cls}"><i></i>${esc(txt)}</span>`;
@@ -2332,7 +2616,7 @@ function stepNav(nextLabel, disabled) {
 }
 function stepBody(step, t, p) {
   const s = sess;
-  if (step === 'read') return `<h2>1 · Learn it (about 8 min)</h2><p class="muted">Read each point, then turn it into a quick mind map or a set of 5 questions on paper — don't copy it out.</p><div class="card"><ul class="pts">${t.pts.map((x) => '<li>' + esc(x) + '</li>').join('')}</ul></div>${stepNav('I\'ve made my notes — hide them')}`;
+  if (step === 'read') return `<h2>1 · Learn it (about 8 min)</h2><p class="muted">Read each point, then turn it into a quick mind map or a set of 5 questions on paper — don't copy it out.</p><div class="card"><ul class="pts">${t.pts.map((x) => '<li>' + esc(x) + '</li>').join('')}</ul></div>${specLine(t)}${stepNav('I\'ve made my notes — hide them')}`;
   if (step === 'blurt') return `<h2>${s.steps[0] === 'blurt' ? '1' : '2'} · Blurt (5 min)</h2><div class="card stack"><p><b>Close everything.</b> On a blank sheet, write down everything you can remember about <b>${esc(t.n)}</b>: key words, facts, examples, diagrams, equations.</p><p class="muted small">Struggling to remember is what makes the memory stronger — don't peek.</p></div>${stepNav('Done — check my blurt')}`;
   if (step === 'check') {
     const n = t.pts.length, got = Object.values(s.checks).filter(Boolean).length;
@@ -2500,8 +2784,17 @@ document.addEventListener('click', (e) => {
       break;
     }
     case 'reset': $('#reset-confirm').innerHTML = '<button class="btn small" data-act="reset-yes" style="color:var(--c1)">Yes, delete all my progress</button>'; break;
+    case 'login-signup': authDo('signup'); break;
+    case 'login-google': authDo('google'); break;
+    case 'login-reset': authDo('reset'); break;
+    case 'login-skip': setSkipLogin(true); go('today'); break;
+    case 'signin-now': setSkipLogin(false); render(); window.scrollTo(0, 0); break;
+    case 'signout': authSignOut(); break;
     case 'reset-yes': { const keep = state.settings; state = defaultState(); state.settings = keep; save(); render(); toast('Progress reset'); break; }
   }
+});
+document.addEventListener('submit', (e) => {
+  if (e.target && e.target.id === 'login-form') { e.preventDefault(); authDo('signin'); }
 });
 document.addEventListener('change', (e) => {
   const el = e.target;
@@ -2537,7 +2830,9 @@ function boot() {
   $('#nav').innerHTML = '<div class="nav-in">' + [['today', 'Today'], ['plan', 'Plan'], ['subjects', 'Subjects'], ['cards', 'Cards'], ['more', 'Settings']]
     .map(([r, l]) => `<a href="#${r}" data-r="${r}">${ICON[r]}<span>${l}</span></a>`).join('') + '</div>';
   readHash(); render();
-  initCloud();
+  initClaudeCloud();
+  initFirebaseAuth();
+  window.addEventListener('rgauth-ready', () => { initFirebaseAuth(); render(); });
   // roll over to a new day if the app stays open past midnight
   let day = D.today();
   setInterval(() => { if (D.today() !== day) { day = D.today(); if (!sess) render(); } }, 60000);
@@ -2546,5 +2841,40 @@ boot();
 
 </script>
 
+<script type="module">
+// Firebase sign-in + per-user progress document (GitHub Pages build only).
+// Loads only when docs/firebase-config.js sets window.FIREBASE_CONFIG.
+const cfg = window.FIREBASE_CONFIG;
+if (cfg && cfg.apiKey) {
+  const V = '10.12.2';
+  const [{ initializeApp }, A, F] = await Promise.all([
+    import(`https://www.gstatic.com/firebasejs/${V}/firebase-app.js`),
+    import(`https://www.gstatic.com/firebasejs/${V}/firebase-auth.js`),
+    import(`https://www.gstatic.com/firebasejs/${V}/firebase-firestore.js`),
+  ]);
+  const app = initializeApp(cfg);
+  const auth = A.getAuth(app);
+  const db = F.getFirestore(app);
+  window.RGAuth = {
+    signIn: (email, pass) => A.signInWithEmailAndPassword(auth, email, pass),
+    signUp: (email, pass) => A.createUserWithEmailAndPassword(auth, email, pass),
+    google: () => A.signInWithPopup(auth, new A.GoogleAuthProvider()),
+    reset: (email) => A.sendPasswordResetEmail(auth, email),
+    signOut: () => A.signOut(auth),
+    onChange: (cb) => A.onAuthStateChanged(auth, cb),
+    // One document per user: users/{uid} = { s: <progress JSON>, at: <last edit time> }
+    backend: (uid) => {
+      const ref = F.doc(db, 'users', uid);
+      return {
+        uid,
+        load: async () => { const snap = await F.getDoc(ref); return snap.exists() ? snap.data() : null; },
+        save: (data) => F.setDoc(ref, data),
+        watch: (cb, err) => F.onSnapshot(ref, (snap) => { if (snap.exists() && !snap.metadata.hasPendingWrites) cb(snap.data()); }, err),
+      };
+    },
+  };
+  window.dispatchEvent(new Event('rgauth-ready'));
+}
+</script>
 </body>
 </html>

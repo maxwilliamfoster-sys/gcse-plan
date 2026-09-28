@@ -228,3 +228,12 @@ details.why ul{margin:8px 0 0;padding-left:18px;display:flex;flex-direction:colu
   .hero{padding-top:28px}
 }
 @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+
+/* login + spec reference */
+.login{max-width:460px;margin:0 auto}
+.login input{border:1px solid var(--line);border-radius:var(--r-sm);background:var(--card);padding:10px 12px;min-height:44px;font-size:16px;width:100%}
+.login .l{font-weight:700}
+.or{text-align:center}
+.spec-ref{margin-top:14px;font-size:14px;display:flex;flex-wrap:wrap;gap:6px 8px;align-items:baseline}
+.nav[hidden]{display:none!important}
+.count:empty{display:none}

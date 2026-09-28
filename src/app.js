@@ -87,7 +87,9 @@ let state = readLocal();
 function applySettings() { PAPER['de-s'].date = state.settings.speakingDate || '2027-04-26'; sortPapers(); }
 applySettings();
 
-const cloud = { ref: null, status: 'local', writing: false, pending: false };
+// cloud.backend: { uid?, load() → {s, at} | null, save({s, at}), watch(cb) → unsubscribe }
+// Two backends: the Claude artifact's per-user db, or Firebase (GitHub Pages build, after sign-in).
+const cloud = { backend: null, unsub: null, status: 'local', writing: false, pending: false };
 let saveTimer = null;
 function prune() {
   const cut = D.add(D.today(), -28);
@@ -102,40 +104,106 @@ function save() {
 }
 function saveQuiet() { prune(); writeLocal(); }
 async function pushCloud() {
-  if (!cloud.ref) return;
+  if (!cloud.backend) return;
   if (cloud.writing) { cloud.pending = true; return; }
   cloud.writing = true;
-  try { await cloud.ref.set({ s: JSON.stringify(state), at: state.at }); cloud.status = 'synced'; }
-  catch (e) { cloud.status = e && e.code === 'invalid_argument' ? 'readonly' : 'error'; }
+  const be = cloud.backend;
+  try { await be.save({ s: JSON.stringify(state), at: state.at }); if (cloud.backend === be) cloud.status = 'synced'; }
+  catch (e) { cloud.status = e && (e.code === 'invalid_argument' || e.code === 'permission-denied') ? 'readonly' : 'error'; }
   cloud.writing = false; updateSync();
   if (cloud.pending) { cloud.pending = false; pushCloud(); }
 }
 function adoptRemote(d) {
   try { state = migrate(JSON.parse(d.s)); applySettings(); writeLocal(); if (!sess) render(); } catch (e) { /* bad remote body */ }
 }
-async function initCloud(tries) {
+async function connectBackend(be) {
+  disconnectBackend();
+  cloud.backend = be; cloud.status = 'connecting'; updateSync();
+  try {
+    const d = await be.load();
+    if (cloud.backend !== be) return;
+    const otherOwner = be.uid && state.owner && state.owner !== be.uid;
+    if (d && (otherOwner || (!hadLocal && !state.at) || d.at > (state.at || 0))) adoptRemote(d);
+    else if (otherOwner) { state = defaultState(); applySettings(); render(); }
+    if (be.uid && state.owner !== be.uid) { state.owner = be.uid; writeLocal(); }
+    if (!d || d.at < state.at) { if (state.at) pushCloud(); }
+    cloud.status = 'synced'; updateSync();
+    cloud.unsub = be.watch((r) => { if (r && r.at > (state.at || 0)) adoptRemote(r); }, () => { cloud.status = 'error'; updateSync(); });
+  } catch (e) { if (cloud.backend === be) { cloud.status = 'error'; updateSync(); } }
+}
+function disconnectBackend() {
+  if (cloud.unsub) { try { cloud.unsub(); } catch (e) { /* already closed */ } }
+  cloud.backend = null; cloud.unsub = null; cloud.status = 'local';
+}
+// Claude artifact: progress lives in this viewer's private db subtree.
+async function initClaudeCloud(tries) {
+  if (window.RGAuth) return; // Firebase build handles sync itself
   const c = window.claude;
-  if (!c || typeof c.use !== 'function') { if ((tries || 0) < 10) setTimeout(() => initCloud((tries || 0) + 1), 400); return; }
+  if (!c || typeof c.use !== 'function') { if ((tries || 0) < 10) setTimeout(() => initClaudeCloud((tries || 0) + 1), 400); return; }
   try {
     const [db, user] = await Promise.all([c.use('db'), c.use('user')]);
     if (!db || !user) { updateSync(); return; }
     const uid = await user.id();
     if (!uid) { updateSync(); return; }
-    cloud.ref = db.doc('data/users/' + uid + '/progress');
-    cloud.status = 'connecting'; updateSync();
-    const snap = await cloud.ref.get();
-    if (snap.exists) {
-      const d = snap.data();
-      if (d && (!hadLocal && !state.at || d.at > (state.at || 0))) adoptRemote(d);
-      else if (d && d.at < state.at) pushCloud();
-    } else if (state.at) pushCloud();
-    cloud.status = 'synced'; updateSync();
-    cloud.ref.onSnapshot((s) => {
-      if (!s.exists || s.metadata.hasPendingWrites) return;
-      const d = s.data();
-      if (d && d.at > (state.at || 0)) adoptRemote(d);
-    }, () => { cloud.status = 'error'; updateSync(); });
+    const ref = db.doc('data/users/' + uid + '/progress');
+    connectBackend({
+      load: async () => { const s = await ref.get(); return s.exists ? s.data() : null; },
+      save: (d) => ref.set(d),
+      watch: (cb, err) => ref.onSnapshot((s) => { if (s.exists && !s.metadata.hasPendingWrites) cb(s.data()); }, err),
+    });
   } catch (e) { cloud.status = 'local'; updateSync(); }
+}
+// Firebase (GitHub Pages build): accounts via email/password or Google.
+const auth = { available: false, checked: false, user: null, error: '', busy: false };
+const SKIP_KEY = 'gcse27.skipLogin';
+let skipMem = false;
+function skipLogin() { if (skipMem) return true; try { return localStorage.getItem(SKIP_KEY) === '1'; } catch (e) { return false; } }
+function setSkipLogin(v) { skipMem = !!v; try { if (v) localStorage.setItem(SKIP_KEY, '1'); else localStorage.removeItem(SKIP_KEY); } catch (e) { /* storage unavailable */ } }
+function initFirebaseAuth() {
+  const A = window.RGAuth;
+  if (!A || auth.available) return;
+  auth.available = true;
+  A.onChange((user) => {
+    auth.checked = true; auth.user = user || null;
+    if (user) { setSkipLogin(false); connectBackend(A.backend(user.uid)); }
+    else disconnectBackend();
+    if (!sess) render();
+  });
+}
+function needsLogin() { return auth.available && auth.checked && !auth.user && !skipLogin(); }
+// Pages build with a Firebase config: hold a loading screen until we know whether you're signed in (max 5s).
+let authGaveUp = false;
+function authPending() { const c = window.FIREBASE_CONFIG; return !!(c && c.apiKey) && !auth.checked && !authGaveUp; }
+setTimeout(() => { if (!auth.checked) { authGaveUp = true; if (!sess) render(); } }, 5000);
+const AUTH_ERR = {
+  'auth/invalid-credential': 'Email or password is wrong.', 'auth/wrong-password': 'Email or password is wrong.', 'auth/user-not-found': 'No account with that email — tap "Create account".',
+  'auth/email-already-in-use': 'There\'s already an account with that email — sign in instead.', 'auth/weak-password': 'Use a password of at least 6 characters.',
+  'auth/invalid-email': 'That email address doesn\'t look right.', 'auth/missing-password': 'Type your password.', 'auth/network-request-failed': 'No internet connection — try again.',
+  'auth/popup-closed-by-user': 'The Google window was closed before signing in.', 'auth/popup-blocked': 'Your browser blocked the Google window — use email and password instead.',
+  'auth/operation-not-allowed': 'This sign-in method isn\'t switched on in Firebase yet.', 'auth/too-many-requests': 'Too many attempts — wait a minute and try again.',
+  'auth/unauthorized-domain': 'This web address isn\'t authorised in Firebase yet (add it under Authentication → Settings → Authorised domains).',
+};
+async function authDo(kind) {
+  const A = window.RGAuth; if (!A) return;
+  const email = ($('#login-email') || {}).value || '', pass = ($('#login-pass') || {}).value || '';
+  auth.error = ''; auth.busy = true; render();
+  try {
+    if (kind === 'signin') await A.signIn(email.trim(), pass);
+    else if (kind === 'signup') await A.signUp(email.trim(), pass);
+    else if (kind === 'google') await A.google();
+    else if (kind === 'reset') { if (!email.trim()) throw { code: 'auth/invalid-email' }; await A.reset(email.trim()); auth.error = 'Password reset email sent to ' + email.trim() + '.'; }
+  } catch (e) { auth.error = AUTH_ERR[e && e.code] || ((e && e.message) || 'Something went wrong — try again.'); }
+  auth.busy = false;
+  if (!sess) { render(); const f = $('#login-email'); if (f && !f.value) f.value = email; }
+}
+async function authSignOut() {
+  const A = window.RGAuth; if (!A) return;
+  disconnectBackend();
+  try { await A.signOut(); } catch (e) { /* ignore */ }
+  // your progress is safe in your account; clear this device's copy
+  state = defaultState(); applySettings(); hadLocal = false;
+  try { localStorage.removeItem(KEY); } catch (e) { /* storage unavailable */ }
+  go('today'); toast('Signed out');
 }
 
 /* ---------- calendar model ---------- */
@@ -466,6 +534,9 @@ function rate5(id, cur) {
 let route = 'today', sub = null, planTab = 'days', cardsSubj = null;
 function render() {
   const v = $('#view');
+  if (authPending()) { v.innerHTML = '<div class="empty" style="padding-top:80px">Loading your plan…</div>'; $('#nav').hidden = true; return; }
+  if (needsLogin()) { v.innerHTML = viewLogin(); $('#nav').hidden = true; $('#count').textContent = ''; return; }
+  $('#nav').hidden = false;
   const map = { today: viewToday, plan: viewPlan, subjects: viewSubjects, cards: viewCards, more: viewMore, rate: viewRate };
   const fn = map[route] || viewToday;
   v.innerHTML = fn();
@@ -476,6 +547,32 @@ function render() {
 }
 function go(r, s) { route = r; sub = s || null; const h = s ? r + '-' + s : r; if (location.hash.slice(1) !== h) history.replaceState(null, '', '#' + h); render(); window.scrollTo(0, 0); }
 
+const SPEC_PDF = {
+  maths: 'https://qualifications.pearson.com/content/dam/pdf/GCSE/mathematics/2015/specification-and-sample-assesment/gcse-maths-2015-specification.pdf',
+  science: 'https://filestore.aqa.org.uk/resources/science/specifications/AQA-8464-SP-2016.PDF',
+  englang: 'https://filestore.aqa.org.uk/resources/english/specifications/AQA-8700-SP-2015.PDF',
+  englit: 'https://www.ocr.org.uk/Images/168995-specification-accredited-gcse-english-literature-j352.pdf',
+  geog: 'https://filestore.aqa.org.uk/resources/geography/specifications/AQA-8035-SP-2016.PDF',
+  hist: 'https://www.ocr.org.uk/Images/207163-specification-accredited-gcse-history-a-first-teaching-2019-with-first-assessment-2021-j410.pdf',
+  german: 'https://filestore.aqa.org.uk/resources/german/specifications/AQA-8662-SP-2024.PDF',
+};
+function specLine(t) {
+  const ref = (RG.spec || {})[t.id];
+  return ref ? `<div class="spec-ref"><span class="eyebrow">Official spec</span> <a href="${esc(SPEC_PDF[t.subj.id])}" target="_blank" rel="noopener">${esc(ref)}</a></div>` : '';
+}
+function viewLogin() {
+  const standalone = window.navigator.standalone === true;
+  return `<div class="login"><div class="hero"><div class="date">Max's GCSE Plan · Summer 2027</div><h1>Sign in to your plan</h1>
+    <p class="muted">Your ratings, flashcards and daily plan save to your account, so they follow you between your phone and your computer.</p></div>
+    <form class="card stack" id="login-form" autocomplete="on" novalidate>
+      <label class="stack" style="gap:6px"><span class="l">Email</span><input id="login-email" name="email" type="email" autocomplete="username" inputmode="email" required></label>
+      <label class="stack" style="gap:6px"><span class="l">Password</span><input id="login-pass" name="password" type="password" autocomplete="current-password" minlength="6" required></label>
+      ${auth.error ? `<p class="small" role="alert" style="color:var(--c1)">${esc(auth.error)}</p>` : ''}
+      <div class="row" style="flex-wrap:wrap"><button class="btn primary" type="submit" ${auth.busy ? 'disabled' : ''}>Sign in</button><button class="btn" type="button" data-act="login-signup" ${auth.busy ? 'disabled' : ''}>Create account</button><button class="linkbtn" type="button" data-act="login-reset">Forgot password?</button></div>
+      ${standalone ? '<p class="small muted">On the home-screen app, use email and password — Google sign-in only works in Safari itself.</p>' : `<div class="or small muted">or</div><button class="btn" type="button" data-act="login-google" ${auth.busy ? 'disabled' : ''}>Continue with Google</button>`}
+    </form>
+    <div class="sect"><button class="linkbtn" data-act="login-skip">Use without an account (saves on this device only)</button></div></div>`;
+}
 function viewToday() {
   const d = D.today(), info = dayInfo(d), plan = ensurePlan(d);
   const ph = info.phase, nx = nextExam(d);
@@ -673,13 +770,14 @@ function viewSubject(s) {
     h += '</div>';
   }
   h += '</div>';
-  h += `<div class="sect"><h2>Where to practise</h2><div class="card"><ul class="pts">${s.resources.map((r) => `<li><a href="${esc(r[1])}" target="_blank" rel="noopener">${esc(r[0])}</a></li>`).join('')}</ul></div></div>`;
+  h += `<div class="sect"><h2>Where to practise</h2><div class="card"><ul class="pts"><li><a href="${esc(SPEC_PDF[s.id])}" target="_blank" rel="noopener">Official ${esc(s.board + ' ' + s.spec)} specification (PDF)</a> — the exact list of what can be examined</li>${s.resources.map((r) => `<li><a href="${esc(r[1])}" target="_blank" rel="noopener">${esc(r[0])}</a></li>`).join('')}</ul></div></div>`;
   return h;
 }
 function viewTopic(t) {
   const s = t.subj, x = st(t.id), d = D.today(), np = nextPaper(t, d);
   let h = `<a class="back" href="#subjects-${s.id}">← ${esc(s.name)}</a><div class="hero" style="padding-top:8px"><div class="eyebrow" style="color:${scol(s.id)}">${esc(s.name)} · ${esc(t.paperIds.map((id) => PAPER[id].code).join(', '))}</div><h1>${esc(t.n)}</h1>
     <div class="wrap-row">${t.h ? '<span class="chip">Higher tier only</span>' : ''}<span class="chip"><i class="dot" style="background:${ccol(x.c)}"></i>${esc(CONF_WORD[x.c || 0])}</span>${x.due ? '<span class="chip">Next review ' + esc(D.short(x.due)) + '</span>' : ''}${np ? '<span class="chip">Exam ' + esc(D.short(np.date)) + '</span>' : ''}</div></div>`;
+  h += specLine(t);
   h += `<div class="sect"><div class="row" style="flex-wrap:wrap"><button class="btn primary" data-act="revise" data-t="${t.id}">Revise this now (25 min)</button>${rate5(t.id, x.c || 0)}</div></div>`;
   h += `<div class="sect"><h2>Key knowledge</h2><div class="card"><ul class="pts">${t.pts.map((p) => '<li>' + esc(p) + '</li>').join('')}</ul></div></div>`;
   if (t.cards && t.cards.length) h += `<div class="sect"><h2>Flashcards (${t.cards.length})</h2><div class="card"><ul class="pts">${t.cards.map((c) => '<li><b>' + esc(c[0]) + '</b><br><span class="muted">' + esc(c[1]) + '</span></li>').join('')}</ul></div></div>`;
@@ -713,6 +811,11 @@ function viewCards() {
 function viewMore() {
   const s = state.settings;
   let h = '<div class="hero"><div class="date">Settings</div><h1>Tune your plan</h1></div>';
+  if (auth.available) {
+    h += `<div class="sect"><h2>Account</h2><div class="card stack">${auth.user
+      ? `<p>Signed in as <b>${esc(auth.user.email || 'your Google account')}</b>. Your progress syncs to every device you sign in on.</p><div><button class="btn small" data-act="signout">Sign out</button></div>`
+      : '<p>You\'re using the app without an account, so progress is saved on this device only.</p><div><button class="btn small primary" data-act="signin-now">Sign in or create an account</button></div>'}</div></div>`;
+  }
   h += '<div class="sect"><h2>Tiers</h2><div class="card" style="padding-block:4px">';
   for (const id of ['maths', 'science', 'german']) {
     h += `<div class="field"><div><div class="l">${esc(SUBJ[id].name)}</div><div class="s">Higher-only topics are hidden on Foundation</div></div>
@@ -728,7 +831,7 @@ function viewMore() {
   h += `<div class="sect"><h2>Workload</h2><div class="card" style="padding-block:4px">
     <div class="field"><div><div class="l">Intensity</div><div class="s">Scales every day's time</div></div><select id="intensity" data-intensity><option value="0.75" ${s.intensity == 0.75 ? 'selected' : ''}>Light (−25%)</option><option value="1" ${s.intensity == 1 ? 'selected' : ''}>Standard</option><option value="1.25" ${s.intensity == 1.25 ? 'selected' : ''}>Intense (+25%)</option></select></div>
     <div class="field"><div><div class="l">Light day each week</div><div class="s">Flashcards only, until Easter</div></div><select id="restday" data-restday>${['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map((n, i) => `<option value="${i}" ${Number(s.restDay) === i ? 'selected' : ''}>${n}</option>`).join('')}<option value="-1" ${Number(s.restDay) === -1 ? 'selected' : ''}>None</option></select></div></div></div>`;
-  h += `<div class="sect"><h2>Your progress is saved</h2><div class="card stack"><div id="sync"></div>
+  h += `<div class="sect"><h2>Backup</h2><div class="card stack"><div id="sync"></div>
     <p class="small muted">Copy your progress as a backup, or paste a backup to restore it.</p>
     <div class="row" style="flex-wrap:wrap"><button class="btn small" data-act="export">Copy backup</button><button class="btn small" data-act="import">Restore from box below</button></div>
     <textarea id="backup" placeholder="Paste a backup here to restore" aria-label="Backup data"></textarea>
@@ -741,7 +844,8 @@ function viewMore() {
     <li><b>Short blocks with breaks</b> (25 + 5 minutes) keep your focus high. Sleep consolidates what you revised that day.</li></ul></div></div>`;
   h += `<div class="sect"><h2>Sources</h2><div class="card small"><ul class="pts">
     <li>Exam boards: <a href="https://ccc.tela.org.uk/information/examinations/" target="_blank" rel="noopener">Chesterton Community College — Examinations</a> (Maths Edexcel 1MA1; English Language AQA 8700; English Literature OCR J352; Combined Science AQA 8464; Geography AQA 8035; German AQA 8662; History OCR J410).</li>
-    <li>Topic options and teaching order: Chesterton KS4 curriculum documents for English, Geography, History, German and Science.</li>
+    <li><b>Content checked against the official specifications</b> (September 2026): every topic shows the section of the spec it comes from. <a href="${SPEC_PDF.maths}" target="_blank" rel="noopener">Edexcel 1MA1</a> · <a href="${SPEC_PDF.science}" target="_blank" rel="noopener">AQA 8464</a> · <a href="${SPEC_PDF.englang}" target="_blank" rel="noopener">AQA 8700</a> · <a href="${SPEC_PDF.englit}" target="_blank" rel="noopener">OCR J352</a> · <a href="${SPEC_PDF.geog}" target="_blank" rel="noopener">AQA 8035</a> · <a href="${SPEC_PDF.hist}" target="_blank" rel="noopener">OCR J410</a> · <a href="${SPEC_PDF.german}" target="_blank" rel="noopener">AQA 8662</a> (German flashcards use only the AQA vocabulary list).</li>
+    <li>Topic options and teaching order: Chesterton KS4 curriculum documents for English, Geography, History, German and Science. Where a topic needs your own class example (e.g. a case study), the app says so.</li>
     <li>Term dates: <a href="https://ccc.tela.org.uk/about/term-dates/" target="_blank" rel="noopener">Chesterton term dates 2026–27</a>.</li>
     <li>Exam dates: AQA provisional timetable May/June 2027, OCR final timetable June 2027, Pearson Edexcel Maths dates. Always check your personal timetable from school.</li></ul></div></div>`;
   return h;
@@ -749,11 +853,11 @@ function viewMore() {
 function updateSync() {
   const el = $('#sync'); if (!el) return;
   const map = {
-    synced: ['ok', 'Synced to your Claude account — progress follows you between phone and computer.'],
+    synced: ['ok', auth.available ? 'Synced to your account — progress follows you to every device you sign in on.' : 'Synced to your Claude account — progress follows you between phone and computer.'],
     connecting: ['', 'Connecting…'],
     readonly: ['warn', 'Saved on this device only (you can view but not save to the shared copy).'],
     error: ['warn', 'Saved on this device. Cloud sync hit a problem — it will retry on your next change.'],
-    local: ['', 'Saved on this device only. Open it through your Claude link to sync between devices.'],
+    local: ['', auth.available ? 'Saved on this device only. Sign in (above) to sync between devices.' : 'Saved on this device only.'],
   };
   const [cls, txt] = map[cloud.status] || map.local;
   el.innerHTML = `<span class="sync ${cls}"><i></i>${esc(txt)}</span>`;
@@ -799,7 +903,7 @@ function stepNav(nextLabel, disabled) {
 }
 function stepBody(step, t, p) {
   const s = sess;
-  if (step === 'read') return `<h2>1 · Learn it (about 8 min)</h2><p class="muted">Read each point, then turn it into a quick mind map or a set of 5 questions on paper — don't copy it out.</p><div class="card"><ul class="pts">${t.pts.map((x) => '<li>' + esc(x) + '</li>').join('')}</ul></div>${stepNav('I\'ve made my notes — hide them')}`;
+  if (step === 'read') return `<h2>1 · Learn it (about 8 min)</h2><p class="muted">Read each point, then turn it into a quick mind map or a set of 5 questions on paper — don't copy it out.</p><div class="card"><ul class="pts">${t.pts.map((x) => '<li>' + esc(x) + '</li>').join('')}</ul></div>${specLine(t)}${stepNav('I\'ve made my notes — hide them')}`;
   if (step === 'blurt') return `<h2>${s.steps[0] === 'blurt' ? '1' : '2'} · Blurt (5 min)</h2><div class="card stack"><p><b>Close everything.</b> On a blank sheet, write down everything you can remember about <b>${esc(t.n)}</b>: key words, facts, examples, diagrams, equations.</p><p class="muted small">Struggling to remember is what makes the memory stronger — don't peek.</p></div>${stepNav('Done — check my blurt')}`;
   if (step === 'check') {
     const n = t.pts.length, got = Object.values(s.checks).filter(Boolean).length;
@@ -967,8 +1071,17 @@ document.addEventListener('click', (e) => {
       break;
     }
     case 'reset': $('#reset-confirm').innerHTML = '<button class="btn small" data-act="reset-yes" style="color:var(--c1)">Yes, delete all my progress</button>'; break;
+    case 'login-signup': authDo('signup'); break;
+    case 'login-google': authDo('google'); break;
+    case 'login-reset': authDo('reset'); break;
+    case 'login-skip': setSkipLogin(true); go('today'); break;
+    case 'signin-now': setSkipLogin(false); render(); window.scrollTo(0, 0); break;
+    case 'signout': authSignOut(); break;
     case 'reset-yes': { const keep = state.settings; state = defaultState(); state.settings = keep; save(); render(); toast('Progress reset'); break; }
   }
+});
+document.addEventListener('submit', (e) => {
+  if (e.target && e.target.id === 'login-form') { e.preventDefault(); authDo('signin'); }
 });
 document.addEventListener('change', (e) => {
   const el = e.target;
@@ -1004,7 +1117,9 @@ function boot() {
   $('#nav').innerHTML = '<div class="nav-in">' + [['today', 'Today'], ['plan', 'Plan'], ['subjects', 'Subjects'], ['cards', 'Cards'], ['more', 'Settings']]
     .map(([r, l]) => `<a href="#${r}" data-r="${r}">${ICON[r]}<span>${l}</span></a>`).join('') + '</div>';
   readHash(); render();
-  initCloud();
+  initClaudeCloud();
+  initFirebaseAuth();
+  window.addEventListener('rgauth-ready', () => { initFirebaseAuth(); render(); });
   // roll over to a new day if the app stays open past midnight
   let day = D.today();
   setInterval(() => { if (D.today() !== day) { day = D.today(); if (!sess) render(); } }, 60000);

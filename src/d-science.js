@@ -22,7 +22,7 @@ RG.subjects.push({
     'Calculations: write the equation, substitute with units, give the answer with a unit and sensible significant figures.',
     'Graphs: read values with a ruler, draw lines of best fit smoothly, and quote data when asked to use the graph.',
     'Required practicals: know the independent, dependent and control variables and how to improve accuracy.',
-    'Physics equations: check with your teacher whether an equation sheet is given in 2027. Learn them anyway — it is faster.'
+    'Physics equations: AQA lists 21 equations you must recall and a set you select from the Physics equation sheet — see the "Physics equations" topic.'
   ],
   resources: [
     ['AQA Trilogy 8464 spec & past papers', 'https://www.aqa.org.uk/subjects/science/gcse/combined-science-trilogy-8464'],
@@ -120,7 +120,8 @@ RG.subjects.push({
 
     /* ---------- BIOLOGY PAPER 2 ---------- */
     { id: 'b-nerves', n: 'Nervous system & reaction time', p: ['sb2'], w: 2, from: '2027-01-04',
-      pts: ['Stimulus → receptor → sensory neurone → relay neurone (CNS) → motor neurone → effector → response.',
+      pts: ['Homeostasis keeps internal conditions (blood glucose, body temperature, water levels) steady. Control systems have receptors, coordination centres (brain, spinal cord, pancreas) and effectors.',
+        'Stimulus → receptor → sensory neurone → relay neurone (CNS) → motor neurone → effector → response.',
         'Reflexes are automatic and rapid, and they do not involve the conscious brain. Synapses pass signals chemically across a gap.',
         'The CNS is the brain and spinal cord.',
         'Required practical: ruler-drop reaction time. Repeat, calculate the mean, control the hand and the distractions.'],
@@ -176,7 +177,7 @@ RG.subjects.push({
     { id: 'c-atoms', n: 'Atoms, the periodic table & separating', p: ['sc1'], w: 3,
       pts: ['Proton: charge +1, mass 1. Neutron: 0, mass 1. Electron: −1, very small mass. Atomic number = protons. Mass number = protons + neutrons.',
         'Isotopes: same number of protons, different number of neutrons.',
-        'Model of the atom: Dalton (solid spheres) → Thomson plum pudding (electron discovered) → Rutherford alpha scattering (nucleus) → Bohr (electron shells) → Chadwick (neutron).',
+        'Model of the atom: tiny spheres → discovery of the electron led to the plum pudding model → alpha scattering showed a small positive nucleus (nuclear model) → Bohr: electrons in shells → Chadwick provided evidence for the neutron.',
         'Electron shells: 2, 8, 8. Group number = outer electrons. Period = number of shells.',
         'Group 1: react with water → metal hydroxide + hydrogen, more reactive down the group. Group 7: less reactive down the group, displacement reactions. Group 0: unreactive (full outer shell).',
         'Separating mixtures: filtration, crystallisation, simple and fractional distillation, chromatography. Mendeleev left gaps for undiscovered elements.'],
@@ -347,6 +348,17 @@ RG.subjects.push({
       cards: [['Direction of field lines', 'North to south'], ['How can you make an electromagnet stronger?', 'More current, more turns, add an iron core'],
         ['Fleming\'s left-hand rule fingers (H)', 'Thumb: motion. First: field. Second: current'], ['Motor effect equation (H)', 'F = BIl']],
       ex: 'Draw field patterns (bar magnet, wire, solenoid) and do 2 F = BIl questions (H).' },
+    { id: 'p-equations', n: 'Physics equations (recall list + equation sheet)', p: ['sp1', 'sp2'], w: 3,
+      pts: ['AQA Appendix B lists 21 equations you must RECALL. The rest are given on the Physics equation sheet — you only need to select and use them.',
+        'Recall (forces & motion): W = mg · W = Fs · F = ke · s = vt · a = Δv/t · F = ma · p = mv (H).',
+        'Recall (energy): Eₖ = ½mv² · Eₚ = mgh · P = E/t · P = W/t · efficiency = useful output ÷ total input (energy or power).',
+        'Recall (waves, electricity, density): v = fλ · Q = It · V = IR · P = VI · P = I²R · E = Pt · E = QV · ρ = m/V.',
+        'Given on the sheet: v² − u² = 2as · Eₑ = ½ke² · ΔE = mcΔθ · T = 1/f · F = BIl (H) · E = mL · VₚIₚ = VₛIₛ (H).',
+        'Always: write the equation, substitute with units, rearrange, then give the answer with a unit.'],
+      cards: [['Weight equation (recall)', 'W = mg'], ['Kinetic energy (recall)', 'Eₖ = ½mv²'], ['Gravitational PE (recall)', 'Eₚ = mgh'], ['Wave speed (recall)', 'v = fλ'],
+        ['Charge flow (recall)', 'Q = It'], ['Two power equations for circuits (recall)', 'P = VI and P = I²R'], ['Energy transferred by charge (recall)', 'E = QV'],
+        ['Density (recall)', 'ρ = m/V'], ['Momentum (recall, H)', 'p = mv'], ['Is ΔE = mcΔθ on the equation sheet?', 'Yes — select and apply it'], ['Is v = fλ on the equation sheet?', 'No — you must recall it']],
+      ex: 'Cover the list and write all 21 recall equations from memory, with units. Then do 6 mixed calculations.' },
     { id: 'p-skills', n: 'Required practicals & working scientifically', p: ['sb1', 'sc1', 'sp1', 'sb2', 'sc2', 'sp2'], w: 2,
       pts: ['Independent variable = what you change. Dependent = what you measure. Control = kept the same.',
         'Accurate = close to the true value. Precise = results close together. Repeatable = same person, same method. Reproducible = different person or method.',

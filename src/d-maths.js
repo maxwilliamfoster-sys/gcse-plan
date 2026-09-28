@@ -18,6 +18,7 @@ RG.subjects.push({
     'Always show working: most marks are method marks, even when the final answer is wrong.',
     'Underline the instruction: units, decimal places, "give reasons", "show that".',
     'Check your calculator is in Degrees (D) before any trig question.',
+    'Only four formulae are provided (cone and sphere volume/surface area). Learn the rest: area of a trapezium, circle formulae, Pythagoras, trig ratios, and (Higher) the quadratic formula and sine/cosine rules.',
     'Non-calc: practise written multiplication, division and fraction arithmetic until automatic.',
     'Stuck? Write down anything you know (a formula, a labelled diagram). Then move on and come back.'
   ],
@@ -146,7 +147,7 @@ RG.subjects.push({
       pts: ['Triangle ½bh. Trapezium ½(a + b)h. Circle area πr², circumference πd.',
         'Arc length = θ/360 × 2πr. Sector area = θ/360 × πr².',
         'Prism volume = cross-section area × length. Cylinder πr²h.',
-        'Cone ⅓πr²h, sphere ⁴⁄₃πr³, sphere surface 4πr², cone curved surface πrl — check your formula sheet, but know how to use them.',
+        'Given in the exam (1MA1 Appendix 3): cone volume ⅓πr²h, cone curved surface πrl, sphere volume ⁴⁄₃πr³, sphere surface 4πr². Every other area/volume formula you must know yourself.',
         '"In terms of π" means leave π in the answer.'],
       cards: [['Area of a circle, radius 5 (in terms of π)', '25π'], ['Trapezium a = 6, b = 10, h = 4', '32'],
         ['Cylinder volume, r = 3, h = 10 (in terms of π)', '90π'], ['Arc length: r = 6, angle 60°', '2π']],

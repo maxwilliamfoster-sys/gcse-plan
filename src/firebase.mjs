@@ -17,6 +17,21 @@ if (cfg && cfg.apiKey) {
     google: () => A.signInWithPopup(auth, new A.GoogleAuthProvider()),
     reset: (email) => A.sendPasswordResetEmail(auth, email),
     signOut: () => A.signOut(auth),
+    // sign-in methods on the current account, e.g. ['google.com'] or ['google.com', 'password']
+    providers: () => (auth.currentUser ? auth.currentUser.providerData.map((p) => p.providerId) : []),
+    // add an email + password to an account made with Google, so it can sign in anywhere
+    addPassword: async (pass) => {
+      const u = auth.currentUser;
+      const cred = A.EmailAuthProvider.credential(u.email, pass);
+      try { return await A.linkWithCredential(u, cred); }
+      catch (e) {
+        if (e && e.code === 'auth/requires-recent-login') {
+          await A.reauthenticateWithPopup(u, new A.GoogleAuthProvider());
+          return A.linkWithCredential(u, cred);
+        }
+        throw e;
+      }
+    },
     onChange: (cb) => A.onAuthStateChanged(auth, cb),
     // One document per user: users/{uid} = { s: <progress JSON>, at: <last edit time> }
     backend: (uid) => {

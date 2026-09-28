@@ -237,3 +237,4 @@ details.why ul{margin:8px 0 0;padding-left:18px;display:flex;flex-direction:colu
 .spec-ref{margin-top:14px;font-size:14px;display:flex;flex-wrap:wrap;gap:6px 8px;align-items:baseline}
 .nav[hidden]{display:none!important}
 .count:empty{display:none}
+.pw-input{border:1px solid var(--line);border-radius:var(--r-sm);background:var(--card);padding:10px 12px;min-height:44px;font-size:16px;width:100%}

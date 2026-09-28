@@ -179,8 +179,10 @@ const AUTH_ERR = {
   'auth/invalid-credential': 'Email or password is wrong.', 'auth/wrong-password': 'Email or password is wrong.', 'auth/user-not-found': 'No account with that email — tap "Create account".',
   'auth/email-already-in-use': 'There\'s already an account with that email — sign in instead.', 'auth/weak-password': 'Use a password of at least 6 characters.',
   'auth/invalid-email': 'That email address doesn\'t look right.', 'auth/missing-password': 'Type your password.', 'auth/network-request-failed': 'No internet connection — try again.',
-  'auth/popup-closed-by-user': 'The Google window was closed before signing in.', 'auth/popup-blocked': 'Your browser blocked the Google window — use email and password instead.',
+  'auth/popup-closed-by-user': 'The Google window was closed before signing in.', 'auth/popup-blocked': 'Google sign-in could not open here. Sign in with Google on your computer, go to Settings → Set a password, then use your email and that password here.',
   'auth/operation-not-allowed': 'This sign-in method isn\'t switched on in Firebase yet.', 'auth/too-many-requests': 'Too many attempts — wait a minute and try again.',
+  'auth/provider-already-linked': 'This account already has a password — sign in with your email and that password.',
+  'auth/credential-already-in-use': 'That email already has a separate password account.', 'auth/requires-recent-login': 'Please sign in again, then set the password.',
   'auth/unauthorized-domain': 'This web address isn\'t authorised in Firebase yet (add it under Authentication → Settings → Authorised domains).',
 };
 async function authDo(kind) {
@@ -569,7 +571,10 @@ function viewLogin() {
       <label class="stack" style="gap:6px"><span class="l">Password</span><input id="login-pass" name="password" type="password" autocomplete="current-password" minlength="6" required></label>
       ${auth.error ? `<p class="small" role="alert" style="color:var(--c1)">${esc(auth.error)}</p>` : ''}
       <div class="row" style="flex-wrap:wrap"><button class="btn primary" type="submit" ${auth.busy ? 'disabled' : ''}>Sign in</button><button class="btn" type="button" data-act="login-signup" ${auth.busy ? 'disabled' : ''}>Create account</button><button class="linkbtn" type="button" data-act="login-reset">Forgot password?</button></div>
-      ${standalone ? '<p class="small muted">On the home-screen app, use email and password — Google sign-in only works in Safari itself.</p>' : `<div class="or small muted">or</div><button class="btn" type="button" data-act="login-google" ${auth.busy ? 'disabled' : ''}>Continue with Google</button>`}
+      <div class="or small muted">or</div><button class="btn" type="button" data-act="login-google" ${auth.busy ? 'disabled' : ''}>Continue with Google</button>
+      <p class="small muted">${standalone
+        ? 'If Google sign-in doesn\'t open here: sign in with Google on your computer, go to <b>Settings → Set a password</b>, then use your email and that password on this phone.'
+        : 'Made your account with Google? You can also set a password in Settings, so you can sign in with email and password on any device.'}</p>
     </form>
     <div class="sect"><button class="linkbtn" data-act="login-skip">Use without an account (saves on this device only)</button></div></div>`;
 }
@@ -813,7 +818,7 @@ function viewMore() {
   let h = '<div class="hero"><div class="date">Settings</div><h1>Tune your plan</h1></div>';
   if (auth.available) {
     h += `<div class="sect"><h2>Account</h2><div class="card stack">${auth.user
-      ? `<p>Signed in as <b>${esc(auth.user.email || 'your Google account')}</b>. Your progress syncs to every device you sign in on.</p><div><button class="btn small" data-act="signout">Sign out</button></div>`
+      ? `<p>Signed in as <b>${esc(auth.user.email || 'your Google account')}</b>. Your progress syncs to every device you sign in on.</p>${pwSection()}<div><button class="btn small" data-act="signout">Sign out</button></div>`
       : '<p>You\'re using the app without an account, so progress is saved on this device only.</p><div><button class="btn small primary" data-act="signin-now">Sign in or create an account</button></div>'}</div></div>`;
   }
   h += '<div class="sect"><h2>Tiers</h2><div class="card" style="padding-block:4px">';
@@ -849,6 +854,27 @@ function viewMore() {
     <li>Term dates: <a href="https://ccc.tela.org.uk/about/term-dates/" target="_blank" rel="noopener">Chesterton term dates 2026–27</a>.</li>
     <li>Exam dates: AQA provisional timetable May/June 2027, OCR final timetable June 2027, Pearson Edexcel Maths dates. Always check your personal timetable from school.</li></ul></div></div>`;
   return h;
+}
+// Accounts made with Google can add a password, so the same account works on the iPhone home-screen app.
+function pwSection() {
+  const A = window.RGAuth;
+  if (!A || !A.providers || !auth.user || !auth.user.email) return '';
+  const prov = A.providers();
+  if (prov.includes('password')) return `<p class="small muted">Sign in with ${prov.includes('google.com') ? 'Google, or ' : ''}your email and password.</p>`;
+  return `<form class="flat stack" id="pw-form" novalidate><div><b>Set a password</b><p class="small muted">Then you can sign in on your phone's home-screen app (or anywhere) with <b>${esc(auth.user.email)}</b> and this password. Same account, same progress.</p></div>
+    <input type="email" autocomplete="username" value="${esc(auth.user.email)}" hidden aria-hidden="true" tabindex="-1">
+    <label class="stack" style="gap:6px"><span class="l">New password (at least 6 characters)</span><input id="pw-new" type="password" autocomplete="new-password" minlength="6" class="pw-input"></label>
+    ${auth.pwMsg ? `<p class="small" role="alert" style="color:${auth.pwOk ? 'var(--c5)' : 'var(--c1)'}">${esc(auth.pwMsg)}</p>` : ''}
+    <div><button class="btn small primary" type="submit" ${auth.busy ? 'disabled' : ''}>Set password</button></div></form>`;
+}
+async function addPassword() {
+  const A = window.RGAuth, pw = ($('#pw-new') || {}).value || '';
+  auth.pwMsg = ''; auth.pwOk = false;
+  if (pw.length < 6) { auth.pwMsg = 'Use a password of at least 6 characters.'; render(); return; }
+  auth.busy = true; render();
+  try { await A.addPassword(pw); auth.pwOk = true; auth.pwMsg = ''; toast('Password set — use ' + auth.user.email + ' and it on your phone'); }
+  catch (e) { auth.pwMsg = AUTH_ERR[e && e.code] || ((e && e.message) || 'Something went wrong — try again.'); }
+  auth.busy = false; render();
 }
 function updateSync() {
   const el = $('#sync'); if (!el) return;
@@ -1082,6 +1108,7 @@ document.addEventListener('click', (e) => {
 });
 document.addEventListener('submit', (e) => {
   if (e.target && e.target.id === 'login-form') { e.preventDefault(); authDo('signin'); }
+  if (e.target && e.target.id === 'pw-form') { e.preventDefault(); addPassword(); }
 });
 document.addEventListener('change', (e) => {
   const el = e.target;

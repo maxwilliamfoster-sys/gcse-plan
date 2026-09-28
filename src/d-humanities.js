@@ -318,6 +318,7 @@ RG.subjects.push({
       ex: 'Essay: "The New Deal was a success." How far do you agree? Judge it by different groups.' },
     { id: 'h-usa-war', n: 'USA 1941–1948: the impact of the Second World War', p: ['h1'], w: 3, from: '2026-11-02',
       pts: ['Mobilisation: propaganda campaigns, massive war production and the end of the Depression.',
+        'Response of the population to US involvement: strong isolationism before Pearl Harbor (7 December 1941), then overwhelming support for the war afterwards.',
         'Increased government and presidential power: control of wages and prices, rationing, and taxes on luxuries.',
         'Social impact: rationing, housing shortages near war factories, and a rise in divorce.',
         'Women and the war effort: millions took war jobs ("Rosie the Riveter"), though many were pushed out after 1945.',

@@ -412,6 +412,31 @@ textarea{width:100%;min-height:100px;font:600 13px/1.4 ui-monospace,Menlo,Consol
 .gbtn.right{border-color:var(--green);background:var(--green-t);color:var(--green-d)}
 .gbtn.wrong{border-color:var(--red);background:var(--red-t);color:var(--red-d)}
 
+/* flashcards / quizzes switch */
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:5px;border-radius:18px;background:var(--bg-2);border:2px solid var(--line);margin-top:10px}
+.seg button{appearance:none;display:flex;align-items:center;justify-content:center;gap:8px;font:inherit;font-weight:900;font-size:15px;padding:10px 8px;border:0;border-radius:13px;background:transparent;color:var(--ink-2);cursor:pointer;transition:background .15s,color .15s}
+.seg button .ico{width:20px;height:20px}
+.seg button[aria-pressed="true"]{background:var(--card);color:var(--blue);box-shadow:0 3px 0 var(--line)}
+/* quizzes */
+.qgo{flex:none;min-width:48px;padding:8px 10px;border-radius:12px;background:var(--c);color:#fff;font-weight:900;font-size:14px;text-align:center;box-shadow:inset 0 -3px 0 var(--cd)}
+.qcard{border:2px solid var(--line);border-bottom-width:5px;border-radius:var(--r-lg);background:var(--card);padding:18px 18px 22px;display:flex;flex-direction:column;gap:10px}
+.qcard .src{font-size:12.5px;font-weight:900;letter-spacing:.06em;text-transform:uppercase;color:var(--cd,var(--ink-3))}
+.qcard .q{font-size:22px;font-weight:800;line-height:1.3}
+.qopts{display:flex;flex-direction:column;gap:10px}
+.qopts.three{display:grid;grid-template-columns:repeat(3,1fr)}
+.qopts.three .qopt{justify-content:center;font-size:20px;padding:16px 8px}
+.qopts.three .qopt b{display:none}
+.qopt{appearance:none;display:flex;align-items:center;gap:12px;width:100%;text-align:left;font:inherit;font-weight:700;font-size:16px;line-height:1.35;color:var(--ink);padding:13px 14px;border:2px solid var(--line);border-bottom-width:5px;border-radius:var(--r);background:var(--card);cursor:pointer;transition:background .15s,border-color .15s,opacity .15s}
+.qopt b{flex:none;width:28px;height:28px;border-radius:9px;border:2px solid var(--line);display:grid;place-items:center;font-size:13px;color:var(--ink-3)}
+.qopt:active:not(:disabled){transform:translateY(3px);border-bottom-width:2px;margin-bottom:3px}
+.qopt:disabled{cursor:default}
+.qopt.right{border-color:var(--green);background:var(--green-t);color:var(--green-d)}
+.qopt.right b{border-color:var(--green);background:var(--green);color:#fff}
+.qopt.wrong{border-color:var(--red);background:var(--red-t);color:var(--red-d)}
+.qopt.wrong b{border-color:var(--red);background:var(--red);color:#fff}
+.qopt.dim{opacity:.55}
+.qopt.shake{animation:shake .4s}
+
 </style>
 </head>
 <body>
@@ -505,7 +530,8 @@ RG.subjects.push({
       pts: ['Solve by factorising: set each bracket equal to zero.',
         'Quadratic formula: x = (−b ± √(b² − 4ac)) ÷ 2a (on the Higher formula sheet) — use it when the answer needs decimal places.',
         'Completing the square (H): x² + bx + c = (x + b/2)² − (b/2)² + c.',
-        'Turning point of y = (x + p)² + q is (−p, q). The roots are where the graph crosses the x-axis.'],
+        'Turning point of y = (x + p)² + q is (−p, q). The roots are where the graph crosses the x-axis.',
+        'Quadratic inequalities (H): solve = 0, sketch the curve, then read off where it is above (> 0) or below (< 0) the x-axis. x² < 9 → −3 < x < 3.'],
       cards: [['Solve x² − x − 12 = 0', 'x = 4 or x = −3'], ['Complete the square: x² + 6x + 2', '(x + 3)² − 7'],
         ['Turning point of y = (x − 2)² + 5', '(2, 5)'], ['Solve 2x² + 3x − 4 = 0 to 2 d.p.', 'x = 0.85 or x = −2.35']],
       ex: 'Do 3 by factorising, 2 with the formula, 2 completing the square (H) — one asking for the turning point.' },
@@ -580,7 +606,8 @@ RG.subjects.push({
         'SOH CAH TOA: label O, A, H from the angle, choose the ratio, use inverse (sin⁻¹) to find an angle.',
         'Exact values: sin30 = cos60 = ½, sin60 = cos30 = √3/2, tan45 = 1, tan30 = 1/√3, tan60 = √3.',
         'H: sine rule a/sinA = b/sinB. Cosine rule a² = b² + c² − 2bc cosA. Area = ½ab sinC. (All three, plus Pythagoras and SOHCAHTOA, are on the formula sheet — the exact values are not.)',
-        'H: 3D problems — find a 2D right-angled triangle inside the shape.'],
+        'H: 3D problems — find a 2D right-angled triangle inside the shape.',
+        'H: trig graphs — y = sin x and y = cos x repeat every 360° between −1 and 1; y = tan x repeats every 180° with asymptotes at 90°, 270°.'],
       cards: [['Hypotenuse when the other sides are 5 and 12', '13'], ['sin 30°', '½'], ['tan 60°', '√3'],
         ['Area: a = 8, b = 5, C = 30°', '½ × 8 × 5 × ½ = 10'], ['When do you use the cosine rule?', 'Three sides known, or two sides and the included angle']],
       ex: 'Do 2 Pythagoras, 3 SOHCAHTOA (one non-calc exact value), and 2 sine/cosine rule questions (H).' },
@@ -758,11 +785,13 @@ RG.subjects.push({
         'Non-specific defences: skin, nose hairs and mucus, cilia in the trachea, stomach acid.',
         'White blood cells: phagocytosis, producing antibodies, producing antitoxins.',
         'Vaccination: dead or inactive pathogen → white cells make antibodies and memory cells → fast response later. Herd immunity protects others.',
-        'Antibiotics kill bacteria but NOT viruses. Resistance is increasing. Drug testing: pre-clinical (cells, animals) → clinical trials, double-blind with a placebo.'],
+        'Antibiotics kill bacteria but NOT viruses. Resistance is increasing. Drug testing: pre-clinical (cells, animals) → clinical trials, double-blind with a placebo.',
+        'Drug origins: digitalis from foxgloves (heart drug), aspirin from willow (painkiller), penicillin discovered by Alexander Fleming from Penicillium mould. Most new drugs are now made by chemists.'],
       cards: [['Why can\'t antibiotics treat viral infections?', 'Viruses live inside cells; antibiotics only kill bacteria'], ['Three ways white blood cells defend us', 'Phagocytosis, antibodies, antitoxins'],
         ['What is a double-blind trial?', 'Neither patients nor doctors know who gets the drug or the placebo'], ['How is malaria spread?', 'By mosquitoes (vector), protist pathogen'],
-        ['How does vaccination work?', 'Inactive pathogen triggers antibodies and memory cells, so a later infection is fought quickly']],
-      ex: 'Make a table of the 8 named diseases (pathogen type, spread, symptoms, control), then do one 6-marker on vaccination.' },
+        ['How does vaccination work?', 'Inactive pathogen triggers antibodies and memory cells, so a later infection is fought quickly'],
+        ['Where do digitalis, aspirin and penicillin come from?', 'Foxgloves, willow, Penicillium mould (Fleming)']],
+      ex: 'Make a table of the 7 named diseases (pathogen type, spread, symptoms, control), then do one 6-marker on vaccination.' },
     { id: 'b-energy', n: 'Photosynthesis & respiration', p: ['sb1'], w: 3,
       pts: ['Photosynthesis: carbon dioxide + water → glucose + oxygen (light, chlorophyll). 6CO₂ + 6H₂O → C₆H₁₂O₆ + 6O₂. Endothermic.',
         'Limiting factors: light intensity, CO₂ concentration, temperature, amount of chlorophyll.',
@@ -823,6 +852,7 @@ RG.subjects.push({
         'Adaptations: structural, behavioural, functional. Extremophiles live in extreme conditions.',
         'Predator–prey cycles: predator numbers peak after prey numbers.',
         'Required practical: quadrats (random sampling for abundance) and transects (how distribution changes).',
+        'Levels of organisation: producers (photosynthesise) → primary → secondary → tertiary consumers; feeding relationships in food chains.',
         'Carbon cycle: photosynthesis removes CO₂; respiration, decomposition and combustion return it. Water cycle: evaporation, condensation, precipitation.',
         'Humans reduce biodiversity through waste, pollution, land use, deforestation (peat bogs, tropical forest) and global warming. Protect it with breeding programmes, hedgerows, reduced deforestation and recycling.'],
       cards: [['Three abiotic factors', 'e.g. light intensity, temperature, soil pH'], ['What is a quadrat used for?', 'Estimating population size / abundance by random sampling'],
@@ -848,6 +878,7 @@ RG.subjects.push({
         'Diamond: each C has 4 covalent bonds — very hard, very high melting point, no conduction.',
         'Graphite: each C has 3 bonds, layers slide, delocalised electrons → conducts. Graphene: a single layer. Fullerenes: hollow cages and tubes.',
         'Metallic bonding: positive ions in a sea of delocalised electrons → conducts, malleable. Alloys are harder because different-sized atoms distort the layers.',
+        'Polymers: very long molecules joined by strong covalent bonds. Intermolecular forces between them are relatively strong, so they are solid at room temperature.',
         'Draw dot-and-cross diagrams for NaCl, MgO, H₂, Cl₂, H₂O, NH₃, CH₄, HCl.'],
       cards: [['Why does graphite conduct electricity?', 'Each carbon has one delocalised electron that can move'], ['Why are alloys harder than pure metals?', 'Different-sized atoms distort the layers so they cannot slide'],
         ['Why does ionic NaCl have a high melting point?', 'Strong electrostatic forces between oppositely charged ions in a giant lattice need lots of energy to overcome'],
@@ -867,7 +898,8 @@ RG.subjects.push({
         'Acid + metal → salt + hydrogen. Acid + alkali → salt + water. Acid + carbonate → salt + water + carbon dioxide. Neutralisation: H⁺ + OH⁻ → H₂O.',
         'Required practical: making a soluble salt — add excess insoluble base to acid, filter, evaporate, crystallise.',
         'Electrolysis: positive ions to the cathode (−), negative ions to the anode (+). Aluminium from aluminium oxide dissolved in cryolite (lower melting point). Carbon anodes burn away.',
-        'Aqueous solutions: hydrogen forms at the cathode if the metal is more reactive than hydrogen. Oxygen forms at the anode unless a halide is present.'],
+        'Aqueous solutions: hydrogen forms at the cathode if the metal is more reactive than hydrogen. Oxygen forms at the anode unless a halide is present.',
+        'Required practical: electrolysis of aqueous solutions with inert electrodes — identify the product at each electrode.'],
       cards: [['Acid + carbonate →', 'Salt + water + carbon dioxide'], ['OIL RIG', 'Oxidation Is Loss, Reduction Is Gain (of electrons)'],
         ['Why is aluminium oxide dissolved in cryolite?', 'Lowers the melting point, saving energy'], ['Electrolysis of NaCl solution: product at cathode', 'Hydrogen'],
         ['Why add excess base when making a salt?', 'To make sure all the acid reacts'], ['Why must carbon anodes be replaced?', 'They react with oxygen to form CO₂']],
@@ -949,7 +981,8 @@ RG.subjects.push({
         'I–V graphs: fixed resistor is a straight line through the origin. Filament lamp curves (resistance rises with temperature). Diode lets current flow one way only.',
         'LDR: resistance falls as light increases. Thermistor: resistance falls as temperature increases.',
         'UK mains: 230 V, 50 Hz a.c. Live (brown), neutral (blue), earth (green/yellow). Fuses and earthing are for safety.',
-        'National Grid: step-up transformers raise the p.d. (lower current, less energy loss); step-down transformers make it safe for homes.'],
+        'National Grid: step-up transformers raise the p.d. (lower current, less energy loss); step-down transformers make it safe for homes.',
+        'Required practicals: resistance (length of a wire; resistors in series and parallel) and I–V characteristics of a resistor, filament lamp and diode.'],
       cards: [['V = ?', 'IR'], ['Resistance in parallel is…', 'Less than the smallest individual resistor'], ['What happens to an LDR in bright light?', 'Resistance decreases'],
         ['Colour of the live wire', 'Brown'], ['Why does the National Grid use high voltage?', 'Lower current → less energy lost as heat in cables'], ['UK mains frequency and p.d.', '50 Hz, 230 V']],
       ex: 'Do 4 circuit calculations, then sketch the three I–V graphs from memory and explain the filament lamp.' },
@@ -1134,7 +1167,7 @@ RG.subjects.push({
   structure: [
     'Two papers, 2 hours each, 80 marks, 50% each. Closed book — learn your quotations.',
     'Paper 1 Section A (An Inspector Calls): (a) compare an extract with an unseen extract from another text (20 marks, ~45 min) and (b) a question on the wider play (20 marks, ~30 min).',
-    'Paper 1 Section B (Jekyll and Hyde): one 40-mark question — extract-based OR an essay.',
+    'Paper 1 Section B (19th-century novel — compulsory, 25% of the GCSE): one 40-mark question, extract-based OR an essay. Chesterton\'s KS4 English map lists Jekyll and Hyde (taught Year 10, Spring 1) — check with your English teacher that this is your class\'s novel.',
     'Paper 2 Section A (Conflict cluster): (a) compare a named anthology poem with an unseen poem (20) and (b) explore another poem from the cluster (20).',
     'Paper 2 Section B (Romeo and Juliet): one 40-mark question — extract-based OR an essay.'
   ],
@@ -1171,7 +1204,8 @@ RG.subjects.push({
         ['Why is the lighting change important?', 'Pink = rosy, comfortable illusion; bright and hard = the harsh truth exposed'], ['Which generation does Gerald side with?', 'The older generation (the Birling parents)']],
       ex: 'Make a table: each character — 3 quotations — what Priestley uses them to show. Then practise an unseen-extract comparison (a).' },
     { id: 'jh-plot', n: 'Jekyll and Hyde — plot & context', p: ['lit1'], w: 3,
-      pts: ['Published 1886 by Robert Louis Stevenson. Narrated mainly through Utterson, a respectable lawyer.',
+      pts: ['Check with your teacher: Chesterton\'s KS4 English map lists Jekyll and Hyde as the 19th-century novel (Paper 1 Section B, compulsory). If your class studied a different novel, tell me and it will be swapped.',
+        'Published 1886 by Robert Louis Stevenson. Narrated mainly through Utterson, a respectable lawyer.',
         'Key events: Enfield\'s "Story of the Door" (Hyde tramples a girl) → Jekyll\'s will → Hyde murders Sir Danvers Carew with a cane → Lanyon\'s shock and death → the Last Night (Poole and Utterson break in and find Hyde dead) → Lanyon\'s and Jekyll\'s letters reveal the truth.',
         'Victorian context: public respectability and reputation, repressed desires, fear of degeneration after Darwin, advances in science, and a religious backlash.',
         'Gothic genre: fog-bound London, secrecy, doubles, the monstrous, and locked doors.',
@@ -1230,10 +1264,14 @@ RG.subjects.push({
       pts: ['Honour Killing (Imtiaz Dharker): the speaker strips away layers of imposed identity (clothing, religion, culture) to find her true self. Conflict between self and society.',
         'Partition (Sujata Bhatt): family memory of the 1947 Partition of India, refugees and violence. Guilt and helplessness at suffering seen but not stopped.',
         'We Lived Happily during the War (Ilya Kaminsky): comfortable citizens stay passive while their country bombs others. Complicity, protest "not enough".',
-        'Papa-T (Fred D\'Aguiar) and Thirteen (Caleb Femi) were added in 2024 — use your class notes for the situation and key quotations.',
+        'Papa-T (Fred D\'Aguiar): addressed to the poet\'s grandfather in Guyana, remembered reciting Tennyson\'s "The Charge of the Light Brigade" in "no-nonsense recitals". The imperial battle blurs with the Guyanese jungle and family life (he threatens the children with a "good lickin\'"). Intertextual: unlike Tennyson\'s soldiers, who just "do and die", for the poet "to hear" is "to disobey".',
+        'Thirteen (Caleb Femi): second person ("you") and future tense predict the life of a Black boy in North Peckham who has just turned thirteen — he will be wrongly suspected and questioned by police, contrasted with a police officer who once visited his primary school and promised a bright future. Extended metaphor of stars: supernovas are dying stars, and black holes. Conflict: prejudice and lost innocence.',
         'For each: the speaker, the type of conflict (personal, political, cultural), 3 quotations, 2 methods, and a partner poem.'],
       cards: [['What does the speaker remove in Honour Killing?', 'Layers of imposed identity (clothes/veil, culture, religion) to reveal herself'], ['Historical event in Partition', '1947 Partition of India'],
-        ['Central idea of We Lived Happily during the War', 'Complicity — ordinary people ignored suffering caused by their country'], ['Which poems were added to the cluster for 2024?', 'Papa-T, Songs for the People, We Lived Happily during the War, Colonization in Reverse, Thirteen']],
+        ['Central idea of We Lived Happily during the War', 'Complicity — ordinary people ignored suffering caused by their country'], ['Which five poems were added in OCR\'s 2022 update (exams from 2024)?', 'Papa-T, Songs for the People, We Lived Happily during the War, Colonization in Reverse, Thirteen'],
+        ['Who is "Papa-T"?', 'The poet\'s grandfather (also a nod to Tennyson) — he recited "The Charge of the Light Brigade"'],
+        ['What does the speaker predict for the boy in Thirteen?', 'He will be falsely suspected by police — his bright promise dimmed by prejudice'],
+        ['Extended metaphor in Thirteen', 'Stars — supernovas (dying stars) and black holes']],
       ex: 'Fill in a one-page grid for all 15 cluster poems (speaker, conflict, 3 quotes, methods), then test yourself on it.' },
     { id: 'lit-unseen', n: 'Unseen extracts & comparison skills', p: ['lit1', 'lit2'], w: 2,
       pts: ['Both papers include an unseen comparison: an unseen drama/prose extract in P1(a) and an unseen poem in P2(a).',
@@ -1565,6 +1603,7 @@ RG.subjects.push({
       ex: 'Essay: "The New Deal was a success." How far do you agree? Judge it by different groups.' },
     { id: 'h-usa-war', n: 'USA 1941–1948: the impact of the Second World War', p: ['h1'], w: 3, from: '2026-11-02',
       pts: ['Mobilisation: propaganda campaigns, massive war production and the end of the Depression.',
+        'Response of the population to US involvement: strong isolationism before Pearl Harbor (7 December 1941), then overwhelming support for the war afterwards.',
         'Increased government and presidential power: control of wages and prices, rationing, and taxes on luxuries.',
         'Social impact: rationing, housing shortages near war factories, and a rise in divorce.',
         'Women and the war effort: millions took war jobs ("Rosie the Riveter"), though many were pushed out after 1945.',
@@ -2807,7 +2846,7 @@ function note(html, tone, icon) {
 }
 
 /* ---------- router & chrome ---------- */
-let route = 'today', sub = null, planTab = 'days', cardsSubj = null, openNode = null;
+let route = 'today', sub = null, planTab = 'days', cardsSubj = null, openNode = null, cardsTab = 'cards';
 function topBar() {
   const nx = nextExam(D.today()), dx = nx ? D.diff(D.today(), nx.date) : null, sk = streak();
   return `<div class="top-in"><a class="logo" href="#today" aria-label="GCSE Plan home"><i>27</i><span>GCSE Plan</span></a>
@@ -3063,7 +3102,7 @@ function viewTopic(t) {
   let h = `<a class="back" href="#subjects-${s.id}">${ic('chevL')} ${esc(s.name)}</a>`;
   h += `<div class="hello"><div class="kind" style="${sv(s.id)}"><i>${ic(s.id)}</i>${esc(s.name)} · ${esc(t.paperIds.map((id) => PAPER[id].code).join(', '))}</div><h1>${esc(t.n)}</h1>
     <div class="wrap-row" style="margin-top:6px">${t.h ? '<span class="chip">Higher only</span>' : ''}<span class="chip"><i class="dot" style="background:${ccol(x.c)}"></i>${esc(CONF_WORD[x.c || 0])}</span>${x.due ? '<span class="chip">Review ' + esc(D.short(x.due)) + '</span>' : ''}${np ? '<span class="chip">Exam ' + esc(D.short(np.date)) + '</span>' : ''}</div></div>`;
-  h += `<div class="sect"><button class="btn green full" data-act="revise" data-t="${t.id}">Start a 25-min session</button><div class="row" style="justify-content:space-between"><span class="small muted" style="font-weight:800">Confidence</span>${rate5(t.id, x.c || 0)}</div></div>`;
+  h += `<div class="sect"><button class="btn green full" data-act="revise" data-t="${t.id}">Start a 25-min session</button>${t.cardIds && t.cardIds.length >= 2 ? `<button class="btn full" data-act="quiz" data-src="t-${t.id}">${ic('target')} Quiz me on this topic</button>` : ''}<div class="row" style="justify-content:space-between"><span class="small muted" style="font-weight:800">Confidence</span>${rate5(t.id, x.c || 0)}</div></div>`;
   h += `<div class="sect"><h2>Key knowledge</h2><div class="card kp">${t.pts.map((p) => '<div>' + esc(p) + '</div>').join('')}</div>${specLine(t)}</div>`;
   if (t.cards && t.cards.length) h += `<div class="sect"><h2>Flashcards (${t.cards.length})</h2><div class="card"><ul class="pts">${t.cards.map((c) => '<li><b>' + esc(c[0]) + '</b><br><span class="muted">' + esc(c[1]) + '</span></li>').join('')}</ul></div></div>`;
   h += `<div class="sect"><h2>Exam practice</h2><div class="card stack"><p>${esc(t.ex)}</p><div class="wrap-row">${s.resources.map((r) => `<a class="btn sm" href="${esc(r[1])}" target="_blank" rel="noopener">${esc(r[0])}</a>`).join('')}</div></div></div>`;
@@ -3080,16 +3119,23 @@ function viewRate() {
 }
 
 /* ---------- flashcards tab ---------- */
+function cardsSwitch() {
+  return `<div class="seg" role="group" aria-label="Cards or quizzes">${[['cards', 'Flashcards', 'cards'], ['quiz', 'Quizzes', 'target']].map(([k, l, i]) => `<button data-ctab="${k}" aria-pressed="${cardsTab === k}">${ic(i)}${l}</button>`).join('')}</div>`;
+}
+function subjTabs() {
+  return `<div class="sect"><div class="tabs" role="group" aria-label="Subject filter"><button data-cs="" aria-pressed="${!cardsSubj}">All</button>${RG.subjects.map((s) => `<button data-cs="${s.id}" aria-pressed="${cardsSubj === s.id}">${esc(s.name.replace('English ', 'Eng. ').replace('Combined ', ''))}</button>`).join('')}</div></div>`;
+}
 function viewCards() {
+  if (cardsTab === 'quiz') return cardsSwitch() + viewQuizzes();
   const d = D.today();
   const due = dueCards(d, cardsSubj), nw = Math.min(newAllowance(d), newCardPool(cardsSubj).length);
   const seen = Object.keys(state.cards).filter((id) => CARD[id] && (!cardsSubj || CARD[id].t.subj.id === cardsSubj));
   const box = [0, 0, 0, 0, 0, 0]; for (const id of seen) box[state.cards[id].b]++;
   const mx = Math.max(1, ...box);
-  let h = `<div class="deckhero"><div class="stackart"><i></i><i></i><i>${due.length + nw}</i></div><h1>${due.length ? plural(due.length, 'card') + ' due' : nw ? plural(nw, 'new card') + ' to learn' : 'All caught up!'}</h1>
+  let h = cardsSwitch() + `<div class="deckhero"><div class="stackart"><i></i><i></i><i>${due.length + nw}</i></div><h1>${due.length ? plural(due.length, 'card') + ' due' : nw ? plural(nw, 'new card') + ' to learn' : 'All caught up!'}</h1>
     <p class="muted">Get a card right and it comes back later (1 → 3 → 7 → 14 → 30 days). Miss it and you'll see it tomorrow.</p></div>`;
   h += `<div class="sect"><button class="btn green full" data-act="review" ${due.length + nw ? '' : 'disabled'}>Review ${due.length} due + ${nw} new</button><button class="btn full" data-act="cram" ${newCardPool(cardsSubj).length + seen.length ? '' : 'disabled'}>Quick practice · 20 cards</button></div>`;
-  h += `<div class="sect"><div class="tabs" role="group" aria-label="Subject filter"><button data-cs="" aria-pressed="${!cardsSubj}">All</button>${RG.subjects.map((s) => `<button data-cs="${s.id}" aria-pressed="${cardsSubj === s.id}">${esc(s.name.replace('English ', 'Eng. ').replace('Combined ', ''))}</button>`).join('')}</div></div>`;
+  h += subjTabs();
   h += viewDecks();
   const bc = ['var(--red)', 'var(--orange)', 'var(--yellow)', 'var(--c4)', 'var(--green)', 'var(--blue)'];
   h += `<div class="sect"><h2>Your memory boxes</h2><div class="card stack"><div class="boxes">${box.map((n, i) => `<div><b class="num">${n}</b><i style="height:${Math.max(6, n / mx * 80)}px;--bc:${bc[i]}"></i><span>BOX ${i}</span></div>`).join('')}</div>
@@ -3546,9 +3592,147 @@ function overrideRight() {
   const t = $('#tres'); if (t) t.innerHTML = tresHTML(c);
 }
 
+/* ---------- multiple-choice quizzes ----------
+   Built from the same cards as the flashcards: the wrong options are other answers of the same kind
+   (a date for a date, a German noun with its article for a noun…). A missed question sends that card
+   back into its practice deck (state.pc = 0). Best scores live in state.quiz[id]. */
+const QUIZ_N = 10;
+const HINT = { en: 'What does this mean?', de: 'Which is the German?', g: 'Der, die or das?', hdates: 'When did this happen?', hpeople: 'Who or what is this?' };
+function paperGroups(s) {
+  const ts = visibleTopics(s).filter((t) => t.cardIds && t.cardIds.length);
+  const keys = [...new Set(ts.map((t) => t.paperIds[0]))];
+  const count = (k) => ts.filter((t) => k === 'all' || t.paperIds[0] === k).reduce((n, t) => n + t.cardIds.length, 0);
+  if (keys.length <= 1) return ts.length ? [{ id: 'p-' + s.id + '-all', sid: s.id, name: s.name + ' · all topics', desc: 'Questions from every ' + s.name + ' topic', n: count('all') }] : [];
+  return keys.map((k) => ({ id: 'p-' + s.id + '-' + k, sid: s.id, name: s.name.replace('Combined ', '') + ' · ' + PAPER[k].name, desc: 'Questions from the topics on this paper', n: count(k) }));
+}
+function quizList() {
+  const order = ['hist', 'german'].concat(RG.subjects.map((x) => x.id).filter((id) => id !== 'hist' && id !== 'german'));
+  const out = DECKS.filter((dk) => !(dk.h && state.settings.tiers.german === 'F'))
+    .map((dk) => ({ id: 'q-' + dk.id, sid: dk.sid, name: dk.name, desc: dk.type === 'g' ? 'Pick the right article' : dk.type ? 'Pick the right translation' : dk.desc, n: deckIds(dk).length }));
+  for (const x of RG.subjects) out.push(...paperGroups(x));
+  return out.map((q, i) => [order.indexOf(q.sid) * 100 + i, q]).sort((a, b) => a[0] - b[0]).map((x) => x[1]).filter((q) => !cardsSubj || q.sid === cardsSubj);
+}
+// { ids: cards to ask, pool: cards to draw wrong answers from, name, sid, kind }
+function findQuiz(id) {
+  if (id.startsWith('q-')) {
+    const dk = findDeck(id.slice(2)); if (!dk) return null;
+    const ids = deckIds(dk);
+    return { id, ids, pool: ids, name: dk.name, sid: dk.sid, kind: dk.type || dk.id };
+  }
+  if (id.startsWith('t-')) {
+    const t = TOPIC[id.slice(2)]; if (!t) return null;
+    return { id, ids: t.cardIds, pool: visibleTopics(t.subj).flatMap((x) => x.cardIds || []), name: t.n, sid: t.subj.id, kind: 'topic' };
+  }
+  if (id.startsWith('p-')) {
+    const rest = id.slice(2), sid = rest.split('-')[0], key = rest.slice(sid.length + 1), subj = SUBJ[sid]; if (!subj) return null;
+    const ts = visibleTopics(subj).filter((t) => t.cardIds && t.cardIds.length);
+    const g = paperGroups(subj).find((x) => x.id === id);
+    return { id, ids: ts.filter((t) => key === 'all' || t.paperIds[0] === key).flatMap((t) => t.cardIds), pool: ts.flatMap((t) => t.cardIds), name: g ? g.name : subj.name, sid, kind: 'topic' };
+  }
+  return null;
+}
+const yearOf = (x) => { const m = String(x).match(/\b(1[0-9]{3}|20[0-9]{2})\b/); return m ? Number(m[1]) : null; };
+function shapeOf(a) {
+  if (/^(der|die|das) \S/.test(a)) return 'noun';
+  if (/^to \S/.test(a)) return 'verb';
+  if (yearOf(a)) return 'date';
+  if (/\d/.test(a)) return 'num';
+  return a.length > 45 ? 'long' : 'short';
+}
+function quizQuestion(c, src) {
+  if (src.kind === 'g') return { id: c.id, ans: c.a.split(' ')[0], opts: ['der', 'die', 'das'], picked: null };
+  const norm = (x) => String(x).trim().toLowerCase(), ans = c.a, sh = shapeOf(ans), yr = yearOf(ans);
+  const vocab = src.kind === 'en' || src.kind === 'de';
+  const clash = (x) => { if (!vocab) return false; const A = new Set(ansAlts(c.a, 'en')), Q = new Set(ansAlts(c.q, 'en')); return ansAlts(x.a, 'en').some((y) => A.has(y)) || ansAlts(x.q, 'en').some((y) => Q.has(y)); };
+  const seen = new Set([norm(ans)]), scored = [];
+  for (const id of src.pool) {
+    const x = cardById(id); if (!x || x.id === c.id || seen.has(norm(x.a)) || clash(x)) continue;
+    seen.add(norm(x.a));
+    let sc = Math.random() * 1.5;
+    if (shapeOf(x.a) === sh) sc += 2;
+    if (src.kind === 'topic') { if (x.t === c.t) sc += 3; else if (x.t.paperIds && c.t.paperIds && x.t.paperIds[0] === c.t.paperIds[0]) sc += 1.5; }
+    const xy = yearOf(x.a); if (yr && xy) sc += Math.max(0, 2 - Math.abs(xy - yr) / 8);
+    sc += 1 - Math.min(1, Math.abs(x.a.length - ans.length) / Math.max(ans.length, 20));
+    scored.push([sc, x.a]);
+  }
+  scored.sort((a, b) => b[0] - a[0]);
+  return { id: c.id, ans, opts: shuffle([ans].concat(scored.slice(0, 3).map((x) => x[1]))), picked: null };
+}
+function quizRound(src) {
+  const pc = state.pc || {}, missed = shuffle(src.ids.filter((id) => pc[id] === 0)).slice(0, 4), m = new Set(missed);
+  return shuffle(missed.concat(shuffle(src.ids.filter((id) => !m.has(id)))).slice(0, QUIZ_N));
+}
+function startQuiz(id) {
+  const src = findQuiz(id); if (!src || !src.ids.length) return;
+  const qs = quizRound(src).map((cid) => quizQuestion(cardById(cid), src));
+  sess = { wasActive: activeOn(D.today()), b: { k: 'quiz', m: 10 }, opts: {}, mode: 'quiz', quiz: { src: id, name: src.name, sid: src.sid, kind: src.kind, qs, i: 0, right: 0 }, left: 10 * 60, running: false, xp: 0, fb: null, complete: null };
+  showOverlay(); renderQuiz();
+}
+function qoptsHTML(q) {
+  return q.opts.map((o, i) => {
+    const st = q.picked == null ? '' : o === q.ans ? ' right' : i === q.picked ? ' wrong' : ' dim';
+    return `<button class="qopt${st}" data-act="qpick" data-i="${i}" ${q.picked != null ? 'disabled' : ''}><b>${i + 1}</b><span>${esc(o)}</span></button>`;
+  }).join('');
+}
+function quizFoot() {
+  const z = sess.quiz, q = z.qs[z.i], f = sess.fb;
+  if (!f) return `<button class="btn full" disabled>Tap an answer</button>`;
+  return `<div class="fb"><div class="badge">${ic(f.ok ? 'check' : 'x')}</div><div><h2>${esc(f.msg)}</h2><p>${f.ok ? '+2 XP' : 'Answer: ' + esc(q.ans) + ' · added to your practice pile'}</p></div></div><button class="btn ${f.ok ? 'green' : 'red'} full" data-act="qnext">${z.i + 1 < z.qs.length ? 'Continue' : 'See your score'}</button>`;
+}
+function renderQuiz() {
+  const z = sess.quiz;
+  if (sess.complete) { $('#session').innerHTML = shell(100, completeBody(), '<div class="pair"><button class="btn full" data-act="next">Done</button><button class="btn green full" data-act="qagain">New quiz</button></div>'); return; }
+  const q = z.qs[z.i], c = cardById(q.id);
+  const hint = HINT[z.kind] || c.t.n;
+  const body = `<div class="kind" style="${sv(z.sid)}"><i>${ic(z.sid)}</i>${esc(z.name)} · ${z.i + 1}/${z.qs.length}</div>
+    <div class="qcard" style="${sv(c.t.subj.id)}"><span class="src">${esc(hint)}</span><div class="q">${esc(c.q)}</div></div>
+    <div class="qopts${z.kind === 'g' ? ' three' : ''}" id="qopts">${qoptsHTML(q)}</div>`;
+  $('#session').innerHTML = shell(z.i / z.qs.length * 100, body, quizFoot(), sess.fb ? (sess.fb.ok ? 'good' : 'bad') : '');
+}
+function pickQuiz(i) {
+  const z = sess && sess.quiz; if (!z || sess.complete || sess.fb) return;
+  const q = z.qs[z.i]; if (!q || i >= q.opts.length) return;
+  q.picked = i;
+  const ok = q.opts[i] === q.ans;
+  if (!state.pc) state.pc = {};
+  if (ok) { z.right++; addXP(2); } else state.pc[q.id] = 0;
+  sess.fb = { ok, msg: ok ? pick(YES) : pick(NO) };
+  save();
+  $('#qopts').innerHTML = qoptsHTML(q);
+  setFoot(quizFoot(), ok ? 'good' : 'bad');
+  const pb = $('#session .pbar i'); if (pb) pb.style.width = Math.max(3, (z.i + 1) / z.qs.length * 100) + '%';
+  const el = $('#qopts .qopt.' + (ok ? 'right' : 'wrong'));
+  if (ok) { Sound.correct(); buzz(12); confetti({ n: 36, spread: 11, y: innerHeight - 140 }); xpFloat(2, el); }
+  else { Sound.wrong(); buzz([20, 40, 20]); if (el) { el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake'); } }
+}
+function nextQuiz() {
+  const z = sess && sess.quiz; if (!z || !sess.fb) return;
+  z.i++; sess.fb = null;
+  if (z.i < z.qs.length) { renderQuiz(); return; }
+  if (!state.quiz) state.quiz = {};
+  const prev = state.quiz[z.src] || { best: 0, n: 0 };
+  state.quiz[z.src] = { best: Math.max(prev.best, z.right), n: prev.n + 1, last: z.right, of: z.qs.length };
+  addXP(5); save();
+  sess.complete = { title: z.right === z.qs.length ? 'Perfect score!' : z.right >= z.qs.length * 0.7 ? 'Great quiz!' : 'Quiz complete!',
+    stats: [['Score', z.right + '/' + z.qs.length, 'var(--green)', 'check'], ['Best', state.quiz[z.src].best + '/' + z.qs.length, 'var(--blue)', 'star']], streakUp: !sess.wasActive };
+  renderQuiz(); Sound.win(); buzz([30, 50, 30]); confetti({ n: 160, spread: 18, y: innerHeight * 0.35 });
+}
+function viewQuizzes() {
+  const L = quizList();
+  let h = `<div class="deckhero"><div class="hero-ill" style="--c:var(--purple);--cd:var(--purple-d)">${ic('target')}</div><h1>Quick-fire quizzes</h1>
+    <p class="muted">10 multiple-choice questions from your revision cards. Tap the right answer — anything you miss goes back into your practice decks.</p></div>`;
+  h += subjTabs();
+  h += `<div class="sect"><div class="decks">${L.map((q) => {
+    const r = (state.quiz || {})[q.id], of = Math.min(QUIZ_N, q.n), pct = r ? Math.round(r.best / (r.of || of) * 100) : 0;
+    return `<button class="deck" data-act="quiz" data-src="${esc(q.id)}" style="${sv(q.sid)}"><span class="deck-ic">${ic(q.sid)}</span><span class="deck-tx"><b>${esc(q.name)}</b><span class="tiny">${esc(q.desc)}</span>
+      <span class="deck-bar"><i style="width:${pct}%"></i></span><span class="tiny num">${r ? 'Best ' + r.best + '/' + (r.of || of) + ' · played ' + plural(r.n, 'time') : q.n + ' questions to draw from'}</span></span><span class="qgo">${r ? r.best + '/' + (r.of || of) : 'Go'}</span></button>`;
+  }).join('')}</div></div>`;
+  return h;
+}
+
 /* ---------- events ---------- */
 document.addEventListener('click', (e) => {
-  const el = e.target.closest('[data-act],[data-rate],[data-topic],[data-unlock],[data-tab],[data-cs],[data-chk],[data-weak]');
+  const el = e.target.closest('[data-act],[data-rate],[data-topic],[data-unlock],[data-tab],[data-cs],[data-chk],[data-weak],[data-ctab]');
   if (!el) return;
   if (el.dataset.rate) {
     quickRate(el.dataset.rate, Number(el.dataset.r)); save(); Sound.tick();
@@ -3558,6 +3742,7 @@ document.addEventListener('click', (e) => {
   if (el.dataset.topic) { go('subjects', el.dataset.topic); return; }
   if (el.dataset.unlock) { state.unlocked[el.dataset.unlock] = true; save(); render(); toast('Added to your plan'); return; }
   if (el.dataset.tab) { planTab = el.dataset.tab; render(); return; }
+  if (el.dataset.ctab) { cardsTab = el.dataset.ctab; Sound.tick(); render(); return; }
   if (el.dataset.cs != null && el.closest('.tabs')) { cardsSubj = el.dataset.cs || null; render(); return; }
   if (el.dataset.chk != null) {
     const on = el.getAttribute('aria-pressed') !== 'true'; sess.checks[el.dataset.chk] = on; el.setAttribute('aria-pressed', on);
@@ -3602,6 +3787,10 @@ document.addEventListener('click', (e) => {
     case 'review': startCards('review'); break;
     case 'cram': startCards('cram'); break;
     case 'practice': startPractice(el.dataset.deck); break;
+    case 'quiz': startQuiz(el.dataset.src); break;
+    case 'qpick': pickQuiz(Number(el.dataset.i)); break;
+    case 'qnext': nextQuiz(); break;
+    case 'qagain': { const id = sess && sess.quiz && sess.quiz.src; closeSession(); if (id) startQuiz(id); break; }
     case 'check': checkTyped(($('#ans') || {}).value || ''); break;
     case 'idk': checkTyped('', true); break;
     case 'gpick': checkTyped(el.dataset.g); break;
@@ -3654,6 +3843,11 @@ document.addEventListener('keydown', (e) => {
   if (!sess) return;
   if (e.key === 'Escape') { closeSession(); return; }
   if (/INPUT|TEXTAREA|SELECT/.test(document.activeElement && document.activeElement.tagName)) return;
+  if (sess.quiz && !sess.complete) {
+    if (!sess.fb && /^[1-4]$/.test(e.key)) pickQuiz(Number(e.key) - 1);
+    else if (sess.fb && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); nextQuiz(); }
+    return;
+  }
   const q = (sess.deck || (sess.steps && sess.steps[sess.step] === 'cards')) ? queue() : null;
   if (q && q.i < q.list.length) {
     if (sess.fb) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); continueCard(); } return; }

@@ -140,7 +140,7 @@ function note(html, tone, icon) {
 }
 
 /* ---------- router & chrome ---------- */
-let route = 'today', sub = null, planTab = 'days', cardsSubj = null, openNode = null;
+let route = 'today', sub = null, planTab = 'days', cardsSubj = null, openNode = null, cardsTab = 'cards';
 function topBar() {
   const nx = nextExam(D.today()), dx = nx ? D.diff(D.today(), nx.date) : null, sk = streak();
   return `<div class="top-in"><a class="logo" href="#today" aria-label="GCSE Plan home"><i>27</i><span>GCSE Plan</span></a>
@@ -396,7 +396,7 @@ function viewTopic(t) {
   let h = `<a class="back" href="#subjects-${s.id}">${ic('chevL')} ${esc(s.name)}</a>`;
   h += `<div class="hello"><div class="kind" style="${sv(s.id)}"><i>${ic(s.id)}</i>${esc(s.name)} · ${esc(t.paperIds.map((id) => PAPER[id].code).join(', '))}</div><h1>${esc(t.n)}</h1>
     <div class="wrap-row" style="margin-top:6px">${t.h ? '<span class="chip">Higher only</span>' : ''}<span class="chip"><i class="dot" style="background:${ccol(x.c)}"></i>${esc(CONF_WORD[x.c || 0])}</span>${x.due ? '<span class="chip">Review ' + esc(D.short(x.due)) + '</span>' : ''}${np ? '<span class="chip">Exam ' + esc(D.short(np.date)) + '</span>' : ''}</div></div>`;
-  h += `<div class="sect"><button class="btn green full" data-act="revise" data-t="${t.id}">Start a 25-min session</button><div class="row" style="justify-content:space-between"><span class="small muted" style="font-weight:800">Confidence</span>${rate5(t.id, x.c || 0)}</div></div>`;
+  h += `<div class="sect"><button class="btn green full" data-act="revise" data-t="${t.id}">Start a 25-min session</button>${t.cardIds && t.cardIds.length >= 2 ? `<button class="btn full" data-act="quiz" data-src="t-${t.id}">${ic('target')} Quiz me on this topic</button>` : ''}<div class="row" style="justify-content:space-between"><span class="small muted" style="font-weight:800">Confidence</span>${rate5(t.id, x.c || 0)}</div></div>`;
   h += `<div class="sect"><h2>Key knowledge</h2><div class="card kp">${t.pts.map((p) => '<div>' + esc(p) + '</div>').join('')}</div>${specLine(t)}</div>`;
   if (t.cards && t.cards.length) h += `<div class="sect"><h2>Flashcards (${t.cards.length})</h2><div class="card"><ul class="pts">${t.cards.map((c) => '<li><b>' + esc(c[0]) + '</b><br><span class="muted">' + esc(c[1]) + '</span></li>').join('')}</ul></div></div>`;
   h += `<div class="sect"><h2>Exam practice</h2><div class="card stack"><p>${esc(t.ex)}</p><div class="wrap-row">${s.resources.map((r) => `<a class="btn sm" href="${esc(r[1])}" target="_blank" rel="noopener">${esc(r[0])}</a>`).join('')}</div></div></div>`;
@@ -413,16 +413,23 @@ function viewRate() {
 }
 
 /* ---------- flashcards tab ---------- */
+function cardsSwitch() {
+  return `<div class="seg" role="group" aria-label="Cards or quizzes">${[['cards', 'Flashcards', 'cards'], ['quiz', 'Quizzes', 'target']].map(([k, l, i]) => `<button data-ctab="${k}" aria-pressed="${cardsTab === k}">${ic(i)}${l}</button>`).join('')}</div>`;
+}
+function subjTabs() {
+  return `<div class="sect"><div class="tabs" role="group" aria-label="Subject filter"><button data-cs="" aria-pressed="${!cardsSubj}">All</button>${RG.subjects.map((s) => `<button data-cs="${s.id}" aria-pressed="${cardsSubj === s.id}">${esc(s.name.replace('English ', 'Eng. ').replace('Combined ', ''))}</button>`).join('')}</div></div>`;
+}
 function viewCards() {
+  if (cardsTab === 'quiz') return cardsSwitch() + viewQuizzes();
   const d = D.today();
   const due = dueCards(d, cardsSubj), nw = Math.min(newAllowance(d), newCardPool(cardsSubj).length);
   const seen = Object.keys(state.cards).filter((id) => CARD[id] && (!cardsSubj || CARD[id].t.subj.id === cardsSubj));
   const box = [0, 0, 0, 0, 0, 0]; for (const id of seen) box[state.cards[id].b]++;
   const mx = Math.max(1, ...box);
-  let h = `<div class="deckhero"><div class="stackart"><i></i><i></i><i>${due.length + nw}</i></div><h1>${due.length ? plural(due.length, 'card') + ' due' : nw ? plural(nw, 'new card') + ' to learn' : 'All caught up!'}</h1>
+  let h = cardsSwitch() + `<div class="deckhero"><div class="stackart"><i></i><i></i><i>${due.length + nw}</i></div><h1>${due.length ? plural(due.length, 'card') + ' due' : nw ? plural(nw, 'new card') + ' to learn' : 'All caught up!'}</h1>
     <p class="muted">Get a card right and it comes back later (1 → 3 → 7 → 14 → 30 days). Miss it and you'll see it tomorrow.</p></div>`;
   h += `<div class="sect"><button class="btn green full" data-act="review" ${due.length + nw ? '' : 'disabled'}>Review ${due.length} due + ${nw} new</button><button class="btn full" data-act="cram" ${newCardPool(cardsSubj).length + seen.length ? '' : 'disabled'}>Quick practice · 20 cards</button></div>`;
-  h += `<div class="sect"><div class="tabs" role="group" aria-label="Subject filter"><button data-cs="" aria-pressed="${!cardsSubj}">All</button>${RG.subjects.map((s) => `<button data-cs="${s.id}" aria-pressed="${cardsSubj === s.id}">${esc(s.name.replace('English ', 'Eng. ').replace('Combined ', ''))}</button>`).join('')}</div></div>`;
+  h += subjTabs();
   h += viewDecks();
   const bc = ['var(--red)', 'var(--orange)', 'var(--yellow)', 'var(--c4)', 'var(--green)', 'var(--blue)'];
   h += `<div class="sect"><h2>Your memory boxes</h2><div class="card stack"><div class="boxes">${box.map((n, i) => `<div><b class="num">${n}</b><i style="height:${Math.max(6, n / mx * 80)}px;--bc:${bc[i]}"></i><span>BOX ${i}</span></div>`).join('')}</div>
@@ -879,9 +886,147 @@ function overrideRight() {
   const t = $('#tres'); if (t) t.innerHTML = tresHTML(c);
 }
 
+/* ---------- multiple-choice quizzes ----------
+   Built from the same cards as the flashcards: the wrong options are other answers of the same kind
+   (a date for a date, a German noun with its article for a noun…). A missed question sends that card
+   back into its practice deck (state.pc = 0). Best scores live in state.quiz[id]. */
+const QUIZ_N = 10;
+const HINT = { en: 'What does this mean?', de: 'Which is the German?', g: 'Der, die or das?', hdates: 'When did this happen?', hpeople: 'Who or what is this?' };
+function paperGroups(s) {
+  const ts = visibleTopics(s).filter((t) => t.cardIds && t.cardIds.length);
+  const keys = [...new Set(ts.map((t) => t.paperIds[0]))];
+  const count = (k) => ts.filter((t) => k === 'all' || t.paperIds[0] === k).reduce((n, t) => n + t.cardIds.length, 0);
+  if (keys.length <= 1) return ts.length ? [{ id: 'p-' + s.id + '-all', sid: s.id, name: s.name + ' · all topics', desc: 'Questions from every ' + s.name + ' topic', n: count('all') }] : [];
+  return keys.map((k) => ({ id: 'p-' + s.id + '-' + k, sid: s.id, name: s.name.replace('Combined ', '') + ' · ' + PAPER[k].name, desc: 'Questions from the topics on this paper', n: count(k) }));
+}
+function quizList() {
+  const order = ['hist', 'german'].concat(RG.subjects.map((x) => x.id).filter((id) => id !== 'hist' && id !== 'german'));
+  const out = DECKS.filter((dk) => !(dk.h && state.settings.tiers.german === 'F'))
+    .map((dk) => ({ id: 'q-' + dk.id, sid: dk.sid, name: dk.name, desc: dk.type === 'g' ? 'Pick the right article' : dk.type ? 'Pick the right translation' : dk.desc, n: deckIds(dk).length }));
+  for (const x of RG.subjects) out.push(...paperGroups(x));
+  return out.map((q, i) => [order.indexOf(q.sid) * 100 + i, q]).sort((a, b) => a[0] - b[0]).map((x) => x[1]).filter((q) => !cardsSubj || q.sid === cardsSubj);
+}
+// { ids: cards to ask, pool: cards to draw wrong answers from, name, sid, kind }
+function findQuiz(id) {
+  if (id.startsWith('q-')) {
+    const dk = findDeck(id.slice(2)); if (!dk) return null;
+    const ids = deckIds(dk);
+    return { id, ids, pool: ids, name: dk.name, sid: dk.sid, kind: dk.type || dk.id };
+  }
+  if (id.startsWith('t-')) {
+    const t = TOPIC[id.slice(2)]; if (!t) return null;
+    return { id, ids: t.cardIds, pool: visibleTopics(t.subj).flatMap((x) => x.cardIds || []), name: t.n, sid: t.subj.id, kind: 'topic' };
+  }
+  if (id.startsWith('p-')) {
+    const rest = id.slice(2), sid = rest.split('-')[0], key = rest.slice(sid.length + 1), subj = SUBJ[sid]; if (!subj) return null;
+    const ts = visibleTopics(subj).filter((t) => t.cardIds && t.cardIds.length);
+    const g = paperGroups(subj).find((x) => x.id === id);
+    return { id, ids: ts.filter((t) => key === 'all' || t.paperIds[0] === key).flatMap((t) => t.cardIds), pool: ts.flatMap((t) => t.cardIds), name: g ? g.name : subj.name, sid, kind: 'topic' };
+  }
+  return null;
+}
+const yearOf = (x) => { const m = String(x).match(/\b(1[0-9]{3}|20[0-9]{2})\b/); return m ? Number(m[1]) : null; };
+function shapeOf(a) {
+  if (/^(der|die|das) \S/.test(a)) return 'noun';
+  if (/^to \S/.test(a)) return 'verb';
+  if (yearOf(a)) return 'date';
+  if (/\d/.test(a)) return 'num';
+  return a.length > 45 ? 'long' : 'short';
+}
+function quizQuestion(c, src) {
+  if (src.kind === 'g') return { id: c.id, ans: c.a.split(' ')[0], opts: ['der', 'die', 'das'], picked: null };
+  const norm = (x) => String(x).trim().toLowerCase(), ans = c.a, sh = shapeOf(ans), yr = yearOf(ans);
+  const vocab = src.kind === 'en' || src.kind === 'de';
+  const clash = (x) => { if (!vocab) return false; const A = new Set(ansAlts(c.a, 'en')), Q = new Set(ansAlts(c.q, 'en')); return ansAlts(x.a, 'en').some((y) => A.has(y)) || ansAlts(x.q, 'en').some((y) => Q.has(y)); };
+  const seen = new Set([norm(ans)]), scored = [];
+  for (const id of src.pool) {
+    const x = cardById(id); if (!x || x.id === c.id || seen.has(norm(x.a)) || clash(x)) continue;
+    seen.add(norm(x.a));
+    let sc = Math.random() * 1.5;
+    if (shapeOf(x.a) === sh) sc += 2;
+    if (src.kind === 'topic') { if (x.t === c.t) sc += 3; else if (x.t.paperIds && c.t.paperIds && x.t.paperIds[0] === c.t.paperIds[0]) sc += 1.5; }
+    const xy = yearOf(x.a); if (yr && xy) sc += Math.max(0, 2 - Math.abs(xy - yr) / 8);
+    sc += 1 - Math.min(1, Math.abs(x.a.length - ans.length) / Math.max(ans.length, 20));
+    scored.push([sc, x.a]);
+  }
+  scored.sort((a, b) => b[0] - a[0]);
+  return { id: c.id, ans, opts: shuffle([ans].concat(scored.slice(0, 3).map((x) => x[1]))), picked: null };
+}
+function quizRound(src) {
+  const pc = state.pc || {}, missed = shuffle(src.ids.filter((id) => pc[id] === 0)).slice(0, 4), m = new Set(missed);
+  return shuffle(missed.concat(shuffle(src.ids.filter((id) => !m.has(id)))).slice(0, QUIZ_N));
+}
+function startQuiz(id) {
+  const src = findQuiz(id); if (!src || !src.ids.length) return;
+  const qs = quizRound(src).map((cid) => quizQuestion(cardById(cid), src));
+  sess = { wasActive: activeOn(D.today()), b: { k: 'quiz', m: 10 }, opts: {}, mode: 'quiz', quiz: { src: id, name: src.name, sid: src.sid, kind: src.kind, qs, i: 0, right: 0 }, left: 10 * 60, running: false, xp: 0, fb: null, complete: null };
+  showOverlay(); renderQuiz();
+}
+function qoptsHTML(q) {
+  return q.opts.map((o, i) => {
+    const st = q.picked == null ? '' : o === q.ans ? ' right' : i === q.picked ? ' wrong' : ' dim';
+    return `<button class="qopt${st}" data-act="qpick" data-i="${i}" ${q.picked != null ? 'disabled' : ''}><b>${i + 1}</b><span>${esc(o)}</span></button>`;
+  }).join('');
+}
+function quizFoot() {
+  const z = sess.quiz, q = z.qs[z.i], f = sess.fb;
+  if (!f) return `<button class="btn full" disabled>Tap an answer</button>`;
+  return `<div class="fb"><div class="badge">${ic(f.ok ? 'check' : 'x')}</div><div><h2>${esc(f.msg)}</h2><p>${f.ok ? '+2 XP' : 'Answer: ' + esc(q.ans) + ' · added to your practice pile'}</p></div></div><button class="btn ${f.ok ? 'green' : 'red'} full" data-act="qnext">${z.i + 1 < z.qs.length ? 'Continue' : 'See your score'}</button>`;
+}
+function renderQuiz() {
+  const z = sess.quiz;
+  if (sess.complete) { $('#session').innerHTML = shell(100, completeBody(), '<div class="pair"><button class="btn full" data-act="next">Done</button><button class="btn green full" data-act="qagain">New quiz</button></div>'); return; }
+  const q = z.qs[z.i], c = cardById(q.id);
+  const hint = HINT[z.kind] || c.t.n;
+  const body = `<div class="kind" style="${sv(z.sid)}"><i>${ic(z.sid)}</i>${esc(z.name)} · ${z.i + 1}/${z.qs.length}</div>
+    <div class="qcard" style="${sv(c.t.subj.id)}"><span class="src">${esc(hint)}</span><div class="q">${esc(c.q)}</div></div>
+    <div class="qopts${z.kind === 'g' ? ' three' : ''}" id="qopts">${qoptsHTML(q)}</div>`;
+  $('#session').innerHTML = shell(z.i / z.qs.length * 100, body, quizFoot(), sess.fb ? (sess.fb.ok ? 'good' : 'bad') : '');
+}
+function pickQuiz(i) {
+  const z = sess && sess.quiz; if (!z || sess.complete || sess.fb) return;
+  const q = z.qs[z.i]; if (!q || i >= q.opts.length) return;
+  q.picked = i;
+  const ok = q.opts[i] === q.ans;
+  if (!state.pc) state.pc = {};
+  if (ok) { z.right++; addXP(2); } else state.pc[q.id] = 0;
+  sess.fb = { ok, msg: ok ? pick(YES) : pick(NO) };
+  save();
+  $('#qopts').innerHTML = qoptsHTML(q);
+  setFoot(quizFoot(), ok ? 'good' : 'bad');
+  const pb = $('#session .pbar i'); if (pb) pb.style.width = Math.max(3, (z.i + 1) / z.qs.length * 100) + '%';
+  const el = $('#qopts .qopt.' + (ok ? 'right' : 'wrong'));
+  if (ok) { Sound.correct(); buzz(12); confetti({ n: 36, spread: 11, y: innerHeight - 140 }); xpFloat(2, el); }
+  else { Sound.wrong(); buzz([20, 40, 20]); if (el) { el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake'); } }
+}
+function nextQuiz() {
+  const z = sess && sess.quiz; if (!z || !sess.fb) return;
+  z.i++; sess.fb = null;
+  if (z.i < z.qs.length) { renderQuiz(); return; }
+  if (!state.quiz) state.quiz = {};
+  const prev = state.quiz[z.src] || { best: 0, n: 0 };
+  state.quiz[z.src] = { best: Math.max(prev.best, z.right), n: prev.n + 1, last: z.right, of: z.qs.length };
+  addXP(5); save();
+  sess.complete = { title: z.right === z.qs.length ? 'Perfect score!' : z.right >= z.qs.length * 0.7 ? 'Great quiz!' : 'Quiz complete!',
+    stats: [['Score', z.right + '/' + z.qs.length, 'var(--green)', 'check'], ['Best', state.quiz[z.src].best + '/' + z.qs.length, 'var(--blue)', 'star']], streakUp: !sess.wasActive };
+  renderQuiz(); Sound.win(); buzz([30, 50, 30]); confetti({ n: 160, spread: 18, y: innerHeight * 0.35 });
+}
+function viewQuizzes() {
+  const L = quizList();
+  let h = `<div class="deckhero"><div class="hero-ill" style="--c:var(--purple);--cd:var(--purple-d)">${ic('target')}</div><h1>Quick-fire quizzes</h1>
+    <p class="muted">10 multiple-choice questions from your revision cards. Tap the right answer — anything you miss goes back into your practice decks.</p></div>`;
+  h += subjTabs();
+  h += `<div class="sect"><div class="decks">${L.map((q) => {
+    const r = (state.quiz || {})[q.id], of = Math.min(QUIZ_N, q.n), pct = r ? Math.round(r.best / (r.of || of) * 100) : 0;
+    return `<button class="deck" data-act="quiz" data-src="${esc(q.id)}" style="${sv(q.sid)}"><span class="deck-ic">${ic(q.sid)}</span><span class="deck-tx"><b>${esc(q.name)}</b><span class="tiny">${esc(q.desc)}</span>
+      <span class="deck-bar"><i style="width:${pct}%"></i></span><span class="tiny num">${r ? 'Best ' + r.best + '/' + (r.of || of) + ' · played ' + plural(r.n, 'time') : q.n + ' questions to draw from'}</span></span><span class="qgo">${r ? r.best + '/' + (r.of || of) : 'Go'}</span></button>`;
+  }).join('')}</div></div>`;
+  return h;
+}
+
 /* ---------- events ---------- */
 document.addEventListener('click', (e) => {
-  const el = e.target.closest('[data-act],[data-rate],[data-topic],[data-unlock],[data-tab],[data-cs],[data-chk],[data-weak]');
+  const el = e.target.closest('[data-act],[data-rate],[data-topic],[data-unlock],[data-tab],[data-cs],[data-chk],[data-weak],[data-ctab]');
   if (!el) return;
   if (el.dataset.rate) {
     quickRate(el.dataset.rate, Number(el.dataset.r)); save(); Sound.tick();
@@ -891,6 +1036,7 @@ document.addEventListener('click', (e) => {
   if (el.dataset.topic) { go('subjects', el.dataset.topic); return; }
   if (el.dataset.unlock) { state.unlocked[el.dataset.unlock] = true; save(); render(); toast('Added to your plan'); return; }
   if (el.dataset.tab) { planTab = el.dataset.tab; render(); return; }
+  if (el.dataset.ctab) { cardsTab = el.dataset.ctab; Sound.tick(); render(); return; }
   if (el.dataset.cs != null && el.closest('.tabs')) { cardsSubj = el.dataset.cs || null; render(); return; }
   if (el.dataset.chk != null) {
     const on = el.getAttribute('aria-pressed') !== 'true'; sess.checks[el.dataset.chk] = on; el.setAttribute('aria-pressed', on);
@@ -935,6 +1081,10 @@ document.addEventListener('click', (e) => {
     case 'review': startCards('review'); break;
     case 'cram': startCards('cram'); break;
     case 'practice': startPractice(el.dataset.deck); break;
+    case 'quiz': startQuiz(el.dataset.src); break;
+    case 'qpick': pickQuiz(Number(el.dataset.i)); break;
+    case 'qnext': nextQuiz(); break;
+    case 'qagain': { const id = sess && sess.quiz && sess.quiz.src; closeSession(); if (id) startQuiz(id); break; }
     case 'check': checkTyped(($('#ans') || {}).value || ''); break;
     case 'idk': checkTyped('', true); break;
     case 'gpick': checkTyped(el.dataset.g); break;
@@ -987,6 +1137,11 @@ document.addEventListener('keydown', (e) => {
   if (!sess) return;
   if (e.key === 'Escape') { closeSession(); return; }
   if (/INPUT|TEXTAREA|SELECT/.test(document.activeElement && document.activeElement.tagName)) return;
+  if (sess.quiz && !sess.complete) {
+    if (!sess.fb && /^[1-4]$/.test(e.key)) pickQuiz(Number(e.key) - 1);
+    else if (sess.fb && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); nextQuiz(); }
+    return;
+  }
   const q = (sess.deck || (sess.steps && sess.steps[sess.step] === 'cards')) ? queue() : null;
   if (q && q.i < q.list.length) {
     if (sess.fb) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); continueCard(); } return; }

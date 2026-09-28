@@ -599,10 +599,10 @@ function nextReviewTxt(t, r) {
   const np = nextPaper(t, D.today()), dx = np ? D.diff(D.today(), np.date) : null;
   return 'Next review: <b>' + esc(D.short(D.add(D.today(), intervalFor(r, (st(t.id).n || 0) + 1, dx)))) + '</b>';
 }
-function cardFace(c, flip) {
+function cardFace(c, flip, typing) {
   const sid = c.t.subj.id;
-  return `<div class="fc-wrap"><div class="fc${flip ? ' flip' : ''}" id="fc" data-act="flip" role="button" tabindex="0" aria-label="Flashcard — tap to ${flip ? 'hide' : 'show'} the answer" style="${sv(sid)}">
-    <div class="face"><span class="src">${esc(c.t.subj.name)} · ${esc(c.t.n)}</span><div class="q">${esc(c.q)}</div><div class="hint">Tap to flip</div></div>
+  return `<div class="fc-wrap${typing ? ' typing' : ''}"><div class="fc${flip ? ' flip' : ''}" id="fc" ${typing ? '' : 'data-act="flip" role="button" tabindex="0"'} aria-label="Flashcard${typing ? '' : ' — tap to ' + (flip ? 'hide' : 'show') + ' the answer'}" style="${sv(sid)}">
+    <div class="face"><span class="src">${esc(c.t.subj.name)} · ${esc(c.t.n)}</span><div class="q">${esc(c.q)}</div><div class="hint">${typing ? (sess.ptype === 'g' ? 'Der, die or das?' : 'Type your answer below') : 'Tap to flip'}</div></div>
     <div class="face back-f"><span class="src">Answer</span><div class="a">${esc(c.a)}</div></div></div></div>`;
 }
 function cardFoot(q) {
@@ -611,6 +611,7 @@ function cardFoot(q) {
     const ok = s.fb.ok;
     return `<div class="fb"><div class="badge">${ic(ok ? 'check' : 'x')}</div><div><h2>${esc(s.fb.msg)}</h2><p>${esc(fbSub(ok, q))}</p></div></div><button class="btn ${ok ? 'green' : 'red'} full" data-act="cont">Continue</button>`;
   }
+  if (s.typing) return s.ptype === 'g' ? `<button class="btn full" data-act="idk">I don't know</button>` : `<div class="pair"><button class="btn full" data-act="idk">Don't know</button><button class="btn blue full" data-act="check">Check</button></div>`;
   if (!q.flip) return `<button class="btn blue full" data-act="flip">Show answer</button>`;
   return `<div class="pair"><button class="btn full" data-act="grade" data-ok="0" style="--fg:var(--red)">Didn't know</button><button class="btn green full" data-act="grade" data-ok="1">Knew it!</button></div>`;
 }
@@ -626,21 +627,21 @@ function setFoot(html, cls) {
 }
 function queue() { return sess.deck || sess.cardQ; }
 function flipCard() {
-  const q = queue(); if (!q || sess.fb) return;
+  const q = queue(); if (!q || sess.fb || sess.typing) return;
   q.flip = !q.flip;
   const el = $('#fc'); if (el) el.classList.toggle('flip', q.flip);
   setFoot(cardFoot(q));
 }
-function gradeCurrent(ok) {
+function gradeCurrent(ok, note) {
   const q = queue(); if (!q || sess.fb || !q.flip) return;
   const id = q.list[q.i], d = D.today(), first = !q.again[id];
   const prac = sess.mode === 'practice', gain = prac ? 1 : 2;
-  if (prac) { if (!state.pc) state.pc = {}; if (first) state.pc[id] = ok ? pcOf(id) + 1 : 0; }
+  if (prac) { if (!state.pc) state.pc = {}; sess.last = { id, first, prev: pcOf(id) }; if (first) state.pc[id] = ok ? pcOf(id) + 1 : 0; }
   else if (sess.mode === 'cram') { if (state.cards[id] || ok) gradeCard(id, ok, d); }
   else if (first) gradeCard(id, ok, d);
   if (ok) { if (first) q.right++; addXP(gain); }
   else { q.wrong++; if (first && sess.mode !== 'cram') { q.again[id] = 1; q.list.push(id); } }
-  sess.fb = { ok, msg: ok ? pick(YES) : pick(NO) };
+  sess.fb = { ok, msg: ok ? pick(YES) : pick(NO), note };
   save();
   setFoot(cardFoot(q), ok ? 'good' : 'bad');
   const btn = $('#l-foot .btn');
@@ -650,7 +651,7 @@ function gradeCurrent(ok) {
 }
 function continueCard() {
   const q = queue(); if (!q) return;
-  q.i++; q.flip = false; sess.fb = null;
+  q.i++; q.flip = false; q.typed = ''; sess.fb = null;
   if (sess.deck) renderDeck(); else renderSession();
 }
 function finishSession() {
@@ -705,8 +706,9 @@ function renderDeck() {
   const c = cardById(q.list[q.i]), cs = state.cards[c.id], prac = sess.mode === 'practice';
   const label = prac ? findDeck(sess.pdeck).name : sess.mode === 'cram' ? 'Quick practice' : 'Review';
   const note = prac ? (c.id in (state.pc || {}) ? (pcOf(c.id) >= MASTER ? 'Mastered' : pcOf(c.id) + '/' + MASTER + ' in a row') : 'New card') : cs ? 'Box ' + cs.b : 'New card';
-  const body = `<div class="kind" style="${sv(c.t.subj.id)}"><i>${ic(c.t.subj.id)}</i>${esc(label)} · ${q.i + 1}/${q.list.length}</div>${cardFace(c, q.flip)}<p class="tiny muted" style="text-align:center">${note} · say the answer out loud before you flip</p>`;
+  const body = `<div class="kind" style="${sv(c.t.subj.id)}"><i>${ic(c.t.subj.id)}</i>${esc(label)} · ${q.i + 1}/${q.list.length}</div>${cardFace(c, q.flip, sess.typing)}${sess.typing ? typeArea(c, q) + `<p class="tiny muted" style="text-align:center">${note}</p>` : `<p class="tiny muted" style="text-align:center">${note} · say the answer out loud before you flip</p>`}`;
   $('#session').innerHTML = shell(progressNow(), body, cardFoot(q), sess.fb ? (sess.fb.ok ? 'good' : 'bad') : '');
+  if (sess.typing && !sess.fb) { const i = $('#ans'); if (i) i.focus({ preventScroll: true }); }
 }
 // a plan flashcard block counts as done once you've worked through it (or there was nothing due)
 function markDeckDone() {
@@ -742,11 +744,11 @@ const DECKS = (() => {
   const dk = RG.decks || {}, v = RG.vocab || { F: [], H: [], genders: [] };
   if (dk.histDates) mk('hdates', 'hist', 'Key dates', 'Event → date, across all your History units', dk.histDates);
   if (dk.histPeople) mk('hpeople', 'hist', 'Key people & terms', 'Who did what, and the key words examiners reward', dk.histPeople);
-  mk('gfde', 'german', 'Foundation words · German → English', 'Every word on the AQA Foundation list', v.F);
-  mk('gfen', 'german', 'Foundation words · English → German', 'The same list the hard way round (for writing)', v.F.map((r) => [r[1], r[0]]));
-  mk('ggen', 'german', 'Der, die or das?', 'Noun genders from the AQA list', v.genders.map((g) => ['___ ' + g[0] + '  (' + g[2] + ')', g[1] + ' ' + g[0], g[3] === 'H']));
-  mk('ghde', 'german', 'Higher words · German → English', 'Extra words that are only on the Higher list', v.H, { h: true });
-  mk('ghen', 'german', 'Higher words · English → German', 'Higher-only words, the hard way round', v.H.map((r) => [r[1], r[0]]), { h: true });
+  mk('gfde', 'german', 'Foundation words · German → English', 'Every word on the AQA Foundation list', v.F, { type: 'en' });
+  mk('gfen', 'german', 'Foundation words · English → German', 'The same list the hard way round (for writing)', v.F.map((r) => [r[1], r[0]]), { type: 'de' });
+  mk('ggen', 'german', 'Der, die or das?', 'Noun genders from the AQA list', v.genders.map((g) => ['___ ' + g[0] + '  (' + g[2] + ')', g[1] + ' ' + g[0], g[3] === 'H']), { type: 'g' });
+  mk('ghde', 'german', 'Higher words · German → English', 'Extra words that are only on the Higher list', v.H, { h: true, type: 'en' });
+  mk('ghen', 'german', 'Higher words · English → German', 'Higher-only words, the hard way round', v.H.map((r) => [r[1], r[0]]), { h: true, type: 'de' });
   return L;
 })();
 const topicDeck = (s) => ({ id: 'all-' + s.id, sid: s.id, name: 'All ' + s.name + ' cards', desc: 'Every flashcard from your ' + s.name + ' topics', topic: true });
@@ -776,17 +778,105 @@ function practiceRound(dk) {
 function startPractice(deckId) {
   const dk = findDeck(deckId); if (!dk) return;
   if (!state.pc) state.pc = {};
-  sess = { wasActive: activeOn(D.today()), b: { k: 'cards', m: 10 }, opts: {}, deck: { list: practiceRound(dk), i: 0, flip: false, right: 0, wrong: 0, again: {} }, mode: 'practice', pdeck: dk.id, left: 10 * 60, running: false, xp: 0, fb: null, complete: null };
+  sess = { wasActive: activeOn(D.today()), b: { k: 'cards', m: 10 }, opts: {}, deck: { list: practiceRound(dk), i: 0, flip: false, right: 0, wrong: 0, again: {} }, mode: 'practice', pdeck: dk.id, typing: !!(dk.type && typeOn()), ptype: dk.type, left: 10 * 60, running: false, xp: 0, fb: null, complete: null };
   showOverlay(); renderDeck();
 }
 function viewDecks() {
   const decks = practiceDecks();
   if (!decks.length) return '';
-  return `<div class="sect"><h2>Practice decks</h2><p class="small muted" style="margin:-4px 0 12px">Always open, so replay them as often as you like. Get a card right 3 times in a row to master it.</p><div class="decks">${decks.map((dk) => {
+  const tog = decks.some((dk) => dk.type) ? `<div class="card" style="padding-block:4px"><div class="field"><div><div class="l">Type German answers</div><div class="s">Type the word instead of flipping, or tap der/die/das for genders. Small typos are OK.</div></div><input type="checkbox" class="switch" data-typemode ${typeOn() ? 'checked' : ''} aria-label="Type German answers"></div></div>` : '';
+  return `<div class="sect"><h2>Practice decks</h2><p class="small muted" style="margin:-4px 0 12px">Always open, so replay them as often as you like. Get a card right 3 times in a row to master it.</p>${tog}<div class="decks">${decks.map((dk) => {
     const st = deckStats(dk), pct = st.total ? Math.round(st.mastered / st.total * 100) : 0;
     return `<button class="deck" data-act="practice" data-deck="${esc(dk.id)}" style="${sv(dk.sid)}"><span class="deck-ic">${ic(dk.sid)}</span><span class="deck-tx"><b>${esc(dk.name)}</b><span class="tiny">${esc(dk.desc)}</span>
-      <span class="deck-bar"><i style="width:${pct}%"></i></span><span class="tiny num">${st.mastered} / ${st.total} mastered</span></span></button>`;
+      <span class="deck-bar"><i style="width:${pct}%"></i></span><span class="tiny num">${st.mastered} / ${st.total} mastered${dk.type && typeOn() ? ' · ' + (dk.type === 'g' ? 'tap der/die/das' : 'type answers') : ''}</span></span></button>`;
   }).join('')}</div></div>`;
+}
+
+/* ---------- typing mode (German decks) ----------
+   Forgiving marking: any listed meaning counts, ae/oe/ue/ss = ä/ö/ü/ß, a missing umlaut or a one-letter
+   slip is accepted with a nudge. Nouns typed into German must carry the right article. */
+const typeOn = () => state.settings.typeMode !== false;
+const FOLD1 = { 'ä': 'ae', 'ö': 'oe', 'ü': 'ue', 'ß': 'ss' }, FOLD2 = { 'ä': 'a', 'ö': 'o', 'ü': 'u', 'ß': 'ss' };
+const fold = (x, m) => x.replace(/[äöüß]/g, (ch) => m[ch]);
+function ansNorm(x, lang) {
+  x = x.toLowerCase().replace(/\be\.g\..*$/, ' ').replace(/\+ ?(accusative|dative|genitive|noun)\b/g, ' ').replace(/…|\.\.\./g, ' ')
+    .replace(/[’'`]/g, '').replace(/[.!?"-]/g, ' ').replace(/\s+/g, ' ').trim();
+  if (lang === 'en') x = x.replace(/^to (?=\S)/, '').replace(/^(a|an|the) (?=\S)/, '');
+  return x;
+}
+const ansAlts = (x, lang) => String(x).replace(/\([^)]*\)/g, ' ').split(/[,;/]| or /).map((y) => ansNorm(y, lang)).filter(Boolean);
+function lev(a, b) {
+  if (Math.abs(a.length - b.length) > 2) return 9;
+  let prev = Array.from({ length: b.length + 1 }, (_, i) => i), pp = prev;
+  for (let i = 1; i <= a.length; i++) {
+    const cur = [i];
+    for (let j = 1; j <= b.length; j++) {
+      cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+      if (i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) cur[j] = Math.min(cur[j], pp[j - 2] + 1); // swapped letters
+    }
+    pp = prev; prev = cur;
+  }
+  return prev[b.length];
+}
+function matchAnswer(typed, answer, lang) {
+  const T = ansAlts(typed, lang), A = ansAlts(answer, lang), pairs = [];
+  for (const t of T) for (const a of A) pairs.push([t, a]);
+  if (pairs.some(([t, a]) => t === a || fold(t, FOLD1) === fold(a, FOLD1))) return { ok: true, note: A.length > 1 ? 'All meanings: ' + answer : '' };
+  if (pairs.some(([t, a]) => fold(t, FOLD2) === fold(a, FOLD2))) return { ok: true, note: 'Watch the umlauts: ' + answer };
+  if (lang === 'de') for (const [t, a] of pairs) {
+    const m = a.match(/^(der|die|das) (.+)$/); if (!m) continue;
+    const tail = fold(m[2], FOLD2), tt = fold(t, FOLD2), tm = tt.match(/^(der|die|das|den|dem) (.+)$/);
+    const near = (x) => x === tail || (tail.length >= 5 && lev(x, tail) <= 1);
+    if (near(tt)) return { ok: false, note: 'Don\'t forget the article: ' + answer };
+    if (tm && tm[1] !== m[1] && near(tm[2])) return { ok: false, note: 'Right word, wrong gender: ' + answer };
+  }
+  for (const [t, a] of pairs) {
+    const x = fold(t, FOLD2), y = fold(a, FOLD2), d = lev(x, y);
+    if ((d <= 1 && y.length >= 4) || (d <= 2 && y.length >= 9)) return { ok: true, note: 'Nearly! Check the spelling: ' + answer };
+  }
+  return { ok: false, note: 'Answer: ' + answer };
+}
+function typeArea(c, q) {
+  if (sess.ptype === 'g') return `<div class="gpick" id="gpick">${gpickBtns(c, q)}</div><div class="tres" id="tres" aria-live="polite">${tresHTML(c)}</div>`;
+  const de = sess.ptype === 'de';
+  return `<form id="type-form" class="typeform" autocomplete="off"><input id="ans" type="text" value="${esc(q.typed || '')}" ${sess.fb ? 'readonly' : ''} placeholder="Type the ${de ? 'German' : 'English'}…" aria-label="Your answer" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="go" lang="${de ? 'de' : 'en'}"></form>
+    ${de ? `<div class="uml">${['ä', 'ö', 'ü', 'ß'].map((ch) => `<button type="button" data-act="uml" data-ch="${ch}" aria-label="Insert ${ch}">${ch}</button>`).join('')}</div>` : ''}<div class="tres" id="tres" aria-live="polite">${tresHTML(c)}</div>`;
+}
+function gpickBtns(c, q) {
+  const a = c.a.split(' ')[0];
+  return ['der', 'die', 'das'].map((g, i) => {
+    const cls = sess.fb ? (g === a ? ' right' : g === q.typed ? ' wrong' : '') : '';
+    return `<button class="gbtn${cls}" data-act="gpick" data-g="${g}" ${sess.fb ? 'disabled' : ''}><small>${i + 1}</small>${g}</button>`;
+  }).join('');
+}
+function tresHTML(c) {
+  const f = sess.fb; if (!f) return '';
+  const txt = f.ok ? (f.note || 'Correct!') : f.note;
+  return `<span class="${f.ok ? 'ok' : 'no'}">${ic(f.ok ? 'check' : 'x')}${esc(txt)}</span>${f.ok || sess.ptype === 'g' ? '' : '<button type="button" class="linkbtn" data-act="override">I was right</button>'}`;
+}
+function checkTyped(val, idk) {
+  const q = queue(); if (!q || sess.fb || !sess.typing || q.i >= q.list.length) return;
+  const c = cardById(q.list[q.i]);
+  if (!idk && !String(val).trim()) { const i = $('#ans'); if (i) { i.classList.remove('shake'); void i.offsetWidth; i.classList.add('shake'); i.focus(); } return; }
+  const r = idk ? { ok: false, note: (sess.ptype === 'g' ? 'It\'s ' : 'Answer: ') + c.a }
+    : sess.ptype === 'g' ? (val === c.a.split(' ')[0] ? { ok: true, note: '' } : { ok: false, note: 'It\'s ' + c.a }) : matchAnswer(val, c.a, sess.ptype);
+  q.typed = idk ? '' : val; q.flip = true;
+  const el = $('#fc'); if (el) el.classList.add('flip');
+  const inp = $('#ans'); if (inp) inp.readOnly = true;
+  gradeCurrent(r.ok, r.note);
+  const t = $('#tres'); if (t) t.innerHTML = tresHTML(c);
+  const g = $('#gpick'); if (g) g.innerHTML = gpickBtns(c, q);
+}
+// typed answers can be right in ways the checker doesn't know (a synonym, a different word order)
+function overrideRight() {
+  const q = queue(), L = sess.last; if (!q || !sess.fb || sess.fb.ok || !L) return;
+  if (L.first) { state.pc[L.id] = L.prev + 1; q.right++; const k = q.list.lastIndexOf(L.id); if (k > q.i) q.list.splice(k, 1); delete q.again[L.id]; }
+  q.wrong--; addXP(1);
+  const c = cardById(L.id);
+  sess.fb = { ok: true, msg: 'Counted as right', note: 'Answer: ' + c.a };
+  save(); Sound.correct();
+  setFoot(cardFoot(q), 'good');
+  const t = $('#tres'); if (t) t.innerHTML = tresHTML(c);
 }
 
 /* ---------- events ---------- */
@@ -845,6 +935,15 @@ document.addEventListener('click', (e) => {
     case 'review': startCards('review'); break;
     case 'cram': startCards('cram'); break;
     case 'practice': startPractice(el.dataset.deck); break;
+    case 'check': checkTyped(($('#ans') || {}).value || ''); break;
+    case 'idk': checkTyped('', true); break;
+    case 'gpick': checkTyped(el.dataset.g); break;
+    case 'override': overrideRight(); break;
+    case 'uml': {
+      const i = $('#ans'); if (!i || i.readOnly) break;
+      const a0 = i.selectionStart == null ? i.value.length : i.selectionStart, b0 = i.selectionEnd == null ? a0 : i.selectionEnd;
+      i.value = i.value.slice(0, a0) + el.dataset.ch + i.value.slice(b0); i.focus(); i.setSelectionRange(a0 + 1, a0 + 1); break;
+    }
     case 'again': { const id = sess && sess.pdeck; closeSession(); if (id) startPractice(id); break; }
     case 'export': {
       const txt = JSON.stringify(state), ta = $('#backup'); ta.value = txt;
@@ -869,9 +968,13 @@ document.addEventListener('click', (e) => {
 document.addEventListener('submit', (e) => {
   if (e.target && e.target.id === 'login-form') { e.preventDefault(); authDo('signin'); }
   if (e.target && e.target.id === 'pw-form') { e.preventDefault(); addPassword(); }
+  if (e.target && e.target.id === 'type-form') { e.preventDefault(); if (sess && sess.fb) continueCard(); else checkTyped(($('#ans') || {}).value || ''); }
 });
+// keep the keyboard up when tapping the umlaut / Check buttons
+document.addEventListener('mousedown', (e) => { if (e.target.closest && e.target.closest('[data-act="uml"],[data-act="check"]')) e.preventDefault(); });
 document.addEventListener('change', (e) => {
   const el = e.target;
+  if (el.dataset.typemode != null) { state.settings.typeMode = el.checked; save(); render(); return; }
   if (el.dataset.sound != null) { state.settings.sound = el.checked; save(); if (el.checked) Sound.correct(); return; }
   if (el.dataset.tier) { state.settings.tiers[el.dataset.tier] = el.value; afterSettings(); }
   else if (el.dataset.mock != null) { const m = state.settings.mocks[Number(el.dataset.mock)]; if (el.value) m[el.dataset.f] = el.value; if (m.end < m.start) m.end = m.start; afterSettings(); }
@@ -887,6 +990,7 @@ document.addEventListener('keydown', (e) => {
   const q = (sess.deck || (sess.steps && sess.steps[sess.step] === 'cards')) ? queue() : null;
   if (q && q.i < q.list.length) {
     if (sess.fb) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); continueCard(); } return; }
+    if (sess.typing) { if (sess.ptype === 'g' && /^[123]$/.test(e.key)) checkTyped(['der', 'die', 'das'][e.key - 1]); return; }
     if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); if (!q.flip) flipCard(); return; }
     if (q.flip && e.key === '1') gradeCurrent(false);
     if (q.flip && e.key === '2') gradeCurrent(true);

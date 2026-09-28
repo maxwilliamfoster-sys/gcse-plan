@@ -423,6 +423,7 @@ function viewCards() {
     <p class="muted">Get a card right and it comes back later (1 → 3 → 7 → 14 → 30 days). Miss it and you'll see it tomorrow.</p></div>`;
   h += `<div class="sect"><button class="btn green full" data-act="review" ${due.length + nw ? '' : 'disabled'}>Review ${due.length} due + ${nw} new</button><button class="btn full" data-act="cram" ${newCardPool(cardsSubj).length + seen.length ? '' : 'disabled'}>Quick practice · 20 cards</button></div>`;
   h += `<div class="sect"><div class="tabs" role="group" aria-label="Subject filter"><button data-cs="" aria-pressed="${!cardsSubj}">All</button>${RG.subjects.map((s) => `<button data-cs="${s.id}" aria-pressed="${cardsSubj === s.id}">${esc(s.name.replace('English ', 'Eng. ').replace('Combined ', ''))}</button>`).join('')}</div></div>`;
+  h += viewDecks();
   const bc = ['var(--red)', 'var(--orange)', 'var(--yellow)', 'var(--c4)', 'var(--green)', 'var(--blue)'];
   h += `<div class="sect"><h2>Your memory boxes</h2><div class="card stack"><div class="boxes">${box.map((n, i) => `<div><b class="num">${n}</b><i style="height:${Math.max(6, n / mx * 80)}px;--bc:${bc[i]}"></i><span>BOX ${i}</span></div>`).join('')}</div>
     <p class="small muted">${seen.length} cards started · ${newCardPool(cardsSubj).length} still new${cardsSubj === 'german' || !cardsSubj ? ' · German vocab comes first' : ''}. Box 5 = long-term memory!</p></div></div>`;
@@ -566,7 +567,7 @@ function renderSession() {
     if (!t.cardIds.length || q.i >= q.list.length) {
       body = `${tag}<div class="hero-ill" style="${sv(subj.id)}">${ic('cards')}</div><h1 style="text-align:center">${t.cardIds.length ? 'Flashcards done!' : 'No flashcards here'}</h1><p class="muted" style="text-align:center">${t.cardIds.length ? `${q.right} right first time. They're now in your review deck.` : 'On to the next step.'}</p>`;
     } else {
-      body = `${tag}<h1>Flashcards <span class="muted num" style="font-size:17px">${q.i + 1}/${q.list.length}</span></h1>${cardFace(CARD[q.list[q.i]], q.flip)}`;
+      body = `${tag}<h1>Flashcards <span class="muted num" style="font-size:17px">${q.i + 1}/${q.list.length}</span></h1>${cardFace(cardById(q.list[q.i]), q.flip)}`;
       foot = cardFoot(q);
       $('#session').innerHTML = shell(progressNow(), body, foot, s.fb ? (s.fb.ok ? 'good' : 'bad') : '');
       return;
@@ -608,10 +609,16 @@ function cardFoot(q) {
   const s = sess;
   if (s.fb) {
     const ok = s.fb.ok;
-    return `<div class="fb"><div class="badge">${ic(ok ? 'check' : 'x')}</div><div><h2>${esc(s.fb.msg)}</h2><p>${ok ? '+2 XP · this card moves up a box' : 'You\'ll see this card again soon.'}</p></div></div><button class="btn ${ok ? 'green' : 'red'} full" data-act="cont">Continue</button>`;
+    return `<div class="fb"><div class="badge">${ic(ok ? 'check' : 'x')}</div><div><h2>${esc(s.fb.msg)}</h2><p>${esc(fbSub(ok, q))}</p></div></div><button class="btn ${ok ? 'green' : 'red'} full" data-act="cont">Continue</button>`;
   }
   if (!q.flip) return `<button class="btn blue full" data-act="flip">Show answer</button>`;
   return `<div class="pair"><button class="btn full" data-act="grade" data-ok="0" style="--fg:var(--red)">Didn't know</button><button class="btn green full" data-act="grade" data-ok="1">Knew it!</button></div>`;
+}
+function fbSub(ok, q) {
+  if (sess.mode !== 'practice') return ok ? '+2 XP · this card moves up a box' : 'You\'ll see this card again soon.';
+  const n = pcOf(q.list[q.i]);
+  if (!ok) return 'It comes back at the end of this round.';
+  return n === MASTER ? '+1 XP · Mastered!' : n > MASTER ? '+1 XP · still mastered' : '+1 XP · ' + n + '/' + MASTER + ' to master';
 }
 function setFoot(html, cls) {
   const f = $('#l-foot'); if (!f) return;
@@ -627,15 +634,17 @@ function flipCard() {
 function gradeCurrent(ok) {
   const q = queue(); if (!q || sess.fb || !q.flip) return;
   const id = q.list[q.i], d = D.today(), first = !q.again[id];
-  if (sess.mode === 'cram') { if (state.cards[id] || ok) gradeCard(id, ok, d); }
+  const prac = sess.mode === 'practice', gain = prac ? 1 : 2;
+  if (prac) { if (!state.pc) state.pc = {}; if (first) state.pc[id] = ok ? pcOf(id) + 1 : 0; }
+  else if (sess.mode === 'cram') { if (state.cards[id] || ok) gradeCard(id, ok, d); }
   else if (first) gradeCard(id, ok, d);
-  if (ok) { if (first) q.right++; addXP(2); }
+  if (ok) { if (first) q.right++; addXP(gain); }
   else { q.wrong++; if (first && sess.mode !== 'cram') { q.again[id] = 1; q.list.push(id); } }
   sess.fb = { ok, msg: ok ? pick(YES) : pick(NO) };
   save();
   setFoot(cardFoot(q), ok ? 'good' : 'bad');
   const btn = $('#l-foot .btn');
-  if (ok) { Sound.correct(); buzz(12); confetti({ n: 36, spread: 11, y: innerHeight - 140 }); xpFloat(2, $('#fc') || btn); }
+  if (ok) { Sound.correct(); buzz(12); confetti({ n: 36, spread: 11, y: innerHeight - 140 }); xpFloat(gain, $('#fc') || btn); }
   else { Sound.wrong(); buzz([20, 40, 20]); const el = $('#session .fc-wrap'); if (el) { el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake'); } }
   const pb = $('#session .pbar i'); if (pb) { q.i++; const w = progressNow(); q.i--; pb.style.width = Math.max(3, w) + '%'; }
 }
@@ -687,14 +696,16 @@ function startCards(mode, opts) {
 }
 function renderDeck() {
   const q = sess.deck;
-  if (sess.complete) { $('#session').innerHTML = shell(100, completeBody(), contBtn('Continue')); return; }
+  if (sess.complete) { $('#session').innerHTML = shell(100, completeBody(), sess.mode === 'practice' ? '<div class="pair"><button class="btn full" data-act="next">Done</button><button class="btn green full" data-act="again">Practise again</button></div>' : contBtn('Continue')); return; }
   if (!q.list.length) {
     $('#session').innerHTML = shell(100, `<div class="stack done-scr"><div class="hero-ill">${ic('check')}</div><h1 style="color:var(--green-d)">Nothing due!</h1><p class="muted">You're all caught up. Come back tomorrow, or try a quick practice set.</p></div>`, contBtn('Continue'));
     return;
   }
   if (q.i >= q.list.length) { deckComplete(); return; }
-  const c = CARD[q.list[q.i]], cs = state.cards[c.id];
-  const body = `<div class="kind" style="${sv(c.t.subj.id)}"><i>${ic(c.t.subj.id)}</i>${esc(sess.mode === 'cram' ? 'Quick practice' : 'Review')} · ${q.i + 1}/${q.list.length}</div>${cardFace(c, q.flip)}<p class="tiny muted" style="text-align:center">${cs ? 'Box ' + cs.b : 'New card'} · say the answer out loud before you flip</p>`;
+  const c = cardById(q.list[q.i]), cs = state.cards[c.id], prac = sess.mode === 'practice';
+  const label = prac ? findDeck(sess.pdeck).name : sess.mode === 'cram' ? 'Quick practice' : 'Review';
+  const note = prac ? (c.id in (state.pc || {}) ? (pcOf(c.id) >= MASTER ? 'Mastered' : pcOf(c.id) + '/' + MASTER + ' in a row') : 'New card') : cs ? 'Box ' + cs.b : 'New card';
+  const body = `<div class="kind" style="${sv(c.t.subj.id)}"><i>${ic(c.t.subj.id)}</i>${esc(label)} · ${q.i + 1}/${q.list.length}</div>${cardFace(c, q.flip)}<p class="tiny muted" style="text-align:center">${note} · say the answer out loud before you flip</p>`;
   $('#session').innerHTML = shell(progressNow(), body, cardFoot(q), sess.fb ? (sess.fb.ok ? 'good' : 'bad') : '');
 }
 // a plan flashcard block counts as done once you've worked through it (or there was nothing due)
@@ -707,8 +718,75 @@ function deckComplete() {
   addXP(5);
   markDeckDone(); save();
   const total = q.right + q.wrong;
+  if (sess.mode === 'practice') {
+    const st = deckStats(findDeck(sess.pdeck));
+    sess.complete = { title: 'Round complete!', stats: [['First try', q.right + '/' + new Set(q.list).size, 'var(--green)', 'check'], ['Mastered', st.mastered + '/' + st.total, 'var(--blue)', 'star']], streakUp: !wasActive };
+    renderDeck(); Sound.win(); buzz([30, 50, 30]); confetti({ n: 160, spread: 18, y: innerHeight * 0.35 }); return;
+  }
   sess.complete = { title: 'Deck complete!', stats: [['Correct', String(q.right), 'var(--green)', 'check'], ['Accuracy', total ? Math.round(q.right / total * 100) + '%' : '—', 'var(--blue)', 'target']], streakUp: !wasActive };
   renderDeck(); Sound.win(); buzz([30, 50, 30]); confetti({ n: 160, spread: 18, y: innerHeight * 0.35 });
+}
+
+/* ---------- practice decks (always available, replay as often as you like) ----------
+   Separate from the Leitner boxes: each card keeps a run of correct answers in state.pc[id];
+   3 in a row = mastered. A round is 20 cards: ones you're still learning first, then new ones. */
+const PCARD = {};
+const MASTER = 3;
+const DECKS = (() => {
+  const L = [];
+  const mk = (id, sid, name, desc, rows, opt) => {
+    const t = { subj: SUBJ[sid], n: name, id: 'deck-' + id };
+    const ids = rows.map((r, i) => { const c = { id: 'x:' + id + ':' + i, q: r[0], a: r[1], t, h: r[2] }; PCARD[c.id] = c; return c.id; });
+    L.push(Object.assign({ id, sid, name, desc, ids }, opt || {}));
+  };
+  const dk = RG.decks || {}, v = RG.vocab || { F: [], H: [], genders: [] };
+  if (dk.histDates) mk('hdates', 'hist', 'Key dates', 'Event → date, across all your History units', dk.histDates);
+  if (dk.histPeople) mk('hpeople', 'hist', 'Key people & terms', 'Who did what, and the key words examiners reward', dk.histPeople);
+  mk('gfde', 'german', 'Foundation words · German → English', 'Every word on the AQA Foundation list', v.F);
+  mk('gfen', 'german', 'Foundation words · English → German', 'The same list the hard way round (for writing)', v.F.map((r) => [r[1], r[0]]));
+  mk('ggen', 'german', 'Der, die or das?', 'Noun genders from the AQA list', v.genders.map((g) => ['___ ' + g[0] + '  (' + g[2] + ')', g[1] + ' ' + g[0], g[3] === 'H']));
+  mk('ghde', 'german', 'Higher words · German → English', 'Extra words that are only on the Higher list', v.H, { h: true });
+  mk('ghen', 'german', 'Higher words · English → German', 'Higher-only words, the hard way round', v.H.map((r) => [r[1], r[0]]), { h: true });
+  return L;
+})();
+const topicDeck = (s) => ({ id: 'all-' + s.id, sid: s.id, name: 'All ' + s.name + ' cards', desc: 'Every flashcard from your ' + s.name + ' topics', topic: true });
+function deckIds(dk) {
+  if (dk.topic) return visibleTopics(SUBJ[dk.sid]).flatMap((t) => t.cardIds || []);
+  return state.settings.tiers.german === 'F' ? dk.ids.filter((id) => !PCARD[id].h) : dk.ids;
+}
+function practiceDecks() {
+  const order = ['hist', 'german'].concat(RG.subjects.map((s) => s.id).filter((id) => id !== 'hist' && id !== 'german'));
+  const out = DECKS.filter((dk) => !(dk.h && state.settings.tiers.german === 'F'));
+  for (const sid of order) { const s = SUBJ[sid]; if (s && visibleTopics(s).some((t) => t.cardIds && t.cardIds.length)) out.push(topicDeck(s)); }
+  return out.map((dk, i) => [order.indexOf(dk.sid) * 100 + i, dk]).sort((a, b) => a[0] - b[0]).map((x) => x[1]).filter((dk) => !cardsSubj || dk.sid === cardsSubj);
+}
+function findDeck(id) { return DECKS.find((d) => d.id === id) || (id.startsWith('all-') && SUBJ[id.slice(4)] ? topicDeck(SUBJ[id.slice(4)]) : null); }
+const cardById = (id) => CARD[id] || PCARD[id];
+const pcOf = (id) => (state.pc && state.pc[id]) || 0;
+function deckStats(dk) { const ids = deckIds(dk); return { total: ids.length, mastered: ids.filter((id) => pcOf(id) >= MASTER).length }; }
+function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function practiceRound(dk) {
+  const ids = deckIds(dk), N = 20, pc = state.pc || {};
+  const learning = shuffle(ids.filter((id) => id in pc && pc[id] < MASTER)).sort((a, b) => pc[a] - pc[b]).slice(0, 14);
+  const fresh = ids.filter((id) => !(id in pc)).slice(0, N - learning.length);
+  let list = learning.concat(fresh);
+  if (list.length < N) list = list.concat(shuffle(ids.filter((id) => pc[id] >= MASTER)).slice(0, N - list.length));
+  return shuffle(list);
+}
+function startPractice(deckId) {
+  const dk = findDeck(deckId); if (!dk) return;
+  if (!state.pc) state.pc = {};
+  sess = { wasActive: activeOn(D.today()), b: { k: 'cards', m: 10 }, opts: {}, deck: { list: practiceRound(dk), i: 0, flip: false, right: 0, wrong: 0, again: {} }, mode: 'practice', pdeck: dk.id, left: 10 * 60, running: false, xp: 0, fb: null, complete: null };
+  showOverlay(); renderDeck();
+}
+function viewDecks() {
+  const decks = practiceDecks();
+  if (!decks.length) return '';
+  return `<div class="sect"><h2>Practice decks</h2><p class="small muted" style="margin:-4px 0 12px">Always open, so replay them as often as you like. Get a card right 3 times in a row to master it.</p><div class="decks">${decks.map((dk) => {
+    const st = deckStats(dk), pct = st.total ? Math.round(st.mastered / st.total * 100) : 0;
+    return `<button class="deck" data-act="practice" data-deck="${esc(dk.id)}" style="${sv(dk.sid)}"><span class="deck-ic">${ic(dk.sid)}</span><span class="deck-tx"><b>${esc(dk.name)}</b><span class="tiny">${esc(dk.desc)}</span>
+      <span class="deck-bar"><i style="width:${pct}%"></i></span><span class="tiny num">${st.mastered} / ${st.total} mastered</span></span></button>`;
+  }).join('')}</div></div>`;
 }
 
 /* ---------- events ---------- */
@@ -766,6 +844,8 @@ document.addEventListener('click', (e) => {
     case 'cont': continueCard(); break;
     case 'review': startCards('review'); break;
     case 'cram': startCards('cram'); break;
+    case 'practice': startPractice(el.dataset.deck); break;
+    case 'again': { const id = sess && sess.pdeck; closeSession(); if (id) startPractice(id); break; }
     case 'export': {
       const txt = JSON.stringify(state), ta = $('#backup'); ta.value = txt;
       try { navigator.clipboard.writeText(txt).then(() => toast('Backup copied'), () => { ta.select(); toast('Select-all and copy the box'); }); } catch (err) { ta.select(); toast('Select-all and copy the box'); }

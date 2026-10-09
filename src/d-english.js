@@ -204,7 +204,7 @@ RG.subjects.push({
         'Tissue (Dharker, 2006): paper as a metaphor for power — maps, the Koran, receipts and buildings. Human life is fragile but powerful; the final single line, "turned into your skin", stands alone.',
         'The Émigrée (Rumens, 1993): a speaker remembers her lost city as "sunlight-clear" despite war and tyranny. Memory and identity resist the regime.',
         'Checking Out Me History (Agard, 2005): Caribbean voice and dialect. The speaker attacks the Eurocentric history he was taught — "Dem tell me / Wha dem want to tell me" — and celebrates Toussaint L’Ouverture, Nanny de Maroon and Mary Seacole to carve out his identity.',
-        'Kamikaze (Garland, 2013): a Japanese pilot turns back from his mission and is shunned by his family. Told through his daughter; nature imagery (a "shoal of little fish") draws him back to life.'],
+        'Kamikaze (Garland, 2013): a Japanese pilot turns back from his mission and is shunned by his family. Told through his daughter; memories of nature ("the dark shoals of fishes / flashing silver") draw him back to life.'],
       cards: [['War Photographer — image of the photos', '"spools of suffering set out in ordered rows"'], ['Tissue — central metaphor', 'Paper = power structures; fragile human life that can alter things'],
         ['The Émigrée — how she remembers the city', '"sunlight-clear" — memory resists tyranny'], ['Checking Out Me History — attack on his education', '"Dem tell me / Wha dem want to tell me"'],
         ['Checking Out Me History — heroes he celebrates', 'Toussaint L’Ouverture, Nanny de Maroon, Mary Seacole'], ['Kamikaze — consequence of turning back', 'His family and neighbours shun him']],

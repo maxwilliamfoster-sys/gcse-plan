@@ -1,5 +1,5 @@
 /* Extra practice decks (always available on the Cards tab).
-   History content follows the OCR J410 specification content lists for the options Chesterton teaches:
+   History content follows the OCR J410 specification content lists for Max's options:
    International Relations 1918–1975, USA 1919–1948, Migration to Britain c.1000–c.2010,
    Impact of Empire 1688–c.1730, Spitalfields. Format: [prompt, answer]. */
 RG.decks = {

@@ -1,6 +1,6 @@
 /* What each exam gives you, and what you must bring in your head.
    Sources: Ofqual decision on formulae/equation sheets for 2025–2027; Pearson 1MA1 exam aid (Higher & Foundation);
-   AQA 8464 Physics Equations Sheet "for use in June 2027 only"; covers of AQA 8464/8035 and OCR J352 question papers;
+   AQA 8464 Physics Equations Sheet "for use in June 2027 only"; covers of AQA 8464 and AQA 8702 question papers;
    AQA 8662 specification (speaking notes, dictionaries); board specifications. Checked September 2026. */
 RG.given = {
   maths: {
@@ -50,20 +50,15 @@ RG.given = {
   },
   englit: {
     given: [
-      'Closed book — you do not get the texts.',
-      'Paper 1: the An Inspector Calls extract and an unseen modern extract are printed for part (a). For Jekyll and Hyde you choose an extract question (extract printed) or an essay question (no extract).',
-      'Paper 2: for part (a) the named anthology poem AND the unseen poem are printed. For Romeo and Juliet you choose an extract question (extract printed) or an essay question.'
+      'Closed book: you do not get the texts or the anthology.',
+      'Paper 1: an extract from Romeo and Juliet and an extract from Jekyll and Hyde are printed. You write about the extract, then the whole text.',
+      'Paper 2: the An Inspector Calls questions have no extract. In Section B the named Power and Conflict poem is printed; the second poem you choose is not. Both unseen poems are printed in Section C.'
     ],
     memorise: [
-      'Part (b) of the poetry question asks you to explore ANOTHER poem from the Conflict cluster that you choose — that poem is not printed, so you need quotations from several poems.',
-      'Quotations and context for An Inspector Calls, Jekyll and Hyde and Romeo and Juliet (for part (b) of Paper 1 and the essay options).'
+      'Quotations for Romeo and Juliet, Jekyll and Hyde and An Inspector Calls — you need the whole text, not just the extract.',
+      'Two or three short quotations and the context for each of the 15 Power and Conflict poems, so you can compare any of them with the named poem.'
     ],
-    marking: ['Questions marked with an asterisk (*) also assess the quality of your extended response.', 'Marked in levels against AO1 (response + references), AO2 (language, form, structure), AO3 (context) and, for comparisons, how well you compare.']
-  },
-  geog: {
-    given: ['Figures (maps, graphs, photos) for the questions are printed in the paper or an insert.', 'Paper 3: a clean copy of the pre-release resource booklet is enclosed (you cannot take your annotated copy in).', 'You may use a calculator in the exams.'],
-    memorise: ['All case studies and examples (Rio, Cambridge, Nigeria, your storm, desert, coast and river examples) with specific facts.', 'Both fieldwork enquiries — your own aims, methods, results and evaluation.'],
-    marking: ['9-mark questions carry 3 extra SPaG marks and are levels-marked: they need developed points, specific case-study detail and a clear judgement.', 'Short questions often need data quoted with units from the figure.']
+    marking: ['Marked in levels against AO1 (response + references), AO2 (language, form, structure) and AO3 (context). Romeo and Juliet and An Inspector Calls each carry 4 extra AO4 marks for spelling, punctuation and grammar.', 'Unseen Q2 (8 marks) assesses only the comparison of methods (AO2).']
   },
   hist: {
     given: ['Sources and interpretations are printed in the paper for the questions that use them.'],

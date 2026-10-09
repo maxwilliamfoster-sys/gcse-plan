@@ -1,4 +1,4 @@
-/* Combined Science — AQA Combined Science: Trilogy 8464 (Chesterton exams page) */
+/* Combined Science — AQA Combined Science: Trilogy 8464 */
 RG.subjects.push({
   id: 'science', name: 'Combined Science', board: 'AQA', spec: '8464', quals: 2, share: 0.20,
   tierable: true,

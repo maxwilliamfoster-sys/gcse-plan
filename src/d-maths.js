@@ -1,4 +1,4 @@
-/* Maths — Pearson Edexcel GCSE Mathematics 1MA1 (Chesterton exams page) */
+/* Maths — Pearson Edexcel GCSE Mathematics 1MA1 */
 RG.subjects.push({
   id: 'maths', name: 'Maths', board: 'Edexcel', spec: '1MA1', quals: 1, share: 0.20,
   tierable: true,

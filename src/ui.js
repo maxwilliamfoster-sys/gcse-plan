@@ -125,8 +125,7 @@ const SPEC_PDF = {
   maths: 'https://qualifications.pearson.com/content/dam/pdf/GCSE/mathematics/2015/specification-and-sample-assesment/gcse-maths-2015-specification.pdf',
   science: 'https://filestore.aqa.org.uk/resources/science/specifications/AQA-8464-SP-2016.PDF',
   englang: 'https://filestore.aqa.org.uk/resources/english/specifications/AQA-8700-SP-2015.PDF',
-  englit: 'https://www.ocr.org.uk/Images/168995-specification-accredited-gcse-english-literature-j352.pdf',
-  geog: 'https://filestore.aqa.org.uk/resources/geography/specifications/AQA-8035-SP-2016.PDF',
+  englit: 'https://cdn.sanity.io/files/p28bar15/green/1d552450a822e04717de340917da5d3b91896f1a.pdf',
   hist: 'https://www.ocr.org.uk/Images/207163-specification-accredited-gcse-history-a-first-teaching-2019-with-first-assessment-2021-j410.pdf',
   german: 'https://filestore.aqa.org.uk/resources/german/specifications/AQA-8662-SP-2024.PDF',
 };
@@ -345,7 +344,7 @@ function planExams() {
 function viewSubjects() {
   if (sub && SUBJ[sub]) return viewSubject(SUBJ[sub]);
   if (sub && TOPIC[sub]) return viewTopic(TOPIC[sub]);
-  let h = '<div class="hello"><div class="caps">Chesterton · exam boards checked</div><h1>Your subjects</h1><p class="muted">The ring shows how confident you are overall. Tap a subject for its papers, exam tips and every topic.</p></div>';
+  let h = '<div class="hello"><div class="caps">Exam boards checked</div><h1>Your subjects</h1><p class="muted">The ring shows how confident you are overall. Tap a subject for its papers, exam tips and every topic.</p></div>';
   h += '<div class="sect"><div class="sgrid">';
   for (const s of RG.subjects) {
     const a = subjectAvg(s), np = PAPERS.find((p) => p.subj === s && p.date >= D.today());
@@ -472,10 +471,10 @@ function viewMore() {
     <li><b>Timed past papers + mark schemes</b> show what examiners reward.</li>
     <li><b>Short sessions with breaks</b> keep focus high; sleep locks it in.</li></ul></div></div>`;
   h += `<div class="sect"><h2>Sources</h2><div class="card small"><ul class="pts">
-    <li>Exam boards: <a href="https://ccc.tela.org.uk/information/examinations/" target="_blank" rel="noopener">Chesterton Community College — Examinations</a>.</li>
-    <li>Content checked against the official specifications: <a href="${SPEC_PDF.maths}" target="_blank" rel="noopener">Edexcel 1MA1</a> · <a href="${SPEC_PDF.science}" target="_blank" rel="noopener">AQA 8464</a> · <a href="${SPEC_PDF.englang}" target="_blank" rel="noopener">AQA 8700</a> · <a href="${SPEC_PDF.englit}" target="_blank" rel="noopener">OCR J352</a> · <a href="${SPEC_PDF.geog}" target="_blank" rel="noopener">AQA 8035</a> · <a href="${SPEC_PDF.hist}" target="_blank" rel="noopener">OCR J410</a> · <a href="${SPEC_PDF.german}" target="_blank" rel="noopener">AQA 8662</a>.</li>
+    <li>Exam boards and set texts: confirmed by Max (October 2026).</li>
+    <li>Content checked against the official specifications: <a href="${SPEC_PDF.maths}" target="_blank" rel="noopener">Edexcel 1MA1</a> · <a href="${SPEC_PDF.science}" target="_blank" rel="noopener">AQA 8464</a> · <a href="${SPEC_PDF.englang}" target="_blank" rel="noopener">AQA 8700</a> · <a href="${SPEC_PDF.englit}" target="_blank" rel="noopener">AQA 8702</a> · <a href="${SPEC_PDF.hist}" target="_blank" rel="noopener">OCR J410</a> · <a href="${SPEC_PDF.german}" target="_blank" rel="noopener">AQA 8662</a>.</li>
     <li>Formula and equation sheets: Ofqual decision for 2025–2027; AQA June 2027 Physics Equations Sheet; Pearson 1MA1 exam aid.</li>
-    <li>Term dates: <a href="https://ccc.tela.org.uk/about/term-dates/" target="_blank" rel="noopener">Chesterton 2026–27</a>. Exam dates: AQA, OCR and Pearson 2027 timetables.</li></ul></div></div>`;
+    <li>Holiday dates: typical Cambridgeshire 2026–27 terms. Exam dates: AQA, OCR and Pearson 2027 timetables.</li></ul></div></div>`;
   return h;
 }
 function pwSection() {

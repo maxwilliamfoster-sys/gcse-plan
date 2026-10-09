@@ -1,6 +1,6 @@
 /* Where each topic sits in the official specification (checked against the board spec PDFs, Sept 2026).
-   Maths: Pearson Edexcel 1MA1 Issue 2 · Science: AQA 8464 v1.1 · Eng Lang: AQA 8700 · Eng Lit: OCR J352
-   Geography: AQA 8035 v1.1 · History: OCR J410 v1.9 · German: AQA 8662 (first exams 2026) */
+   Maths: Pearson Edexcel 1MA1 Issue 2 · Science: AQA 8464 v1.1 · Eng Lang: AQA 8700 · Eng Lit: AQA 8702 v1.3
+   History: OCR J410 v1.9 · German: AQA 8662 (first exams 2026) */
 RG.spec = {
   // Maths — Edexcel 1MA1 subject content (N number, A algebra, R ratio, G geometry, P probability, S statistics)
   'm-num': '1MA1 Number N4, N6, N7', 'm-frac': '1MA1 Number N2, N8, N10, N12 · Ratio R9–R16', 'm-bounds': '1MA1 Number N9, N14, N15, N16',
@@ -29,19 +29,12 @@ RG.spec = {
   'el-p1q1': 'AQA 8700 Paper 1 Q1 & Paper 2 Q1 (AO1)', 'el-lang': 'AQA 8700 P1 Q2 & P2 Q3 (AO2)', 'el-struct': 'AQA 8700 P1 Q3 (AO2)',
   'el-eval': 'AQA 8700 P1 Q4 (AO4)', 'el-compare': 'AQA 8700 P2 Q2 (AO1) & Q4 (AO3)', 'el-creative': 'AQA 8700 P1 Section B (AO5, AO6)',
   'el-viewpoint': 'AQA 8700 P2 Section B (AO5, AO6)', 'el-spag': 'AQA 8700 AO6 technical accuracy',
-  // English Literature — OCR J352
-  'aic-plot': 'OCR J352/01 Section A: modern drama (An Inspector Calls)', 'aic-chars': 'OCR J352/01 Section A: modern drama (An Inspector Calls)',
-  'jh-plot': 'OCR J352/01 Section B: 19th-century prose (Jekyll and Hyde)', 'jh-themes': 'OCR J352/01 Section B: 19th-century prose (Jekyll and Hyde)',
-  'rj-plot': 'OCR J352/02 Section B: Shakespeare (Romeo and Juliet)', 'rj-themes': 'OCR J352/02 Section B: Shakespeare (Romeo and Juliet)',
-  'poem-heritage': 'OCR J352/02 Section A: Poetry Anthology — Conflict cluster', 'poem-war': 'OCR J352/02 Section A: Poetry Anthology — Conflict cluster',
-  'poem-modern': 'OCR J352/02 Section A: Poetry Anthology — Conflict cluster', 'lit-unseen': 'OCR J352/01 A(a) unseen extract · J352/02 A(a) unseen poem',
-  // Geography — AQA 8035
-  'g-tect': 'AQA 8035 3.1.1.1 Natural hazards · 3.1.1.2 Tectonic hazards', 'g-weather': 'AQA 8035 3.1.1.3 Weather hazards', 'g-climate': 'AQA 8035 3.1.1.4 Climate change',
-  'g-eco': 'AQA 8035 3.1.2.1 Ecosystems · 3.1.2.2 Tropical rainforests', 'g-desert': 'AQA 8035 3.1.2.3 Hot deserts',
-  'g-coast': 'AQA 8035 3.1.3.1 UK physical landscapes · 3.1.3.2 Coastal landscapes', 'g-river': 'AQA 8035 3.1.3.3 River landscapes',
-  'g-urban-rio': 'AQA 8035 3.2.1 Urban issues (LIC/NEE city case study)', 'g-urban-cam': 'AQA 8035 3.2.1 Urban issues (UK city case study, sustainability)',
-  'g-dev': 'AQA 8035 3.2.2 Changing economic world (development gap)', 'g-nigeria': 'AQA 8035 3.2.2 (LIC/NEE case study)', 'g-ukecon': 'AQA 8035 3.2.2 (economic futures in the UK)',
-  'g-resources': 'AQA 8035 3.2.3.1 Resource management · 3.2.3.2 Food', 'g-fieldwork': 'AQA 8035 3.3.2 Fieldwork', 'g-issue': 'AQA 8035 3.3.1 Issue evaluation · 3.4 Geographical skills',
+  // English Literature — AQA 8702
+  'rj-plot': 'AQA 8702/1 Section A: Shakespeare (Romeo and Juliet)', 'rj-themes': 'AQA 8702/1 Section A: Shakespeare (Romeo and Juliet)',
+  'jh-plot': 'AQA 8702/1 Section B: 19th-century novel (Jekyll and Hyde)', 'jh-themes': 'AQA 8702/1 Section B: 19th-century novel (Jekyll and Hyde)',
+  'aic-plot': 'AQA 8702/2 Section A: modern texts (An Inspector Calls)', 'aic-chars': 'AQA 8702/2 Section A: modern texts (An Inspector Calls)',
+  'pc-1': 'AQA 8702/2 Section B: poetry anthology — Power and Conflict', 'pc-2': 'AQA 8702/2 Section B: poetry anthology — Power and Conflict',
+  'pc-3': 'AQA 8702/2 Section B: poetry anthology — Power and Conflict', 'lit-unseen': 'AQA 8702/2 Section C: unseen poetry',
   // History — OCR J410
   'h-ir-peace': 'OCR J410 period study: Conflict and co-operation 1918–1939', 'h-ir-war': 'OCR J410 period study: Conflict and co-operation 1918–1939 (1930s)',
   'h-ir-interp': 'OCR J410 period study: historical controversy (interpretations)', 'h-ir-cw1': 'OCR J410 period study: The Cold War in Europe 1945–1961',

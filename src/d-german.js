@@ -1,4 +1,4 @@
-/* German — AQA GCSE German 8662 (new specification, first exams 2026) — Chesterton exams page + Y10/Y11 German maps */
+/* German — AQA GCSE German 8662 (new specification, first exams 2026) */
 RG.subjects.push({
   id: 'german', name: 'German', board: 'AQA', spec: '8662', quals: 1, share: 0.12,
   tierable: true,

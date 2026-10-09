@@ -22,7 +22,7 @@ const D = {
   full(s) { return D.fmt(s, { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }); },
 };
 
-/* ---------- fixed calendar (Chesterton term dates 2026-27 + JCQ 2027) ---------- */
+/* ---------- fixed calendar (typical Cambridgeshire term dates 2026-27 + JCQ 2027) ---------- */
 const EXAM_START = '2027-05-10', EXAM_END = '2027-06-18';
 const RESULTS_DAY = '2027-08-19', CONTINGENCY = '2027-06-23';
 const HOLIDAYS = [
@@ -34,7 +34,7 @@ const HOLIDAYS = [
   ['2027-05-31', '2027-06-04', 'May half term'],
 ];
 const REST_DAYS = { '2026-12-25': 'Christmas Day', '2026-12-26': 'Boxing Day', '2027-01-01': 'New Year\'s Day', '2027-03-28': 'Easter Sunday' };
-const ORDER = ['maths', 'science', 'englang', 'englit', 'geog', 'hist', 'german'];
+const ORDER = ['maths', 'science', 'englang', 'englit', 'hist', 'german'];
 const KEY = 'gcse27.state.v1';
 
 /* ---------- data index ---------- */
@@ -77,6 +77,15 @@ function migrate(s) {
   if (typeof s.at !== 'number') s.at = 0;
   if (!Array.isArray(s.settings.mocks) || s.settings.mocks.length < 2) s.settings.mocks = d.settings.mocks;
   for (const k of ['topics', 'cards', 'unlocked', 'plans', 'days', 'papersDone', 'newCards']) if (!s[k] || typeof s[k] !== 'object') s[k] = {};
+  // Drop progress for topics/papers that no longer exist (Geography and the old OCR Literature topics were removed in Oct 2026).
+  for (const id of Object.keys(s.topics)) if (!TOPIC[id]) delete s.topics[id];
+  for (const id of Object.keys(s.unlocked)) if (!TOPIC[id]) delete s.unlocked[id];
+  for (const id of Object.keys(s.cards)) if (!CARD[id]) delete s.cards[id];
+  for (const id of Object.keys(s.papersDone)) if (!PAPER[id]) delete s.papersDone[id];
+  for (const k of Object.keys(s.plans)) {
+    const p = s.plans[k], blocks = p && Array.isArray(p.blocks) ? p.blocks : null;
+    if (blocks && blocks.some((b) => (b.t && !TOPIC[b.t]) || (b.pid && !PAPER[b.pid]))) delete s.plans[k];
+  }
   return s;
 }
 function readLocal() { try { const r = localStorage.getItem(KEY); if (r) return migrate(JSON.parse(r)); } catch (e) { /* storage unavailable */ } return defaultState(); }
@@ -232,7 +241,7 @@ function phases() {
       mins: { school: 90, weekend: 160, holiday: 220, mock: 70 } },
     { id: 'papers', name: 'Past-paper phase', start: D.add(m2.end, 1), end: '2027-03-25',
       goal: 'Timed past papers every weekend, marked against the official mark schemes.',
-      how: ['One full paper on each weekend day', 'Log scores and mark weak topics from each paper', 'Geography pre-release booklet arrives'],
+      how: ['One full paper on each weekend day', 'Log scores and mark weak topics from each paper', 'Redo every question you dropped marks on'],
       mins: { school: 100, weekend: 190, holiday: 220, mock: 100 } },
     { id: 'easter', name: 'Easter intensive', start: '2027-03-26', end: '2027-04-11',
       goal: 'The biggest revision push: a paper and several topic blocks most days.',

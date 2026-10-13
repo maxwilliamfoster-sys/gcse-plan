@@ -22,12 +22,12 @@ const D = {
   full(s) { return D.fmt(s, { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }); },
 };
 
-/* ---------- fixed calendar (typical Cambridgeshire term dates 2026-27 + JCQ 2027) ---------- */
+/* ---------- fixed calendar (holidays are estimates — editable in Settings; exam dates JCQ 2027) ---------- */
 const EXAM_START = '2027-05-10', EXAM_END = '2027-06-18';
 const RESULTS_DAY = '2027-08-19', CONTINGENCY = '2027-06-23';
 const HOLIDAYS = [
   ['2026-10-22', '2026-10-30', 'October half term'],
-  ['2026-12-12', '2027-01-03', 'Christmas holidays'],
+  ['2026-12-19', '2027-01-03', 'Christmas holidays'],
   ['2027-02-15', '2027-02-19', 'February half term'],
   ['2027-03-26', '2027-04-11', 'Easter holidays'],
   ['2027-05-03', '2027-05-03', 'Bank holiday'],
@@ -57,16 +57,16 @@ for (const t of TOPICS) t.cards && t.cards.forEach((c, i) => { CARD[t.id + '#' +
 /* ---------- state ---------- */
 function defaultState() {
   return {
-    v: 1, at: 0,
+    v: 2, at: 0,
     settings: {
       tiers: { maths: 'H', science: 'H', german: 'H' },
       mocks: [
         { name: 'Mock exams 1', start: '2026-11-23', end: '2026-12-04' },
         { name: 'Mock exams 2', start: '2027-02-01', end: '2027-02-12' },
       ],
-      intensity: 1, restDay: 5, speakingDate: '2027-04-26',
+      intensity: 1, restDay: -1, speakingDate: '2027-04-26', theme: 'system', holidays: null,
     },
-    topics: {}, cards: {}, unlocked: {}, plans: {}, days: {}, papersDone: {}, newCards: {},
+    topics: {}, cards: {}, unlocked: {}, plans: {}, days: {}, papersDone: {}, newCards: {}, noLive: {}, ticks: {},
   };
 }
 function migrate(s) {
@@ -76,15 +76,18 @@ function migrate(s) {
   s.settings.tiers = Object.assign({ maths: 'H', science: 'H', german: 'H' }, s.settings.tiers || {});
   if (typeof s.at !== 'number') s.at = 0;
   if (!Array.isArray(s.settings.mocks) || s.settings.mocks.length < 2) s.settings.mocks = d.settings.mocks;
-  for (const k of ['topics', 'cards', 'unlocked', 'plans', 'days', 'papersDone', 'newCards']) if (!s[k] || typeof s[k] !== 'object') s[k] = {};
+  // The bell-time timetable has its own day off (Sunday), so the old "light day" no longer applies.
+  if (s.v < 2) { s.settings.restDay = -1; s.v = 2; }
+  for (const k of ['topics', 'cards', 'unlocked', 'plans', 'days', 'papersDone', 'newCards', 'noLive', 'ticks']) if (!s[k] || typeof s[k] !== 'object') s[k] = {};
   // Drop progress for topics/papers that no longer exist (Geography and the old OCR Literature topics were removed in Oct 2026).
   for (const id of Object.keys(s.topics)) if (!TOPIC[id]) delete s.topics[id];
   for (const id of Object.keys(s.unlocked)) if (!TOPIC[id]) delete s.unlocked[id];
   for (const id of Object.keys(s.cards)) if (!CARD[id]) delete s.cards[id];
   for (const id of Object.keys(s.papersDone)) if (!PAPER[id]) delete s.papersDone[id];
+  // Day plans are v2 (timetable periods → picked topics). Older 25-min "path" plans are dropped and rebuilt.
   for (const k of Object.keys(s.plans)) {
-    const p = s.plans[k], blocks = p && Array.isArray(p.blocks) ? p.blocks : null;
-    if (blocks && blocks.some((b) => (b.t && !TOPIC[b.t]) || (b.pid && !PAPER[b.pid]))) delete s.plans[k];
+    const p = s.plans[k];
+    if (!p || p.v !== 2 || Object.values(p.picks || {}).some((x) => x && ((x.t && !TOPIC[x.t]) || (x.pid && !PAPER[x.pid])))) delete s.plans[k];
   }
   return s;
 }
@@ -218,7 +221,8 @@ async function authSignOut() {
 }
 
 /* ---------- calendar model ---------- */
-function holidayOf(d) { for (const h of HOLIDAYS) if (d >= h[0] && d <= h[1]) return h[2]; return null; }
+function holidayList() { const h = state.settings.holidays; return Array.isArray(h) && h.length ? h : HOLIDAYS; }
+function holidayOf(d) { for (const h of holidayList()) if (h[0] && h[1] && d >= h[0] && d <= h[1]) return h[2]; return null; }
 function mockOf(d) { for (const m of state.settings.mocks) if (m.start && m.end && d >= m.start && d <= m.end) return m; return null; }
 function phases() {
   const m1 = state.settings.mocks[0], m2 = state.settings.mocks[1];
@@ -283,7 +287,8 @@ function dayInfo(d) {
 
 /* ---------- topic model ---------- */
 function tierOk(t) { const s = t.subj; return !(t.h && s.tierable && state.settings.tiers[s.id] === 'F'); }
-function taught(t, d) { return !t.from || t.from <= d || !!state.unlocked[t.id]; }
+// taught = in class, ticked "I've covered it", or its week in the study plan has started (COVERED is built in timetable.js)
+function taught(t, d) { return !t.from || t.from <= d || !!state.unlocked[t.id] || (COVERED[t.id] != null && COVERED[t.id] <= d); }
 function nextPaper(t, d) {
   let best = null;
   for (const id of t.paperIds) { const p = PAPER[id]; if (p.date > d && (!best || p.date < best.date)) best = p; }
@@ -370,116 +375,6 @@ const KIND = {
   paper: { label: 'Timed past paper', steps: ['paper', 'score'] },
   cards: { label: 'Daily flashcards', steps: [] },
 };
-function pickPaper(d, sim, info) {
-  const ph = info.phase.id;
-  if (!['papers', 'easter', 'final', 'exams'].includes(ph)) return null;
-  if (!(info.type === 'weekend' || info.type === 'holiday' || info.type === 'study')) return null;
-  let cands = PAPERS.filter((p) => !p.approx && p.date > d && tierOk({ subj: p.subj }));
-  if (ph === 'exams') {
-    const nx = cands.filter((p) => D.diff(d, p.date) >= 2 && D.diff(d, p.date) <= 5);
-    cands = nx.slice(0, 2);
-  }
-  if (!cands.length) return null;
-  cands.sort((a, b) => (sim.pc[a.id] || 0) - (sim.pc[b.id] || 0) || a.date.localeCompare(b.date));
-  return cands[0];
-}
-function buildDay(d, sim) {
-  const info = dayInfo(d);
-  const blocks = [];
-  if (info.mins <= 0) return { info, blocks };
-  const pool = activeTopics(d);
-  const pmToday = info.exams.filter((p) => p.time === 'pm');
-  if (!pool.length && !pmToday.length) return { info, blocks };
-  blocks.push({ k: 'cards', m: Math.min(15, info.mins) });
-  let rem = info.mins - 15;
-  // afternoon exam today: one final-review block for it in the morning
-  const morning = [];
-  for (const p of pmToday) {
-    const ts = TOPICS.filter((t) => tierOk(t) && t.paperIds.includes(p.id)).sort((x, y) => (st(x.id, sim.topics).c || 0) - (st(y.id, sim.topics).c || 0));
-    if (ts.length && rem >= 25) { blocks.push({ k: 'final', t: ts[0].id, m: 25, why: [p.subj.name + ' exam this afternoon'] }); morning.push(ts[0].id); rem -= 30; }
-  }
-  const paper = pickPaper(d, sim, info);
-  if (paper && rem >= paper.dur + 15 + 30) {
-    blocks.push({ k: 'paper', pid: paper.id, m: paper.dur + 15, why: ['least-practised paper'] });
-    rem -= paper.dur + 15;
-    sim.pc[paper.id] = (sim.pc[paper.id] || 0) + 1;
-    sim.tally[paper.subj.id] += paper.dur + 15;
-  }
-  const n = Math.max(0, Math.floor((rem + 5) / 30));
-  if (!n || !pool.length) return { info, blocks };
-  const active = [...new Set(pool.map((t) => t.subj.id))];
-  const scored = pool.filter((t) => !morning.includes(t.id)).map((t) => Object.assign({ t }, scoreTopic(t, d, sim, active))).sort((a, b) => b.score - a.score);
-  const soonSubj = new Set(scored.filter((x) => x.dx <= 2).map((x) => x.t.subj.id));
-  const perSubj = {}, maxPer = Math.max(2, Math.ceil(n * 0.4));
-  const chosen = [];
-  let last = null;
-  for (let i = 0; i < n; i++) {
-    let pick = null;
-    for (const x of scored) {
-      if (chosen.includes(x)) continue;
-      const sid = x.t.subj.id;
-      const limit = soonSubj.has(sid) ? n : maxPer;
-      if ((perSubj[sid] || 0) >= limit) continue;
-      if (sid === last && !soonSubj.has(sid)) continue;
-      pick = x; break;
-    }
-    if (!pick) pick = scored.find((x) => !chosen.includes(x));
-    if (!pick) break;
-    chosen.push(pick); last = pick.t.subj.id; perSubj[last] = (perSubj[last] || 0) + 1;
-  }
-  for (const x of chosen) {
-    const c = st(x.t.id, sim.topics).c || 0;
-    blocks.push({ k: kindFor(c, info.phase.id, x.dx), t: x.t.id, m: 25, why: x.why.slice(0, 2) });
-  }
-  return { info, blocks };
-}
-function simApply(sim, b, d) {
-  if (b.t) {
-    const t = TOPIC[b.t], old = st(b.t, sim.topics), r = Math.min(5, (old.c || 2) + 1), n = (old.n || 0) + 1;
-    const np = nextPaper(t, d), dx = np ? D.diff(d, np.date) : null;
-    sim.topics[b.t] = { c: r, n, last: d, due: D.add(d, intervalFor(r, n, dx)) };
-    sim.tally[t.subj.id] += b.m;
-  }
-}
-function simDecay(sim) { for (const k in sim.tally) sim.tally[k] *= 0.93; }
-function ensurePlan(d) {
-  if (!state.plans[d]) {
-    const { blocks } = buildDay(d, makeSim(d));
-    state.plans[d] = { blocks, done: {} };
-    saveQuiet();
-  }
-  return state.plans[d];
-}
-function rebuildPlan(d) {
-  const old = state.plans[d];
-  const kept = old ? old.blocks.filter((b, i) => old.done[i] != null) : [];
-  const keptDone = {};
-  if (old) { let j = 0; old.blocks.forEach((b, i) => { if (old.done[i] != null) keptDone[j++] = old.done[i]; }); }
-  const sim = makeSim(d);
-  for (const b of kept) simApply(sim, b, d);
-  const fresh = buildDay(d, sim).blocks.filter((b) => !(b.k === 'cards' && kept.some((k) => k.k === 'cards')));
-  const takenT = new Set(kept.map((b) => b.t).filter(Boolean));
-  const add = fresh.filter((b) => !b.t || !takenT.has(b.t));
-  // keep today's total similar: drop fresh blocks beyond the day's budget
-  const budget = dayInfo(d).mins; let used = kept.reduce((a, b) => a + b.m, 0);
-  const blocks = kept.slice();
-  for (const b of add) { if (used + b.m <= budget + 5) { blocks.push(b); used += b.m; } }
-  state.plans[d] = { blocks, done: keptDone };
-  save();
-}
-function forecast(days) {
-  const t = D.today(), sim = makeSim(t), out = [];
-  const plan = ensurePlan(t);
-  plan.blocks.forEach((b) => simApply(sim, b, t));
-  for (let k = 1; k <= days; k++) {
-    const d = D.add(t, k);
-    simDecay(sim);
-    const res = buildDay(d, sim);
-    res.blocks.forEach((b) => simApply(sim, b, d));
-    out.push({ d, info: res.info, blocks: res.blocks });
-  }
-  return out;
-}
 function logMinutes(d, sid, m) {
   const day = state.days[d] || (state.days[d] = { m: 0, subj: {} });
   day.m += m; if (sid) day.subj[sid] = (day.subj[sid] || 0) + m;

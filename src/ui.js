@@ -1,58 +1,60 @@
 /* ============================================================
-   GCSE Plan — UI layer (bright, chunky, playful)
-   Rendering, lessons, flashcards, celebrations, events, boot.
-   Engine (planner, sync, data) lives in app.js.
+   GCSE Plan — UI layer (calm, shadcn-style via Basecoat)
+   Router, views, lessons, flashcards, quizzes, events, boot.
+   Engine lives in app.js (planner, sync, data) and timetable.js (bell times).
    ============================================================ */
 
-/* ---------- icons ---------- */
+/* ---------- icons (Lucide, ISC licence, plus subject marks) ---------- */
 const IC = {
-  home: '<path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v10h13V10"/><path d="M10 20v-5h4v5"/>',
-  plan: '<path d="M9 4 3 6.5v13.5l6-2.5 6 2.5 6-2.5V4l-6 2.5z"/><path d="M9 4v13.5M15 6.5V20"/>',
-  book: '<path d="M2.5 5.5c3-1.4 6.3-1.4 9.5.8 3.2-2.2 6.5-2.2 9.5-.8V19c-3-1.4-6.3-1.4-9.5.8C8.8 17.6 5.5 17.6 2.5 19z"/><path d="M12 6.3v13.4"/>',
-  cards: '<rect x="3" y="7" width="13" height="14" rx="2.5"/><path d="M7.5 7V5.5A2.5 2.5 0 0 1 10 3h8.5A2.5 2.5 0 0 1 21 5.5v10a2.5 2.5 0 0 1-2.5 2.5H16"/>',
-  sliders: '<path d="M4 6h9M17 6h3M4 12h3M11 12h9M4 18h11M19 18h1"/><circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="18" r="2"/>',
-  fire: '<path fill="currentColor" stroke="none" d="M12.6 1.8c.4 3.1-1.7 4.7-1.7 7 0 1.3.9 2.3 2.1 2.3 1.5 0 2.3-1.2 2.1-2.8 2.3 1.7 3.9 4.3 3.9 7.2A7 7 0 0 1 12 22.5a7 7 0 0 1-7-7c0-4.6 4.4-7 6.1-10.2.5-1 .9-2.2 1.5-3.5z"/>',
-  bolt: '<path fill="currentColor" stroke="none" d="M13.5 1.8 4 14h6.6l-1.3 8.2L19 10h-6.7z"/>',
-  cal: '<rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/>',
-  check: '<path d="M5 12.5l4.6 4.6L19.2 7.5" stroke-width="3.2"/>',
-  x: '<path d="M6 6l12 12M18 6 6 18" stroke-width="3"/>',
-  star: '<path fill="currentColor" stroke="none" d="m12 2.6 2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17l-5.7 3.1 1.2-6.4L2.8 9.3l6.4-.8z"/>',
-  bulb: '<path d="M9 18h6M10 21.5h4"/><path d="M12 2.8a6.2 6.2 0 0 0-3.6 11.3c.7.5 1.1 1.3 1.1 2.1v.8h5v-.8c0-.8.4-1.6 1.1-2.1A6.2 6.2 0 0 0 12 2.8z"/>',
-  pencil: '<path d="M4 20l1.2-4.8L16 4.4a2 2 0 0 1 2.8 0l.8.8a2 2 0 0 1 0 2.8L8.8 18.8z"/><path d="M14.5 6l3.5 3.5"/>',
-  target: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/>',
-  doc: '<path d="M6 2.5h8.5l4.5 4.5v14.5H6z"/><path d="M14 2.5V7h5M9 12h7M9 16h5"/>',
-  clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
-  trophy: '<path d="M8 21h8M12 16.5V21M7 3.5h10V9a5 5 0 0 1-10 0z"/><path d="M17 5h3v1.5a3.5 3.5 0 0 1-3.5 3.5M7 5H4v1.5A3.5 3.5 0 0 0 7.5 10"/>',
-  chevL: '<path d="M15 5l-7 7 7 7" stroke-width="3"/>',
-  chevR: '<path d="M9 5l7 7-7 7" stroke-width="3"/>',
-  info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 7.5v.2" stroke-width="2.8"/>',
-  alert: '<path d="M12 3.5 2.5 20h19z"/><path d="M12 10v4.5M12 17.2v.2" stroke-width="2.8"/>',
-  lock: '<rect x="4.5" y="10.5" width="15" height="10" rx="2.5"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/>',
-  sound: '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M16 9a4.2 4.2 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/>',
-  user: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+  today: '<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
+  week: '<path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/>',
+  book: '<path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/>',
+  layers: '<path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/>',
+  map: '<path d="M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0z"/><path d="M15 5.764v15"/><path d="M9 3.236v15"/>',
+  settings: '<path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"/><circle cx="12" cy="12" r="3"/>',
+  check: '<path d="M20 6 9 17l-5-5"/>',
+  x: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
+  chevL: '<path d="m15 18-6-6 6-6"/>',
+  chevR: '<path d="m9 18 6-6-6-6"/>',
+  chevD: '<path d="m6 9 6 6 6-6"/>',
+  play: '<polygon points="6 3 20 12 6 21 6 3"/>',
+  ext: '<path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>',
+  fire: '<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>',
+  bolt: '<path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/>',
+  info: '<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>',
+  alert: '<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/>',
+  live: '<path d="M4.9 19.1C1 15.2 1 8.8 4.9 4.9"/><path d="M7.8 16.2c-2.3-2.3-2.3-6.1 0-8.5"/><circle cx="12" cy="12" r="2"/><path d="M16.2 7.8c2.3 2.3 2.3 6.1 0 8.5"/><path d="M19.1 4.9C23 8.8 23 15.1 19.1 19"/>',
+  coffee: '<path d="M10 2v2"/><path d="M14 2v2"/><path d="M16 8a1 1 0 0 1 1 1v8a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1h14a4 4 0 1 1 0 8h-1"/><path d="M6 2v2"/>',
+  star: '<path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/>',
+  moon: '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>',
+  bulb: '<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/>',
+  pencil: '<path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/>',
+  target: '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
+  doc: '<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/>',
+  clock: '<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
+  trophy: '<path d="M10 14.66v1.626a2 2 0 0 1-.976 1.696A5 5 0 0 0 7 21.978"/><path d="M14 14.66v1.626a2 2 0 0 0 .976 1.696A5 5 0 0 1 17 21.978"/><path d="M18 9h1.5a1 1 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M6 9a6 6 0 0 0 12 0V3a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1z"/><path d="M6 9H4.5a1 1 0 0 1 0-5H6"/>',
+  cards: '<rect width="18" height="14" x="3" y="7" rx="2"/><path d="M7 7V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-2"/>',
+  user: '<circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/>',
   google: '<path d="M21 12.2c0-.7-.1-1.3-.2-1.9H12v3.6h5a4.3 4.3 0 0 1-1.9 2.8v2.3h3A9 9 0 0 0 21 12.2z" fill="#4285F4" stroke="none"/><path d="M12 21.3c2.5 0 4.6-.8 6.1-2.3l-3-2.3c-.8.6-1.9.9-3.1.9-2.4 0-4.4-1.6-5.1-3.8H3.8v2.4A9.2 9.2 0 0 0 12 21.3z" fill="#34A853" stroke="none"/><path d="M6.9 13.8a5.5 5.5 0 0 1 0-3.6V7.8H3.8a9.2 9.2 0 0 0 0 8.4z" fill="#FBBC05" stroke="none"/><path d="M12 6.5c1.3 0 2.5.5 3.5 1.4l2.6-2.6A9.2 9.2 0 0 0 3.8 7.8l3.1 2.4C7.6 8.1 9.6 6.5 12 6.5z" fill="#EA4335" stroke="none"/>',
   maths: '<path d="M6.5 3.5v6M3.5 6.5h6M14.5 6.5h6M4 14.5l5 5M9 14.5l-5 5M14.5 17h6"/><circle cx="17.5" cy="14.3" r=".9" fill="currentColor"/><circle cx="17.5" cy="19.7" r=".9" fill="currentColor"/>',
   science: '<path d="M9 2.8h6M10 2.8v6.4L4.6 18.6a1.7 1.7 0 0 0 1.5 2.6h11.8a1.7 1.7 0 0 0 1.5-2.6L14 9.2V2.8"/><path d="M7.2 14.5h9.6"/>',
   englang: '<path d="M4 4.5h16v11.5H9.5L4.5 20z"/><path d="M8.5 8.5h7M8.5 12h4.5"/>',
   englit: '<path d="M20.5 3.5C12.5 3.5 6 9.5 5 19"/><path d="M20.5 3.5c0 7.5-5.5 12-12 12.5"/><path d="M3.5 20.5 7 17"/>',
-  geog: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.4 3 14.6 0 18M12 3c-3 3.4-3 14.6 0 18"/>',
   hist: '<path d="M3 21h18M12 3l9 4.5H3z"/><path d="M5.5 10v8M10 10v8M14 10v8M18.5 10v8M4 10h16M4 18h16"/>',
   german: '<path d="M3 4.5h11.5v8.5H7.5L3 16.5z"/><path d="M10.5 16v1.5h6l4.5 3.5V9.5h-3.5"/>',
 };
-function ic(name, cls) { return `<svg class="ico${cls ? ' ' + cls : ''}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[name] || ''}</svg>`; }
+function ic(name, cls) { return `<svg class="ico${cls ? ' ' + cls : ''}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[name] || ''}</svg>`; }
 const KIND_ICON = { learn: 'book', recall: 'bulb', exam: 'pencil', final: 'target', paper: 'doc', cards: 'cards' };
-const sv = (sid) => `--c:var(--${sid});--cd:var(--${sid}-d);--t:var(--${sid}-t);--d:var(--${sid}-d)`;
-const scol = (sid) => 'var(--' + sid + ')';
+const sv = (sid) => sid ? `--c:var(--${sid})` : '--c:var(--muted-foreground)';
 const ccol = (c) => 'var(--c' + (c || 0) + ')';
 const CONF_WORD = ['Not rated', 'Don\'t know it', 'Shaky', 'Okay, some gaps', 'Good', 'Exam-ready'];
 function plural(n, w) { return n + ' ' + w + (n === 1 ? '' : 's'); }
-function minsTxt(m) { if (m < 60) return m + ' min'; const h = Math.floor(m / 60), r = m % 60; return h + 'h' + (r ? ' ' + r + 'm' : ''); }
+function minsTxt(m) { if (m < 60) return m + ' min'; const h = Math.floor(m / 60), r = m % 60; return h + ' h' + (r ? ' ' + r + ' min' : ''); }
 function nextExam(d) { return PAPERS.find((p) => p.date >= d && !p.approx) || null; }
 function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
-function monAbbr(s) { return D.fmt(s, { month: 'short' }).toUpperCase(); }
-function dayNum(s) { return D.fmt(s, { day: 'numeric' }); }
+const shortName = (s) => s.name.replace('Combined ', '').replace('English ', 'Eng. ');
 
-/* ---------- XP, streak, sound, confetti ---------- */
+/* ---------- XP, streak, sound ---------- */
 function addXP(n) {
   if (!n) return;
   state.xp = (state.xp || 0) + n;
@@ -72,42 +74,21 @@ const Sound = {
     for (const [f, dur, gap] of notes) {
       const o = c.createOscillator(), g = c.createGain();
       o.type = type || 'sine'; o.frequency.setValueAtTime(f, t);
-      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol || 0.2, t + 0.015); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol || 0.16, t + 0.015); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
       o.connect(g); g.connect(c.destination); o.start(t); o.stop(t + dur + 0.03); t += gap;
     }
   },
-  correct() { this.play([[784, 0.14, 0.09], [1175, 0.24, 0]], 'sine', 0.2); },
-  wrong() { this.play([[247, 0.16, 0.12], [196, 0.26, 0]], 'triangle', 0.16); },
-  tick() { this.play([[988, 0.07, 0]], 'sine', 0.1); },
-  win() { this.play([[523, 0.14, 0.11], [659, 0.14, 0.11], [784, 0.14, 0.11], [1047, 0.4, 0]], 'sine', 0.2); },
+  correct() { this.play([[784, 0.14, 0.09], [1175, 0.24, 0]], 'sine', 0.14); },
+  wrong() { this.play([[247, 0.16, 0.12], [196, 0.26, 0]], 'triangle', 0.12); },
+  tick() { this.play([[988, 0.07, 0]], 'sine', 0.07); },
+  win() { this.play([[523, 0.14, 0.11], [659, 0.14, 0.11], [784, 0.14, 0.11], [1047, 0.4, 0]], 'sine', 0.14); },
 };
 function buzz(ms) { try { const ua = navigator.userActivation; if (navigator.vibrate && (!ua || ua.hasBeenActive)) navigator.vibrate(ms); } catch (e) { /* not supported */ } }
-const reduceMotion = () => window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-function confetti(opts) {
-  if (reduceMotion()) return;
-  opts = opts || {};
-  const cv = document.createElement('canvas'); cv.className = 'confetti'; document.body.appendChild(cv);
-  const W = innerWidth, H = innerHeight, dpr = Math.min(2, window.devicePixelRatio || 1);
-  cv.width = W * dpr; cv.height = H * dpr; const x = cv.getContext('2d'); x.scale(dpr, dpr);
-  const cols = ['#58CC02', '#1CB0F6', '#FFC800', '#FF4B4B', '#CE82FF', '#FF9600', '#00CD9C'];
-  const n = opts.n || 90, ox = opts.x != null ? opts.x : W / 2, oy = opts.y != null ? opts.y : H * 0.4, spread = opts.spread || 15;
-  const ps = Array.from({ length: n }, () => ({ x: ox, y: oy, vx: (Math.random() - 0.5) * spread, vy: -Math.random() * spread - 4, r: Math.random() * 6 + 5, c: cols[Math.random() * cols.length | 0], a: Math.random() * 6, va: (Math.random() - 0.5) * 0.35, sq: Math.random() < 0.6 }));
-  let last = performance.now();
-  (function frame(t) {
-    const dt = Math.min(34, t - last) / 16.7; last = t;
-    x.clearRect(0, 0, W, H); let alive = 0;
-    for (const p of ps) {
-      p.vy += 0.42 * dt; p.vx *= 0.985; p.x += p.vx * dt; p.y += p.vy * dt; p.a += p.va * dt;
-      if (p.y < H + 30) { alive++; x.save(); x.translate(p.x, p.y); x.rotate(p.a); x.fillStyle = p.c; if (p.sq) x.fillRect(-p.r / 2, -p.r / 4, p.r, p.r / 2); else { x.beginPath(); x.arc(0, 0, p.r / 2.4, 0, 6.3); x.fill(); } x.restore(); }
-    }
-    if (alive) requestAnimationFrame(frame); else cv.remove();
-  })(last);
-}
 function xpFloat(n, el) {
   const f = document.createElement('div'); f.className = 'xpfloat'; f.textContent = '+' + n + ' XP';
   const r = el ? el.getBoundingClientRect() : { left: innerWidth / 2, top: innerHeight / 2, width: 0 };
-  f.style.left = (r.left + r.width / 2) + 'px'; f.style.top = (r.top - 10) + 'px';
-  document.body.appendChild(f); setTimeout(() => f.remove(), 1050);
+  f.style.left = (r.left + r.width / 2) + 'px'; f.style.top = (r.top - 6) + 'px';
+  document.body.appendChild(f); setTimeout(() => f.remove(), 950);
 }
 function toast(msg) {
   $$('.toast').forEach((t) => t.remove());
@@ -118,9 +99,10 @@ function toast(msg) {
 /* ---------- shared bits ---------- */
 function mastery(s) { const a = subjectAvg(s); return Math.round((a.avg / 5) * 100); }
 function rate5(id, cur) {
-  return '<div class="rate5" role="group" aria-label="Confidence 1 to 5">' + [1, 2, 3, 4, 5].map((r) =>
-    `<button type="button" data-rate="${esc(id)}" data-r="${r}" aria-pressed="${cur === r}" title="${CONF_WORD[r]}">${r}</button>`).join('') + '</div>';
+  return `<div class="rate5" role="group" aria-label="Confidence, 1 to 5">` + [1, 2, 3, 4, 5].map((r) =>
+    `<button type="button" data-rate="${esc(id)}" data-r="${r}" aria-pressed="${cur === r}" title="${CONF_WORD[r]}" style="--rc:${ccol(r)}">${r}</button>`).join('') + '</div>';
 }
+function confChip(c) { return `<span class="chip"><i class="dot" style="background:${ccol(c)}"></i>${esc(CONF_WORD[c || 0])}</span>`; }
 const SPEC_PDF = {
   maths: 'https://qualifications.pearson.com/content/dam/pdf/GCSE/mathematics/2015/specification-and-sample-assesment/gcse-maths-2015-specification.pdf',
   science: 'https://filestore.aqa.org.uk/resources/science/specifications/AQA-8464-SP-2016.PDF',
@@ -131,350 +113,468 @@ const SPEC_PDF = {
 };
 function specLine(t) {
   const ref = (RG.spec || {})[t.id];
-  return ref ? `<div class="spec-ref"><span class="caps">Official spec</span> <a href="${esc(SPEC_PDF[t.subj.id])}" target="_blank" rel="noopener">${esc(ref)}</a></div>` : '';
+  return ref ? `<p class="spec-ref">Official spec: <a href="${esc(SPEC_PDF[t.subj.id])}" target="_blank" rel="noopener">${esc(ref)}</a></p>` : '';
 }
-function note(html, tone, icon) {
-  const tones = { blue: '--t:var(--blue-t);--d:var(--blue)', yellow: '--t:var(--yellow-t);--d:var(--yellow-d)', red: '--t:var(--red-t);--d:var(--red)', green: '--t:var(--green-t);--d:var(--green-d)', purple: '--t:var(--purple-t);--d:var(--purple-d)' };
-  return `<div class="note" style="${tones[tone || 'blue']}">${ic(icon || 'info')}<div>${html}</div></div>`;
+function note(html, tone, icon) { return `<div class="note" data-tone="${tone || 'info'}">${ic(icon || 'info')}<div>${html}</div></div>`; }
+function extLink(label, url) { return `<a class="xlink" href="${esc(url)}" target="_blank" rel="noopener">${esc(label)}${ic('ext', 'xs')}</a>`; }
+// link keys from the timetable data ('app' was the old separate flashcard app, now the Practice tab here)
+function ttLinks(keys) {
+  return (keys || []).map((k) => k === 'app' ? `<a class="xlink" href="#/practice/decks">Practice decks in this app</a>` : TT.LINKS[k] ? extLink(TT.LINKS[k][0], TT.LINKS[k][1]) : '').join('');
+}
+function vidList(list) {
+  return `<ul class="vids">${list.map((v) => `<li><a href="https://www.youtube.com/watch?v=${esc(v.id)}" target="_blank" rel="noopener"><span class="play">${ic('play')}</span><span><span class="t">${esc(v.title)}</span><span class="meta">${esc(v.channel)}${v.length ? ', ' + esc(v.length) : ''}</span></span></a></li>`).join('')}</ul>`;
+}
+function seg(items, cur, label) {
+  return `<nav class="seg" aria-label="${esc(label)}">${items.map(([key, text, hrefTo]) => `<a href="${hrefTo}" aria-current="${key === cur ? 'page' : 'false'}">${esc(text)}</a>`).join('')}</nav>`;
+}
+function subjChips(cur, base) {
+  return `<nav class="chips" aria-label="Subject">${[['', 'All']].concat(RG.subjects.map((s) => [s.id, shortName(s)])).map(([id, n]) =>
+    `<a href="${base}${id ? '?s=' + id : ''}" aria-current="${(cur || '') === id ? 'page' : 'false'}" style="${sv(id || null)}">${id ? '<i class="dot"></i>' : ''}${esc(n)}</a>`).join('')}</nav>`;
+}
+function pageHead(title, sub, back) {
+  return `<header class="phead">${back ? `<a class="back" href="${back[1]}" data-back>${ic('chevL')}${esc(back[0])}</a>` : ''}<h1>${title}</h1>${sub ? `<p class="muted">${sub}</p>` : ''}</header>`;
 }
 
-/* ---------- router & chrome ---------- */
-let route = 'today', sub = null, planTab = 'days', cardsSubj = null, openNode = null, cardsTab = 'cards';
+/* ---------- router ----------
+   #/today[/date] · #/week[/monday] · #/subjects[/id[/tab]] · #/topic/id · #/rate · #/practice[/tab]?s=id · #/plan[/tab] · #/settings
+   Every navigation is a real history entry, so the browser/phone back button works everywhere. */
+let R = { tab: 'today', parts: [], q: {} }, cardsSubj = null;
+const TABS = [['today', 'Today', 'today'], ['week', 'Week', 'week'], ['subjects', 'Subjects', 'book'], ['practice', 'Practice', 'layers'], ['plan', 'Plan', 'map']];
+const href = (p) => '#/' + p;
+function parseHash() {
+  let h = location.hash.replace(/^#\/?/, '');
+  // links from the old app: #cards, #more, #subjects-<id>
+  const legacy = h.match(/^(today|plan|subjects|cards|more|rate)(?:-(.+))?$/);
+  if (legacy) h = legacy[1] === 'cards' ? 'practice' : legacy[1] === 'more' ? 'settings' : legacy[2] ? (TOPIC[legacy[2]] ? 'topic/' + legacy[2] : 'subjects/' + legacy[2]) : legacy[1];
+  const [p, qs] = h.split('?');
+  const parts = p.split('/').filter(Boolean).map(decodeURIComponent);
+  const tab = parts.shift() || 'today';
+  const q = {}; new URLSearchParams(qs || '').forEach((v, k) => { q[k] = v; });
+  R = { tab: ['today', 'week', 'subjects', 'topic', 'rate', 'practice', 'plan', 'settings'].includes(tab) ? tab : 'today', parts, q };
+  cardsSubj = SUBJ[q.s] ? q.s : null;
+}
+function go(p) { const h = href(p); if (location.hash === h) render(); else location.hash = h; }
+// in-app back links step back through history when there is somewhere to go back to
+const trail = [];
+function noteHash() { const h = location.hash; if (trail.length > 1 && trail[trail.length - 2] === h) trail.pop(); else if (trail[trail.length - 1] !== h) trail.push(h); }
+
+function applyTheme() {
+  const t = state.settings.theme || 'system';
+  const dark = t === 'dark' || (t === 'system' && window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches);
+  document.documentElement.classList.toggle('dark', dark);
+  document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+}
 function topBar() {
-  const nx = nextExam(D.today()), dx = nx ? D.diff(D.today(), nx.date) : null, sk = streak();
-  return `<div class="top-in"><a class="logo" href="#today" aria-label="GCSE Plan home"><i>27</i><span>GCSE Plan</span></a>
-    <a class="stat fire${sk ? '' : ' off'}" href="#plan" title="${plural(sk, 'day')} streak" aria-label="${plural(sk, 'day')} streak">${ic('fire')}<span class="num">${sk}</span></a>
-    <span class="stat xp" title="Total XP" aria-label="${state.xp || 0} XP">${ic('bolt')}<span class="num">${state.xp || 0}</span></span>
-    <button class="stat days linkbtn" data-act="to-exams" title="Days to your first exam" aria-label="${dx == null ? 'No exams left' : plural(dx, 'day') + ' to your next exam'}" style="text-transform:none;letter-spacing:0;font-size:16px">${ic('cal')}<span class="num">${dx == null ? '–' : dx}</span></button></div>`;
+  const sk = streak(), nx = nextExam(D.today()), dx = nx ? D.diff(D.today(), nx.date) : null;
+  const navTab = R.tab === 'topic' || R.tab === 'rate' ? 'subjects' : R.tab;
+  return `<div class="top-in"><a class="brand" href="#/today"><b>GCSE</b><span>2027</span></a>
+    <nav class="toptabs" aria-label="Main">${TABS.map(([r, l, i]) => `<a href="#/${r}" aria-current="${navTab === r ? 'page' : 'false'}">${ic(i)}${l}</a>`).join('')}</nav>
+    <div class="stats"><a class="stat" href="#/plan/exams" title="Days to your next exam">${ic('trophy')}<span class="num">${dx == null ? '–' : dx}</span><span class="sr">days to your next exam</span></a>
+    <span class="stat${sk ? ' hot' : ''}" title="${plural(sk, 'day')} streak">${ic('fire')}<span class="num">${sk}</span><span class="sr">day streak</span></span>
+    <span class="stat" title="Total XP">${ic('bolt')}<span class="num">${state.xp || 0}</span><span class="sr">XP</span></span>
+    <a class="btn" data-variant="ghost" data-size="icon" href="#/settings" aria-label="Settings" aria-current="${R.tab === 'settings' ? 'page' : 'false'}">${ic('settings')}</a></div></div>`;
 }
 function render() {
   const v = $('#view'), top = $('#top'), nav = $('#nav');
-  if (authPending()) { top.hidden = true; nav.hidden = true; v.innerHTML = '<div class="login" style="padding-top:90px"><div class="appmark">27</div><p class="muted">Loading your plan…</p></div>'; return; }
+  if (authPending()) { top.hidden = true; nav.hidden = true; v.innerHTML = '<div class="login"><div class="appmark">27</div><p class="muted">Loading your plan…</p></div>'; return; }
   if (needsLogin()) { top.hidden = true; nav.hidden = true; v.innerHTML = viewLogin(); return; }
   top.hidden = false; nav.hidden = false;
+  applyTheme(); // the theme can change when progress syncs in from another device
   top.innerHTML = topBar();
-  const map = { today: viewToday, plan: viewPlan, subjects: viewSubjects, cards: viewCards, more: viewMore, rate: viewRate };
-  v.innerHTML = (map[route] || viewToday)();
-  $$('.nav a').forEach((a) => a.setAttribute('aria-current', a.dataset.r === (route === 'rate' ? 'subjects' : route) ? 'page' : 'false'));
+  const navTab = R.tab === 'topic' || R.tab === 'rate' ? 'subjects' : R.tab;
+  $$('#nav a').forEach((a) => a.setAttribute('aria-current', a.dataset.r === navTab ? 'page' : 'false'));
+  const P = R.parts;
+  const map = {
+    today: () => viewToday(P[0]), week: () => viewWeek(P[0]), subjects: () => (P[0] && SUBJ[P[0]] ? viewSubject(SUBJ[P[0]], P[1]) : viewSubjects()),
+    topic: () => (TOPIC[P[0]] ? viewTopic(TOPIC[P[0]]) : viewSubjects()), rate: viewRate, practice: () => viewPractice(P[0]), plan: () => viewPlan(P[0]), settings: viewSettings,
+  };
+  v.innerHTML = map[R.tab]();
   updateSync();
+  if (R.tab === 'today' && !P[0]) { const cur = $('#view .tl-item.is-now'); if (cur && !render.scrolled) { render.scrolled = true; cur.scrollIntoView({ block: 'center' }); } }
 }
-function go(r, s) { route = r; sub = s || null; const h = s ? r + '-' + s : r; if (location.hash.slice(1) !== h) history.replaceState(null, '', '#' + h); render(); window.scrollTo(0, 0); }
 
 /* ---------- login ---------- */
 function viewLogin() {
   const standalone = window.navigator.standalone === true;
   return `<div class="login"><div class="appmark">27</div>
-    <div><h1>Your GCSE plan</h1><p class="muted" style="margin-top:6px">Sign in so your streak, XP and progress follow you between your phone and computer.</p></div>
-    <form id="login-form" autocomplete="on" novalidate>
-      <input id="login-email" name="email" type="email" autocomplete="username" inputmode="email" placeholder="Email" aria-label="Email" required>
-      <input id="login-pass" name="password" type="password" autocomplete="current-password" minlength="6" placeholder="Password" aria-label="Password" required>
-      ${auth.error ? `<p class="small" role="alert" style="color:var(--red);font-weight:800">${esc(auth.error)}</p>` : ''}
-      <button class="btn blue full" type="submit" ${auth.busy ? 'disabled' : ''}>Sign in</button>
-      <button class="btn full" type="button" data-act="login-signup" ${auth.busy ? 'disabled' : ''}>Create account</button>
+    <div><h1>Your GCSE plan</h1><p class="muted">Sign in so your streak, XP and progress follow you between your phone and computer.</p></div>
+    <form id="login-form" class="stack" autocomplete="on" novalidate>
+      <input class="input" id="login-email" name="email" type="email" autocomplete="username" inputmode="email" placeholder="Email" aria-label="Email" required>
+      <input class="input" id="login-pass" name="password" type="password" autocomplete="current-password" minlength="6" placeholder="Password" aria-label="Password" required>
+      ${auth.error ? `<p class="small err" role="alert">${esc(auth.error)}</p>` : ''}
+      <button class="btn full" type="submit" ${auth.busy ? 'disabled' : ''}>Sign in</button>
+      <button class="btn full" data-variant="outline" type="button" data-act="login-signup" ${auth.busy ? 'disabled' : ''}>Create account</button>
       <div class="or">or</div>
-      <button class="btn full plain" type="button" data-act="login-google" ${auth.busy ? 'disabled' : ''}>${ic('google')} Continue with Google</button>
-      <p class="tiny muted" style="text-align:center">${standalone
+      <button class="btn full" data-variant="outline" type="button" data-act="login-google" ${auth.busy ? 'disabled' : ''}>${ic('google')} Continue with Google</button>
+      <p class="tiny muted center">${standalone
         ? 'Google not opening here? Sign in with Google on your computer, set a password in Settings, then use it on this phone.'
         : 'Made your account with Google? You can also set a password in Settings to sign in anywhere.'}</p>
-      <div class="row" style="justify-content:center;gap:18px"><button class="linkbtn" type="button" data-act="login-reset">Forgot password?</button></div>
+      <button class="btn" data-variant="link" type="button" data-act="login-reset">Forgot password?</button>
     </form>
-    <button class="linkbtn" data-act="login-skip" style="color:var(--ink-3)">Use without an account</button></div>`;
+    <button class="btn" data-variant="ghost" data-act="login-skip">Use without an account</button></div>`;
 }
 
 /* ---------- today ---------- */
-function greeting() { const h = new Date().getHours(); return h < 12 ? 'Good morning!' : h < 18 ? 'Good afternoon!' : 'Good evening!'; }
-function viewToday() {
-  const d = D.today(), info = dayInfo(d), plan = ensurePlan(d), ph = info.phase, nx = nextExam(d);
-  const doneMins = plan.blocks.reduce((a, b, i) => a + (plan.done[i] != null ? b.m : 0), 0);
-  const totMins = plan.blocks.reduce((a, b) => a + b.m, 0);
-  const pct = totMins ? Math.round(doneMins / totMins * 100) : 0;
-  const left = plan.blocks.filter((b, i) => plan.done[i] == null).length;
-  const allT = TOPICS.filter(tierOk), rated = allT.filter((t) => st(t.id).c).length;
-  let h = `<div class="hello"><div class="caps">${esc(D.long(d))}</div><h1>${pct >= 100 && totMins ? 'Daily goal smashed!' : greeting()}</h1></div>`;
-  if (totMins) {
-    h += `<div class="sect"><div class="card goal"><div class="ring" style="--p:${pct}"><b class="num">${pct}%</b></div><div class="stack" style="gap:8px">
-      <div class="row" style="justify-content:space-between"><b>Daily goal</b><span class="small muted num">${minsTxt(doneMins)} / ${minsTxt(totMins)}</span></div>
-      <div class="bar" role="progressbar" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100" aria-label="Daily goal"><i style="width:${pct}%"></i></div>
-      <span class="small muted">${left ? plural(left, 'session') + ' left today' : 'All sessions done — see you tomorrow!'}</span></div></div></div>`;
+const KIND_META = {
+  live: ['Live lesson', 'live'], self: ['Self-study', null], anki: ['Flashcards', 'layers'], cards: ['Flashcards', 'layers'], eve: ['Optional', 'moon'],
+  quiz: ['Mixed quiz', 'target'], break: ['Break', 'coffee'], blurt: ['Review', 'pencil'], paper: ['Timed practice', 'doc'], mark: ['Marking', 'pencil'],
+  exam: ['Exam', 'trophy'], prep: ['Exam prep', 'target'], rest: ['', 'moon'],
+};
+const QUIET = new Set(['break', 'rest', 'eve']);
+function timeTxt(it) { return it.start ? (/:/.test(it.end || '') ? it.start + '–' + it.end : it.start) : ''; }
+function doable(day) { return day.items.filter((it) => !QUIET.has(it.kind)); }
+function pickLine(it, d, canStart) {
+  const pk = it.pick;
+  if (!pk) return canStart && (it.kind === 'self' || it.kind === 'prep' || it.kind === 'paper') ? '<p class="small muted">Every topic for this subject is done or its exams are over.</p>' : '';
+  if (pk.pid) {
+    const p = PAPER[pk.pid];
+    return `<div class="pick"><div class="grow"><p class="pick-t">${esc(p.subj.name)}: ${esc(p.name)}</p><p class="small muted">${esc(p.subj.board + ' ' + p.code)}, ${minsTxt(p.dur)} timed${pk.why && pk.why.length ? '. Picked because it\'s your ' + esc(pk.why[0]) : ''}</p></div>
+      ${canStart && it.done == null ? `<button class="btn" data-act="start" data-d="${d}" data-id="${it.id}">Start paper</button>` : ''}</div>`;
   }
-  // alerts
+  const t = TOPIC[pk.t];
+  return `<div class="pick"><div class="grow"><p class="pick-t"><a href="#/topic/${t.id}">${esc(t.n)}</a></p><p class="small muted">${esc(KIND[pk.k].label)}${pk.why && pk.why.length ? '. ' + esc(pk.why.join(', ').replace(/^./, (c) => c.toUpperCase())) : ''}</p></div>
+    ${canStart && it.done == null ? `<button class="btn" data-act="start" data-d="${d}" data-id="${it.id}">Start lesson</button>` : ''}</div>`;
+}
+function itemBody(it, d, seenVid, canStart) {
+  let h = '';
+  if (it.replaces) h += `<p class="small muted">No online lessons today, so ${esc(it.replaces)} becomes ${esc(SUBJ[it.sid].name)} self-study.</p>`;
+  if (it.skipped) h += `<p class="small muted">This replaces ${esc(it.skipped.replace(' (not attending)', ''))}, which you don't attend.</p>`;
+  if (it.pickable) h += pickLine(it, d, canStart);
+  if (it.desc) h += `<p class="small">${esc(it.desc)}</p>`;
+  if (it.how && it.how.length) h += `<ol class="how">${it.how.map((x) => `<li>${esc(x)}</li>`).join('')}</ol>`;
+  if (it.kind === 'quiz' || it.kind === 'cards') h += `<div class="row"><button class="btn" data-variant="secondary" data-act="review" data-d="${d}" data-id="${it.id}">Review due cards (${dueCards(D.today()).length})</button></div>`;
+  if (it.links && it.links.length) h += `<div class="links">${ttLinks(it.links)}</div>`;
+  if (it.videos && it.videos.length) {
+    if (seenVid.has(it.sid)) h += `<p class="small muted">This week's ${esc(SUBJ[it.sid].name)} videos are in your earlier ${esc(SUBJ[it.sid].name)} period.</p>`;
+    else { seenVid.add(it.sid); h += `<p class="label">Watch this week</p>${vidList(it.videos)}`; }
+  }
+  return h;
+}
+function doneCtl(it, d) {
+  if (QUIET.has(it.kind) || it.kind === 'exam') return '';
+  const on = it.done != null;
+  return `<button class="tick" data-act="tick" data-d="${d}" data-id="${it.id}" aria-pressed="${on}" aria-label="${on ? 'Done. Tap to undo' : 'Mark as done'}">${ic('check')}</button>`;
+}
+function tlItem(it, d, ctx) {
+  const meta = KIND_META[it.kind] || ['', null], quiet = QUIET.has(it.kind);
+  const cls = ['tl-item', 'k-' + it.kind, it.done != null ? 'is-done' : '', ctx.cur === it ? 'is-now' : '', ctx.next === it ? 'is-next' : ''].filter(Boolean).join(' ');
+  const badge = it.kind === 'live' ? `<span class="badge" data-variant="outline">${ic('live')}Live</span>` : it.badge ? `<span class="badge" data-variant="secondary">${esc(it.badge)}</span>` : '';
+  const head = `<span class="tl-title">${esc(it.title)}</span>${badge}`;
+  const sub = it.focus ? `<span class="tl-focus">${esc(it.focus)}</span>` : (meta[0] && !quiet ? `<span class="tl-focus">${esc(meta[0])}</span>` : '');
+  const time = `<span class="tl-time num">${esc(it.start || '')}${it.end && /:/.test(it.end) ? `<small>${esc(it.end)}</small>` : ''}</span>`;
+  const dot = `<span class="tl-dot" style="${sv(it.sid)}">${it.done != null ? ic('check') : ''}</span>`;
+  if (quiet) return `<li class="${cls}">${time}${dot}<div class="tl-body"><div class="tl-head">${head}</div>${it.desc ? `<p class="small muted">${esc(it.desc)}</p>` : ''}</div></li>`;
+  const open = ctx.cur === it || ctx.next === it || ctx.openAll;
+  return `<li class="${cls}" style="${sv(it.sid)}">${time}${dot}<details class="tl-body"${open ? ' open' : ''}><summary><span class="tl-head">${head}</span>${sub}${ic('chevD', 'tl-chev')}</summary>
+    <div class="tl-more">${itemBody(it, d, ctx.seenVid, ctx.canStart)}</div></details>${doneCtl(it, d)}</li>`;
+}
+function nowCard(day, pos, mins) {
+  const { cur, next } = pos, d = day.d;
+  const focusItem = cur && !QUIET.has(cur.kind) ? cur : next;
+  let h = '';
+  if (!cur && !next) {
+    const left = doable(day).filter((it) => it.done == null).length;
+    return `<section class="now done-day"><p class="now-k">${day.items.length ? 'School day finished' : 'Nothing scheduled'}</p><h2>${left && day.items.length ? plural(left, 'period') + ' not ticked off yet' : day.items.length ? 'Everything ticked off. Good work.' : 'Enjoy the day.'}</h2></section>`;
+  }
+  if (cur && QUIET.has(cur.kind)) {
+    const endM = /:/.test(cur.end || '') ? toMin(cur.end) - mins : null;
+    h += `<p class="now-k">${esc(cur.title)}${endM != null ? ', ' + plural(endM, 'minute') + ' left' : ''}</p>`;
+  }
+  if (!focusItem) return `<section class="now">${h}</section>`;
+  const isCur = focusItem === cur, a = toMin(focusItem.start), b = /:/.test(focusItem.end || '') ? toMin(focusItem.end) : a + 45;
+  const pct = isCur ? Math.round((mins - a) / (b - a) * 100) : 0;
+  const t = focusItem.pick && focusItem.pick.t ? TOPIC[focusItem.pick.t] : null;
+  h += `<p class="now-k">${isCur ? 'Now' : 'Next'}, ${esc(timeTxt(focusItem))}${isCur ? '. ' + plural(b - mins, 'minute') + ' left' : focusItem.start ? '. Starts in ' + minsTxt(a - mins) : ''}</p>
+    <h2>${focusItem.kind === 'live' ? 'Live: ' : ''}${esc(focusItem.title)}</h2>
+    ${t ? `<p class="now-topic">${esc(t.n)}</p>` : focusItem.focus ? `<p class="now-topic">${esc(focusItem.focus)}</p>` : ''}
+    ${isCur ? `<div class="now-bar" role="progressbar" aria-label="Period progress" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100"><i style="width:${pct}%"></i></div>` : ''}`;
+  const acts = [];
+  if (focusItem.pick && focusItem.done == null) acts.push(`<button class="btn" data-act="start" data-d="${d}" data-id="${focusItem.id}">${focusItem.pick.pid ? 'Start paper' : 'Start lesson'}</button>`);
+  if (focusItem.kind === 'anki' || focusItem.kind === 'cards' || focusItem.kind === 'quiz') acts.push(`<button class="btn" data-act="review" data-d="${d}" data-id="${focusItem.id}">Review due cards</button>`);
+  if (focusItem.kind === 'live') acts.push(`<span class="small muted">${esc(focusItem.how[0])}</span>`);
+  return `<section class="now" style="${sv(focusItem.sid)}">${h}${acts.length ? `<div class="row wrap">${acts.join('')}</div>` : ''}</section>`;
+}
+function viewToday(dParam) {
+  const today = D.today(), d = dParam && /^\d{4}-\d{2}-\d{2}$/.test(dParam) ? dParam : today, isToday = d === today;
+  const day = dayPlan(d), ph = day.ph, dow = D.dow(d);
+  const now = new Date(), mins = now.getHours() * 60 + now.getMinutes();
+  const pos = isToday ? nowIn(day, mins) : { cur: null, next: null };
+  let h = `<header class="dayhead">
+    <a class="btn" data-variant="ghost" data-size="icon" href="#/today/${D.add(d, -1)}" aria-label="Previous day">${ic('chevL')}</a>
+    <div class="grow"><h1>${isToday ? 'Today' : esc(D.fmt(d, { weekday: 'long' }))}</h1><p class="muted">${esc(D.fmt(d, { weekday: isToday ? 'long' : undefined, day: 'numeric', month: 'long' }))}. ${esc(ph.name)}${hasWeeks(ph) ? ', week ' + (ph.wk + 1) : ''}</p></div>
+    ${isToday ? '' : '<a class="btn" data-variant="outline" data-size="sm" href="#/today">Today</a>'}
+    <a class="btn" data-variant="ghost" data-size="icon" href="#/today/${D.add(d, 1)}" aria-label="Next day">${ic('chevR')}</a></header>`;
+  // notes
   const notes = [];
-  if (rated < allT.length * 0.6) notes.push(note(`<b>First, rate your topics</b> (${rated}/${allT.length}). It takes 5 minutes and tells the planner exactly what you need.<div style="margin-top:10px"><a class="btn blue sm" href="#rate">Rate topics</a></div>`, 'blue', 'star'));
-  if (info.exams.length) notes.push(note(`<b>Exam today:</b> ${info.exams.map((p) => esc(p.subj.name + ' — ' + p.name + ' (' + p.time + ')')).join('; ')}. Light flashcards only, eat breakfast, arrive early. You've got this!`, 'yellow', 'trophy'));
+  const allT = TOPICS.filter(tierOk), rated = allT.filter((t) => st(t.id).c).length;
+  if (isToday && rated < allT.length * 0.6) notes.push(note(`<b>Rate your topics first</b> (${rated} of ${allT.length} done). It takes 5 minutes and tells the planner what you need. <a href="#/rate">Rate topics</a>`, 'info', 'star'));
+  if (d < '2026-10-12') notes.push(note('The plan starts on <b>Monday 12 October</b>. Until then, treat this as a trial run of week 1.'));
+  if (day.hol) notes.push(note(`<b>${esc(day.hol)}.</b> ${day.half ? 'Mornings only, then the afternoon off.' : 'No online lessons, so those periods are self-study.'}`, 'info', 'moon'));
   const tmr = examsOn(D.add(d, 1));
-  if (tmr.length) notes.push(note(`<b>Tomorrow:</b> ${tmr.map((p) => esc(p.subj.name + ' — ' + p.name)).join('; ')}. Tonight's path focuses on it. Stop by 9:30pm and sleep.`, 'red', 'alert'));
+  if (tmr.length) notes.push(note(`<b>Exam tomorrow:</b> ${tmr.map((p) => esc(p.subj.name + ', ' + p.name)).join('; ')}. Stop by 9:30pm and sleep.`, 'warn', 'alert'));
   const m = state.settings.mocks.find((x) => x.start > d && D.diff(d, x.start) <= 21);
-  if (m) notes.push(note(`<b>${esc(m.name)}</b> start ${esc(D.short(m.start))} — ${plural(D.diff(d, m.start), 'day')} away. (Estimated dates — fix them in <a href="#more">Settings</a>.)`, 'purple', 'cal'));
-  if (ph.id === 'gaps' && D.diff(state.settings.mocks[0].end, d) <= 21) notes.push(note('<b>Mock results back?</b> Re-rate your topics using your marks. <a href="#rate">Rate topics</a>', 'blue', 'info'));
-  if (notes.length) h += '<div class="sect">' + notes.join('') + '</div>';
-  // phase banner
-  if (ph.id !== 'after') {
-    const P = phases(), idx = Math.max(0, P.findIndex((p) => p.id === ph.id));
-    h += `<div class="sect"><div class="unit"><div class="grow"><div class="caps">Phase ${idx + 1} · until ${esc(D.short(ph.end))}</div><h2>${esc(ph.name)}</h2><p>${esc(ph.goal)}</p></div><a class="btn sm" href="#plan" data-act="to-road" aria-label="See the roadmap">${ic('plan')}</a></div></div>`;
-  }
-  // path
-  if (!plan.blocks.length) {
-    h += `<div class="sect"><div class="card empty stack" style="align-items:center"><div class="trophy won">${ic('star')}</div><h2>${info.type === 'rest' ? 'Rest day' : 'Nothing today'}</h2><p>${info.type === 'rest' ? 'Rest is part of the plan. Recharge and come back tomorrow!' : 'Nothing is scheduled today.'}</p></div></div>`;
-  } else {
-    const cur = plan.blocks.findIndex((b, i) => plan.done[i] == null);
-    const OFF = [0, -58, -86, -58, 0, 58, 86, 58];
-    h += '<div class="path">';
-    plan.blocks.forEach((b, i) => { h += pathNode(b, i, plan, d, OFF[i % OFF.length], i === cur); });
-    const allDone = cur === -1;
-    h += `<div class="path-end"><div class="trophy${allDone ? ' won' : ''}">${ic('trophy')}</div><span>${allDone ? 'Path complete — great work!' : 'Finish the path to hit your daily goal'}</span></div></div>`;
-    h += `<div class="row" style="justify-content:center;margin-top:10px"><button class="linkbtn" data-act="rebuild">Rebuild today's path</button></div>`;
-  }
-  // next exam + week
-  if (nx) {
-    const dx = D.diff(d, nx.date);
-    h += `<div class="sect"><h2>Next exam</h2><div class="card exam"><div class="cal"><b>${monAbbr(nx.date)}</b><span>${dayNum(nx.date)}</span></div><div class="grow">
-      <div class="caps" style="color:var(--${nx.subj.id}-d)">${esc(nx.subj.name)}</div><h3 style="margin-top:2px">${esc(nx.name)}</h3>
-      <div class="small muted">${esc(D.fmt(nx.date, { weekday: 'long' }))} ${esc(nx.time)} · <b class="num" style="color:var(--ink)">${plural(dx, 'day')}</b> to go</div></div></div></div>`;
-  }
-  h += '<div class="sect"><h2>Your streak</h2>' + weekStreak(d) + '</div>';
-  h += `<div class="sect"><details class="why card"><summary>How is today's path chosen?</summary><ul>
-      <li><b>Weakest first:</b> topics you rated 1–2 (or haven't rated) come up most.</li>
-      <li><b>Spaced repetition:</b> your rating sets the next review — tomorrow for "don't know it", weeks later for "exam-ready".</li>
-      <li><b>Exam dates:</b> topics for the soonest papers get priority; the day before an exam goes to that paper.</li>
-      <li><b>Mixing subjects:</b> no subject twice in a row, and none left out for long.</li>
-      <li><b>25-minute sessions</b> with 5-minute breaks. Daily time grows as the exams get closer.</li></ul></details></div>`;
+  if (m) notes.push(note(`<b>${esc(m.name)}</b> start ${esc(D.short(m.start))}, ${plural(D.diff(d, m.start), 'day')} away. The dates are estimates, so fix them in <a href="#/settings">Settings</a>.`, 'info', 'week'));
+  if (notes.length) h += `<div class="notes">${notes.join('')}</div>`;
+  if (!day.items.length) return h + `<section class="now done-day"><h2>${ph.p === 5 ? 'Exams finished' : 'Nothing scheduled'}</h2><p class="muted">${esc(ph.goal || '')}</p></section>`;
+  const work = doable(day), doneN = work.filter((it) => it.done != null).length;
+  const ctx = { cur: pos.cur, next: pos.next, seenVid: new Set(), canStart: d >= today }; // one seenVid per day: each subject's videos show once
+  h += `${isToday ? nowCard(day, pos, mins) : ''}
+    ${work.length ? `<div class="dayprog"><span>${doneN} of ${work.length} done</span><div class="bar" role="progressbar" aria-label="Today's progress" aria-valuenow="${doneN}" aria-valuemin="0" aria-valuemax="${work.length}"><i style="width:${Math.round(doneN / work.length * 100)}%"></i></div></div>` : ''}
+    <ol class="timeline">${day.items.map((it) => tlItem(it, d, ctx)).join('')}</ol>`;
+  const weekday = dow >= 1 && dow <= 5 && !day.hol && (ph.p === 1 || ph.p === 2 || ph.p === 3);
+  h += `<div class="dayfoot">${weekday ? `<button class="btn" data-variant="outline" data-size="sm" data-act="nolive" data-d="${d}">${state.noLive[d] ? 'Online lessons are on today' : 'No online lessons today?'}</button>` : ''}
+    ${d >= today ? `<button class="btn" data-variant="ghost" data-size="sm" data-act="rebuild" data-d="${d}">Re-pick topics</button>` : ''}</div>
+    <details class="explain"><summary>How each period's topic is chosen</summary><ul class="pts">
+      <li>The timetable sets the subject for each period, built around your online lessons.</li>
+      <li>The topic is this week's focus from the plan first, then whatever is weakest or due for review.</li>
+      <li>Your rating after each lesson sets when the topic comes back: tomorrow for "don't know it", weeks later for "exam-ready".</li>
+      <li>Close to an exam, that paper's topics jump the queue.</li></ul></details>`;
   return h;
 }
-function blockInfo(b, d) {
-  if (b.k === 'cards') { const due = dueCards(d).length, nw = Math.min(newAllowance(d), newCardPool().length); return { title: 'Daily flashcards', sid: null, meta: `${due} due · ${nw} new`, icon: 'cards', xp: 10 }; }
-  if (b.k === 'paper') { const p = PAPER[b.pid]; return { title: 'Past paper: ' + p.subj.name, sid: p.subj.id, meta: p.name, icon: 'doc', xp: 50 }; }
-  const t = TOPIC[b.t]; if (!t) return null;
-  return { title: t.n, sid: t.subj.id, meta: t.subj.name + ' · ' + KIND[b.k].label, icon: KIND_ICON[b.k] || 'book', xp: 20 };
+
+/* ---------- week ---------- */
+function mondayOf(d) { return D.add(d, -((D.dow(d) + 6) % 7)); }
+function weekRow(it) {
+  if (QUIET.has(it.kind) && it.kind !== 'rest') return '';
+  const label = it.kind === 'live' ? 'Live: ' + it.title.replace(' (online lesson)', '') : it.kind === 'self' ? SUBJ[it.sid].name : it.kind === 'anki' ? 'Anki' : it.kind === 'quiz' ? 'Mixed quiz' : it.kind === 'blurt' ? 'Blurt' : it.title;
+  return `<li style="${sv(it.sid)}"><span class="num">${esc(it.start || '')}</span><i class="dot"></i><span>${esc(label)}</span>${it.kind === 'live' ? ic('live', 'xs') : ''}</li>`;
 }
-function pathNode(b, i, plan, d, off, isCur) {
-  const bi = blockInfo(b, d); if (!bi) return '';
-  const done = plan.done[i] != null;
-  const c = bi.sid ? `--nc:var(--${bi.sid});--nd:var(--${bi.sid}-d)` : '--nc:var(--purple);--nd:var(--purple-d)';
-  const hb = isCur && openNode !== i;
-  let h = `<div class="pn${hb ? ' hb' : ''}" style="--off:${off}px;${c}">`;
-  if (hb) h += `<div class="bubble">Start</div>`;
-  h += `<button class="node${done ? ' done' : ''}${isCur ? ' cur' : ''}" data-act="node" data-i="${i}" aria-label="${esc(bi.title)}${done ? ' (done)' : ''}" aria-expanded="${openNode === i}">${ic(done ? 'check' : bi.icon)}</button>`;
-  h += `<div class="lbl">${esc(bi.title)}<small>${b.m} min${done && b.t ? ' · rated ' + plan.done[i] + '/5' : ''}</small></div></div>`;
-  if (openNode === i) {
-    const why = b.why && b.why.length && !done ? `<div class="meta">Why today: ${esc(b.why.join(', '))}</div>` : '';
-    const dark = '';
-    const pc = done ? '' : (bi.sid ? `--pc:var(--${bi.sid});--pd:var(--${bi.sid}-d)` : '--pc:var(--purple);--pd:var(--purple-d)');
-    h += `<div class="pop${done ? ' gold' : dark}" style="${pc}"><h3>${esc(bi.title)}</h3><div class="meta">${esc(bi.meta)} · ${b.m} min</div>${why}`;
-    if (!done) h += `<button class="btn full" data-act="start" data-i="${i}">Start +${bi.xp} XP</button>`;
-    else if (b.t) h += `<button class="btn full" data-act="revise" data-t="${b.t}">Practise again</button>`;
-    else if (b.k === 'cards') h += `<button class="btn full" data-act="cram">Practise more cards</button>`;
-    else h += `<div class="meta">Paper logged — nice work!</div>`;
-    h += '</div>';
-  }
-  return h;
-}
-function weekStreak(d) {
-  const dow = (D.dow(d) + 6) % 7, mon = D.add(d, -dow), sk = streak();
-  let h = `<div class="card stack"><div class="row"><div class="stat fire${sk ? '' : ' off'}" style="padding:0">${ic('fire')}</div><div><b class="num" style="font-size:20px">${plural(sk, 'day')}</b><div class="small muted">${sk ? 'Keep it going — do one session every day.' : 'Do a session today to start a streak!'}</div></div></div><div class="week">`;
+function viewWeek(param) {
+  const today = D.today(), mon = mondayOf(param && /^\d{4}-\d{2}-\d{2}$/.test(param) ? param : today), ph = ttPhase(mon);
+  let h = `<header class="dayhead"><a class="btn" data-variant="ghost" data-size="icon" href="#/week/${D.add(mon, -7)}" aria-label="Previous week">${ic('chevL')}</a>
+    <div class="grow"><h1>Week of ${esc(D.fmt(mon, { day: 'numeric', month: 'long' }))}</h1><p class="muted">${esc(ph.name)}${hasWeeks(ph) ? ', week ' + (ph.wk + 1) : ''}</p></div>
+    ${mon === mondayOf(today) ? '' : '<a class="btn" data-variant="outline" data-size="sm" href="#/week">This week</a>'}
+    <a class="btn" data-variant="ghost" data-size="icon" href="#/week/${D.add(mon, 7)}" aria-label="Next week">${ic('chevR')}</a></header><div class="weekgrid">`;
   for (let k = 0; k < 7; k++) {
-    const day = D.add(mon, k), hit = activeOn(day);
-    h += `<div class="d${hit ? ' hit' : ''}${day === d ? ' today' : ''}"><span>${'MTWTFSS'[k]}</span><div class="f">${hit ? ic('fire') : ''}</div></div>`;
+    const d = D.add(mon, k), day = ttDay(d), pl = state.plans[d], done = pl ? Object.keys(pl.done).length : 0;
+    h += `<a class="wday${d === today ? ' is-today' : ''}" href="#/today/${d}"><div class="wday-h"><b>${esc(D.fmt(d, { weekday: 'short' }))}</b><span class="muted">${esc(D.fmt(d, { day: 'numeric', month: 'short' }))}</span>${day.hol ? `<span class="badge" data-variant="secondary">${esc(day.hol.replace(' holidays', '').replace(' half term', ' half term'))}</span>` : ''}${done ? `<span class="badge" data-variant="outline">${done} done</span>` : ''}</div>
+      <ul>${day.items.map(weekRow).join('') || '<li class="muted">Nothing scheduled</li>'}</ul></a>`;
   }
-  return h + '</div></div>';
+  h += '</div>';
+  if (hasWeeks(ph) || ph.p === 'x') {
+    h += `<section class="sect"><h2>This week's focus</h2><ul class="focuslist">${TT_ORDER.map((sid) => `<li style="${sv(sid)}"><a href="#/subjects/${sid}/plan"><i class="dot"></i><b>${esc(SUBJ[sid].name)}</b><span>${esc(focusFor(sid, ph))}</span></a></li>`).join('')}</ul></section>`;
+    const withVids = TT_ORDER.filter((sid) => videosFor(sid, ph).length);
+    if (withVids.length) h += `<section class="sect"><h2>This week's videos</h2>${withVids.map((sid) => `<div class="vgroup" style="${sv(sid)}"><p class="label"><i class="dot"></i>${esc(SUBJ[sid].name)}</p>${vidList(videosFor(sid, ph))}</div>`).join('')}</section>`;
+  }
+  const sk = TT.SKIPPED;
+  if (Object.keys(sk).length) h += `<p class="small muted foot">ELAC periods (Wed, Thu, Fri) are self-study because you don't attend ELAC. If your online timetable changes after half term, the live lessons need updating.</p>`;
+  return h;
 }
 
 /* ---------- plan ---------- */
-function viewPlan() {
-  let h = '<div class="hello"><div class="caps">Your plan to June 2027</div><h1>What to revise, and when</h1></div>';
-  h += `<div class="sect"><div class="tabs" role="group" aria-label="Plan view">
-    <button data-tab="days" aria-pressed="${planTab === 'days'}">Next 14 days</button>
-    <button data-tab="road" aria-pressed="${planTab === 'road'}">Roadmap</button>
-    <button data-tab="exams" aria-pressed="${planTab === 'exams'}">Exam timetable</button></div></div>`;
-  h += planTab === 'days' ? planDays() : planTab === 'road' ? planRoad() : planExams();
-  return h;
-}
-function flRow(icon, sid, text) {
-  const bg = sid ? `var(--${sid})` : 'var(--purple)';
-  return `<div class="fl"><span class="sq" style="background:${bg}">${ic(icon)}</span><span>${text}</span></div>`;
-}
-function planDays() {
-  const f = forecast(14);
-  let h = '<div class="sect"><p class="small muted">A forecast — each day is rebuilt from your ratings when it arrives.</p>';
-  for (const day of f) {
-    const tMins = day.blocks.reduce((a, b) => a + b.m, 0);
-    h += `<div class="card day"><div class="day-h"><b>${esc(D.short(day.d))}</b><span class="chip">${esc(day.info.label)}</span><span class="small muted num" style="margin-left:auto">${tMins ? minsTxt(tMins) : 'rest'}</span></div>`;
-    for (const p of day.info.exams) h += flRow('trophy', p.subj.id, `<b>EXAM:</b> ${esc(p.subj.name)} — ${esc(p.name)} (${esc(p.time)})`);
-    for (const b of day.blocks) {
-      if (b.k === 'cards') continue;
-      if (b.k === 'paper') { const p = PAPER[b.pid]; h += flRow('doc', p.subj.id, `${esc(p.subj.name)} past paper`); continue; }
-      const t = TOPIC[b.t]; h += flRow(KIND_ICON[b.k], t.subj.id, esc(t.n));
-    }
-    h += '</div>';
-  }
-  return h + '</div>';
+function viewPlan(tab) {
+  tab = ['road', 'exams', 'method'].includes(tab) ? tab : 'road';
+  let h = pageHead('Plan to June 2027', 'The phases, your exam dates and how the revision works.');
+  h += seg([['road', 'Roadmap', '#/plan/road'], ['exams', 'Exams', '#/plan/exams'], ['method', 'How to revise', '#/plan/method']], tab, 'Plan view');
+  return h + (tab === 'road' ? planRoad() : tab === 'exams' ? planExams() : planMethod());
 }
 function planRoad() {
-  const d = D.today(), P = phases();
-  let h = '<div class="sect"><div class="road">';
-  P.forEach((p, i) => {
-    const cls = d > p.end ? 'past' : (d >= p.start ? 'now' : '');
-    const m = p.mins, parts = [];
-    const sc = (x) => minsTxt(Math.round(x * state.settings.intensity / 5) * 5);
-    if (m.school) parts.push('school days ' + sc(m.school));
-    if (m.weekend) parts.push('weekends ' + sc(m.weekend));
-    if (m.holiday) parts.push('holidays ' + sc(m.holiday));
-    if (m.study) parts.push('study days ' + sc(m.study));
-    h += `<div class="stage ${cls}"><div class="pin">${cls === 'past' ? ic('check') : cls === 'now' ? ic('star') : i + 1}</div><div><div class="caps">${esc(D.short(p.start))} – ${esc(D.short(p.end))}${cls === 'now' ? ' · you are here' : ''}</div>
-      <h3 style="margin-top:3px">${esc(p.name)}</h3><p class="small" style="margin-top:4px">${esc(p.goal)}</p>
-      <ul>${p.how.map((x) => '<li>' + esc(x) + '</li>').join('')}<li>Daily time: ${esc(parts.join(', '))}</li></ul></div></div>`;
-  });
-  h += `<div class="stage"><div class="pin" style="background:var(--gold);color:#fff">${ic('trophy')}</div><div><div class="caps">${esc(D.short(RESULTS_DAY))}</div><h3 style="margin-top:3px">Results day</h3></div></div>`;
-  h += '</div></div><div class="sect"><h2>Key dates</h2><div class="card"><ul class="pts">';
-  for (const m of state.settings.mocks) h += `<li><b>${esc(m.name)}:</b> ${esc(D.short(m.start))} – ${esc(D.short(m.end))} <span class="muted">(estimate — edit in Settings)</span></li>`;
-  for (const x of HOLIDAYS) h += `<li><b>${esc(x[2])}:</b> ${esc(D.short(x[0]))}${x[0] !== x[1] ? ' – ' + esc(D.short(x[1])) : ''}</li>`;
-  h += `<li><b>Exams:</b> ${esc(D.short(EXAM_START))} – ${esc(D.short(EXAM_END))}. Contingency day ${esc(D.short(CONTINGENCY))}.</li><li><b>Results day:</b> ${esc(D.full(RESULTS_DAY))}</li></ul></div></div>`;
+  const d = D.today(), cur = ttPhase(d);
+  let h = '<ol class="road">';
+  for (const p of TT_PHASES) {
+    const cls = d > p.end ? 'past' : String(cur.p) === String(p.p) ? 'now' : '';
+    const wkTxt = cls === 'now' && hasWeeks(cur) ? `<span class="badge">Week ${cur.wk + 1} of ${p.weeks}</span>` : '';
+    h += `<li class="stage ${cls}"><span class="pin">${cls === 'past' ? ic('check') : ''}</span><div><p class="small muted">${esc(D.short(p.start))} to ${esc(D.short(p.end))}</p><h3>${esc(p.name)} ${wkTxt}</h3><p>${esc(p.goal)}</p></div></li>`;
+  }
+  h += `<li class="stage"><span class="pin"></span><div><p class="small muted">${esc(D.short(RESULTS_DAY))}</p><h3>Results day</h3></div></li></ol>`;
+  h += `<section class="sect"><h2>A normal school day</h2><ul class="pts">
+    <li><b>08:00</b> Anki warm-up, then 45-minute periods on the online school's bell times until 16:00.</li>
+    <li>Live online lessons stay where they are. Every other period is self-study on one subject, with this week's focus, a recipe and videos.</li>
+    <li><b>16:00</b> a 20-minute blurt of the whole day. Optional Anki in the evening.</li>
+    <li><b>Saturday</b> one timed practice paper (rotating subject), then marking. <b>Sunday</b> off.</li>
+    <li>Half terms and the Christmas catch-up week: mornings only. Easter: full days.</li></ul></section>`;
+  h += '<section class="sect"><h2>Key dates</h2><ul class="pts">';
+  for (const m of state.settings.mocks) h += `<li><b>${esc(m.name)}:</b> ${esc(D.short(m.start))} to ${esc(D.short(m.end))} <span class="muted">(estimate)</span></li>`;
+  for (const x of holidayList()) h += `<li><b>${esc(x[2])}:</b> ${esc(D.short(x[0]))}${x[0] !== x[1] ? ' to ' + esc(D.short(x[1])) : ''}</li>`;
+  h += `<li><b>Exams:</b> ${esc(D.short(EXAM_START))} to ${esc(D.short(EXAM_END))}. Contingency day ${esc(D.short(CONTINGENCY))}.</li><li><b>Results day:</b> ${esc(D.full(RESULTS_DAY))}</li></ul>
+    <p class="small muted">Holiday and mock dates are estimates. Change them in <a href="#/settings">Settings</a> when you know them.</p></section>`;
   return h;
 }
 function planExams() {
   const d = D.today(), nx = nextExam(d);
-  let h = '<div class="sect"><p class="small muted">From the AQA and OCR 2027 timetables and Pearson Edexcel\'s Maths dates. Check against your personal timetable from school.</p><div class="card">';
-  for (const p of PAPERS) {
-    const dx = D.diff(d, p.date), cls = p.date < d ? 'gone' : (nx && p === nx ? 'next' : '');
-    h += `<div class="xrow ${cls}"><div class="cal"><b style="background:var(--${p.subj.id})">${monAbbr(p.date)}</b><span>${dayNum(p.date)}</span></div><div class="grow"><b>${esc(p.subj.name)}</b><div class="small muted">${esc(p.name)}</div><div class="tiny muted">${esc(p.subj.board + ' ' + p.code)} · ${esc(p.time)} · ${p.approx ? 'set by school' : minsTxt(p.dur)}</div></div><div class="left num">${dx >= 0 ? (dx === 0 ? 'Today' : dx + 'd') : 'Done'}</div></div>`;
+  const rows = PAPERS.filter((p) => !p.approx).slice();
+  const months = {};
+  for (const p of rows) (months[p.date.slice(0, 7)] = months[p.date.slice(0, 7)] || []).push(p);
+  let h = `<div class="xrow special" style="${sv('german')}"><div class="xdate"><b>12 Apr</b><span>to 21 May</span></div><div class="grow"><b>German speaking test</b><p class="small muted">Your school picks the day (set to ${esc(D.short(state.settings.speakingDate))}). 10–12 minutes plus 15 minutes' preparation.</p></div></div>`;
+  for (const [ym, ps] of Object.entries(months)) {
+    h += `<h2 class="month">${esc(D.fmt(ym + '-01', { month: 'long', year: 'numeric' }))}</h2>`;
+    for (const p of ps) {
+      const dx = D.diff(d, p.date);
+      h += `<div class="xrow${p.date < d ? ' gone' : ''}${p === nx ? ' next' : ''}" style="${sv(p.subj.id)}"><div class="xdate"><b>${esc(D.fmt(p.date, { day: 'numeric', month: 'short' }))}</b><span>${esc(D.fmt(p.date, { weekday: 'short' }))} ${p.time === 'am' ? 'morning' : 'afternoon'}</span></div>
+        <div class="grow"><b>${esc(p.subj.name)}</b><p class="small">${esc(p.name)}</p><p class="tiny muted">${esc(p.subj.board + ' ' + p.code)}, ${minsTxt(p.dur)}</p></div><span class="left num">${dx > 0 ? dx + ' days' : dx === 0 ? 'Today' : 'Done'}</span></div>`;
+    }
   }
-  return h + '</div></div>';
+  h += `<div class="xrow special"><div class="xdate"><b>${esc(D.fmt(CONTINGENCY, { day: 'numeric', month: 'short' }))}</b><span>Wed</span></div><div class="grow"><b>Contingency day</b><p class="small muted">Keep it free in case an exam is moved.</p></div></div>`;
+  h += `<p class="small muted foot">From the AQA provisional and OCR final June 2027 timetables, and the JCQ common slots for Maths (confirmed by Pearson). Morning exams start at 9:00 and afternoon ones at 13:30. Your own candidate timetable from school is the final word. The May half term (31 May to 4 June) falls in the exam gap: use it for Language Paper 2, History Paper 3, Maths Paper 3 and the three Science Paper 2s.</p>`;
+  return h;
+}
+const METHOD = [
+  ['Test yourself (retrieval practice)', 'p', 'Pulling information out of memory is what strengthens it. Every period ends with a question, a blurt or flashcards. If a period is only reading or watching, it didn\'t count.'],
+  ['Space it out', 'p', 'Revisit a topic after about 1 day, 3 days, 1 week and 3 weeks. Anki and this app do the spacing for you. Your six Anki subject decks hold about 4,100 cards in plan order. German finishes around the end of February, the rest by early January. The Friday quiz pulls topics from 2–3 weeks back on purpose.'],
+  ['Mix subjects (interleaving)', 'p', 'No subject runs twice in a row, and in Maths you mix question types. It feels harder, but that difficulty is what improves exam performance.'],
+  ['Past papers and mark schemes', 'p', 'The fastest way to learn what examiners reward. Always mark with the official scheme, and copy its exact wording into your flashcards.'],
+  ['Blurting', 'ol', ['Pick a topic. Blank page, 5–8 minutes, write everything you remember.', 'Open your notes and fill the gaps in a different colour.', 'The coloured bits are tomorrow\'s flashcards.']],
+  ['Mistake log', 'ol', ['One page per subject: the question, why you lost marks, the correct answer.', 'Redo each one 3 days later, then a week later.', 'Two correct redos in a row: cross it off.']],
+  ['Your Anki decks', 'ol', ['There is one deck per subject. Click the subject (for example German (AQA 8662)), not a sub-deck, and new cards arrive in the plan\'s order.', 'New cards a day: German 21, Science 6, History 5, Maths 3, English Literature 2, English Language 2. That is about 40 minutes with reviews: the 08:00 warm-up plus 15–20 minutes in the evening.', 'Nothing printed on the exam sheets is in the decks. Every Physics equation is on the 2027 equation sheet, so you learn units and ideas instead. The Maths deck only has formulae that are NOT on the Edexcel sheet.', 'Be honest: press Again if you didn\'t know it. Good is the normal button.', 'Never skip a day. Reviews pile up fast, and missing a day doubles the next one.']],
+  ['Working from home', 'ul', ['Same start time every day (08:00), dressed, at a desk, never in bed.', 'Phone in another room during periods. Use it only for flashcards in the warm-up.', 'Lunch outside or at the gym. Exercise helps memory and focus.', 'Sleep 8–9 hours. Memory is consolidated during sleep, so an all-nighter costs marks.']],
+  ['If you fall behind', 'ul', ['Don\'t try to catch up by doubling the next day. Skip the missed period and carry on with today.', 'Put the missed topic on Saturday or your weak list.', 'Priority if time is tight: German vocab every day, History content, Science Paper 1 topics, then the rest.']],
+];
+function planMethod() {
+  let h = '<p class="lead">These are the techniques research rates highest for learning a lot, fast, and the plan is built from them. Rereading and highlighting feel productive but work least well, so the plan avoids them.</p><div class="mgrid">';
+  for (const [t, kind, body] of METHOD) h += `<section class="panel"><h3>${esc(t)}</h3>${kind === 'p' ? `<p>${esc(body)}</p>` : `<${kind} class="${kind === 'ol' ? 'how' : 'pts'}">${body.map((x) => `<li>${esc(x)}</li>`).join('')}</${kind}>`}</section>`;
+  return h + '</div><p class="small muted foot">The ranking comes from Dunlosky et al. (2013), "Improving Students\' Learning With Effective Learning Techniques". Practice testing and distributed practice were the only two rated high utility.</p>';
 }
 
 /* ---------- subjects ---------- */
 function viewSubjects() {
-  if (sub && SUBJ[sub]) return viewSubject(SUBJ[sub]);
-  if (sub && TOPIC[sub]) return viewTopic(TOPIC[sub]);
-  let h = '<div class="hello"><div class="caps">Exam boards checked</div><h1>Your subjects</h1><p class="muted">The ring shows how confident you are overall. Tap a subject for its papers, exam tips and every topic.</p></div>';
-  h += '<div class="sect"><div class="sgrid">';
+  let h = pageHead('Subjects', 'Exam boards, papers, every topic and how to revise each one.');
+  h += '<div class="sgrid">';
   for (const s of RG.subjects) {
-    const a = subjectAvg(s), np = PAPERS.find((p) => p.subj === s && p.date >= D.today());
-    h += `<a class="scard" href="#subjects-${s.id}" style="${sv(s.id)}"><div class="mring" style="--p:${mastery(s)}"><span>${ic(s.id)}</span></div>
-      <div><h3>${esc(s.name)}</h3><div class="tiny">${esc(s.board)} ${esc(s.spec)}${s.tierable ? ' · ' + (state.settings.tiers[s.id] === 'F' ? 'Foundation' : 'Higher') : ''}</div></div>
-      <div class="tiny">${a.rated}/${a.total} rated · ${np ? 'exam ' + esc(D.short(np.date)) : 'done'}</div></a>`;
+    const a = subjectAvg(s), np = PAPERS.find((p) => p.subj === s && p.date >= D.today() && !p.approx), pct = mastery(s);
+    h += `<a class="scard" href="#/subjects/${s.id}" style="${sv(s.id)}"><span class="sicon">${ic(s.id)}</span><div class="grow"><h3>${esc(s.name)}</h3>
+      <p class="small muted">${esc(s.board)} ${esc(s.spec)}${s.tierable ? ', ' + (state.settings.tiers[s.id] === 'F' ? 'Foundation' : 'Higher') : ''}</p>
+      <div class="bar" aria-hidden="true"><i style="width:${pct}%"></i></div><p class="tiny muted">${a.rated} of ${a.total} topics rated${np ? '. First exam ' + esc(D.short(np.date)) : ''}</p></div>${ic('chevR', 'muted')}</a>`;
   }
-  h += '</div></div><div class="sect"><a class="btn blue full" href="#rate">Rate all topics</a></div>';
+  return h + '</div><a class="btn full" data-variant="outline" href="#/rate">Rate all topics</a>';
+}
+function viewSubject(s, tab) {
+  tab = ['overview', 'topics', 'revise', 'plan'].includes(tab) ? tab : 'overview';
+  const a = subjectAvg(s);
+  let h = `<header class="phead shero" style="${sv(s.id)}"><a class="back" href="#/subjects" data-back>${ic('chevL')}Subjects</a><div class="row"><span class="sicon lg">${ic(s.id)}</span><div><h1>${esc(s.name)}</h1>
+    <p class="muted">${esc(s.board)} ${esc(s.spec)}${s.tierable ? ', ' + (state.settings.tiers[s.id] === 'F' ? 'Foundation' : 'Higher') + ' tier' : ''}. ${a.rated} of ${a.total} topics rated${a.avg ? ', average ' + a.avg.toFixed(1) + ' of 5' : ''}.</p></div></div></header>`;
+  h += seg([['overview', 'Overview', `#/subjects/${s.id}`], ['topics', 'Topics', `#/subjects/${s.id}/topics`], ['revise', 'How to revise', `#/subjects/${s.id}/revise`], ['plan', 'Weekly plan', `#/subjects/${s.id}/plan`]], tab, s.name + ' sections');
+  return h + (tab === 'topics' ? subjTopics(s) : tab === 'revise' ? subjRevise(s) : tab === 'plan' ? subjPlan(s) : subjOverview(s));
+}
+function list(arr) { return '<ul class="pts">' + arr.map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul>'; }
+function subjOverview(s) {
+  const d = D.today(), g = TT.GUIDE[s.id], G = (RG.given || {})[s.id];
+  let h = '<section class="sect"><h2>Papers</h2>';
+  for (const p of s.papers) h += `<div class="xrow${p.date < d ? ' gone' : ''}" style="${sv(s.id)}"><div class="xdate"><b>${p.approx ? 'Apr–May' : esc(D.fmt(p.date, { day: 'numeric', month: 'short' }))}</b><span>${p.approx ? 'set by school' : esc(D.fmt(p.date, { weekday: 'short' })) + ' ' + (p.time === 'am' ? 'am' : 'pm')}</span></div><div class="grow"><b>${esc(p.name)}</b><p class="tiny muted">${esc(p.code)}${p.dur ? ', ' + minsTxt(p.dur) : ''}</p></div>${p.approx ? '' : `<span class="left num">${p.date >= d ? D.diff(d, p.date) + ' days' : 'Done'}</span>`}</div>`;
+  h += '</section>';
+  if (g) h += `<section class="sect"><h2>Exam format</h2>${list(g.exam)}</section>`;
+  if (G) h += `<section class="sect"><h2>What the exam gives you</h2><div class="given"><div class="panel" data-tone="ok"><h3>Given in the exam</h3>${list(G.given)}</div>
+    <div class="panel" data-tone="warn"><h3>Learn this yourself</h3>${list(G.memorise)}</div><div class="panel"><h3>How it's marked</h3>${list(G.marking)}</div></div>
+    ${g ? `<details class="explain"><summary>More on exam aids</summary>${list(g.aids)}</details>` : ''}</section>`;
+  h += `<section class="sect"><details class="explain"><summary>How it's assessed, in detail</summary>${list(s.structure)}</details></section>`;
   return h;
 }
-function viewSubject(s) {
-  const d = D.today(), a = subjectAvg(s);
-  let h = `<a class="back" href="#subjects">${ic('chevL')} Subjects</a>`;
-  h += `<div class="shero" style="${sv(s.id)}"><div class="mring" style="--p:${mastery(s)}"><span>${ic(s.id)}</span></div><div class="grow"><div class="caps">${esc(s.board)} · ${esc(s.spec)}</div><h1>${esc(s.name)}</h1><p>${a.rated}/${a.total} topics rated${a.avg ? ' · average ' + a.avg.toFixed(1) + '/5' : ''}</p></div></div>`;
-  h += '<div class="sect"><h2>Papers</h2><div class="card">';
-  for (const p of s.papers) h += `<div class="xrow ${p.date < d ? 'gone' : ''}"><div class="cal"><b style="background:var(--${s.id})">${monAbbr(p.date)}</b><span>${dayNum(p.date)}</span></div><div class="grow"><b>${esc(p.name)}</b><div class="tiny muted">${esc(p.code)} · ${esc(p.time)} · ${p.approx ? 'date set by school' : minsTxt(p.dur)}</div></div><div class="left num">${p.date >= d ? D.diff(d, p.date) + 'd' : 'Done'}</div></div>`;
-  h += '</div></div>';
-  const G = (RG.given || {})[s.id];
-  if (G) {
-    const list = (arr) => '<ul class="pts">' + arr.map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul>';
-    h += `<div class="sect"><h2>What the exam gives you</h2>
-      <div class="card given" style="border-color:var(--green)"><div class="caps" style="color:var(--green-d)">Given in the exam</div>${list(G.given)}</div>
-      <div class="card given" style="border-color:var(--orange)"><div class="caps" style="color:var(--orange-d)">Learn this yourself</div>${list(G.memorise)}</div>
-      <div class="card given" style="border-color:var(--blue)"><div class="caps" style="color:var(--blue-d)">How it's marked</div>${list(G.marking)}</div></div>`;
-  }
-  h += `<div class="sect"><h2>Topics</h2><p class="small muted" style="margin-top:-6px">Tap 1–5 to rate how confident you are.</p>`;
-  const groups = [];
+function topicRow(t, d) {
+  const x = st(t.id), tt = taught(t, d);
+  return `<li class="trow"><div class="row"><a class="tn grow" href="#/topic/${t.id}">${esc(t.n)}</a>${t.h ? '<span class="badge" data-variant="outline">Higher</span>' : ''}</div>
+    <p class="tiny muted">${!tt ? `Taught later. <button class="linkbtn" data-unlock="${t.id}">I've covered it</button>` : x.due ? 'Next review ' + esc(D.short(x.due)) : 'Not started'}</p>${rate5(t.id, x.c || 0)}</li>`;
+}
+function subjTopics(s) {
+  const d = D.today(), groups = [];
   for (const p of s.papers) { const ts = visibleTopics(s).filter((t) => t.paperIds.length < s.papers.length && t.paperIds[0] === p.id); if (ts.length) groups.push([p.name, ts]); }
   const all = visibleTopics(s).filter((t) => t.paperIds.length === s.papers.length || !groups.some((g) => g[1].includes(t)));
   if (all.length) groups.push([groups.length ? 'Across all papers' : 'All papers', all]);
-  for (const [name, ts] of groups) {
-    h += `<div class="card"><div class="caps" style="margin-bottom:4px">${esc(name)}</div>`;
-    for (const t of ts) {
-      const c = st(t.id).c || 0, tt = taught(t, d);
-      h += `<div class="trow"><div><button class="tn" data-topic="${t.id}">${esc(t.n)}</button>
-        <div class="tiny muted">${t.h ? '<span class="tag">HIGHER</span> ' : ''}${!tt ? 'Taught later · <button class="linkbtn" style="font-size:12px" data-unlock="' + t.id + '">I\'ve covered it</button>' : (st(t.id).due ? 'Review ' + esc(D.short(st(t.id).due)) : 'Not started')}</div></div>${rate5(t.id, c)}</div>`;
-    }
-    h += '</div>';
-  }
-  h += '</div>';
-  h += `<div class="sect"><h2>How it's assessed</h2><div class="card"><ul class="pts">${s.structure.map((x) => '<li>' + esc(x) + '</li>').join('')}</ul></div></div>`;
-  h += `<div class="sect"><h2>Exam technique</h2><div class="card"><ul class="pts">${s.technique.map((x) => '<li>' + esc(x) + '</li>').join('')}</ul></div></div>`;
-  h += `<div class="sect"><h2>Where to practise</h2><div class="stack"><a class="btn full" href="${esc(SPEC_PDF[s.id])}" target="_blank" rel="noopener">Official ${esc(s.board + ' ' + s.spec)} spec</a>${s.resources.map((r) => `<a class="btn full plain" href="${esc(r[1])}" target="_blank" rel="noopener">${esc(r[0])}</a>`).join('')}</div></div>`;
+  let h = '<p class="small muted">Rate each topic from 1 (don\'t know it) to 5 (exam-ready). The planner uses this to pick your lessons.</p>';
+  for (const [name, ts] of groups) h += `<section class="sect"><h2>${esc(name)}</h2><ul class="tlist">${ts.map((t) => topicRow(t, d)).join('')}</ul></section>`;
   return h;
 }
+function subjRevise(s) {
+  const ph = ttPhase(D.today()), use = hasWeeks(ph) ? ph : { p: ph.p === 4 || ph.p === 5 ? 3 : 1 }, r = recipeFor(s.id, use), g = TT.GUIDE[s.id];
+  let h = `<section class="sect"><h2>A 45-minute period, ${use.p === 1 ? 'Phase 1' : 'Phase ' + use.p}</h2><ol class="how">${r.how.map((x) => `<li>${esc(x)}</li>`).join('')}</ol><div class="links">${ttLinks(r.ln)}</div></section>`;
+  h += `<section class="sect"><h2>Exam tips</h2>${list((g ? g.tips : []).concat(s.technique))}</section>`;
+  const seen = new Set(), links = [[`Official ${s.board} ${s.spec} specification`, SPEC_PDF[s.id]]].concat((g ? g.ln : []).filter((k) => k !== 'app' && TT.LINKS[k]).map((k) => TT.LINKS[k]), s.resources)
+    .filter((x) => !seen.has(x[1]) && seen.add(x[1]));
+  h += `<section class="sect"><h2>Free resources</h2><div class="links col">${links.map((x) => extLink(x[0], x[1])).join('')}${s.id === 'german' ? '<a class="xlink" href="#/practice/decks?s=german">Practice decks in this app</a>' : ''}</div></section>`;
+  if (g) {
+    const ticks = state.ticks[s.id] || {}, n = g.topics.filter((_, i) => ticks[i]).length;
+    h += `<section class="sect"><h2>Spec checklist <span class="muted num small">${n} of ${g.topics.length}</span></h2><p class="small muted">Tick a topic once you can blurt it from memory and score 70% or more on exam questions.</p>
+      <ul class="checklist">${g.topics.map((t, i) => `<li><label><input type="checkbox" class="input" data-tick="${s.id}" data-i="${i}" ${ticks[i] ? 'checked' : ''}><span>${esc(t)}</span></label></li>`).join('')}</ul></section>`;
+  }
+  return h;
+}
+function subjPlan(s) {
+  const cur = ttPhase(D.today());
+  let h = '';
+  for (const p of [1, 'x', 2, 3]) {
+    const P = TT_PH[p], weeks = TT.PLAN[p][s.id];
+    h += `<section class="sect"><h2>${esc(P.name)}</h2><ol class="wplan">${weeks.map((f, wk) => {
+      const now = String(cur.p) === String(p) && (p === 'x' || cur.wk === wk);
+      const when = p === 'x' ? '28 Dec' : D.fmt(weekStartOf(p, wk), { day: 'numeric', month: 'short' });
+      return `<li class="${now ? 'is-now' : ''}" style="${sv(s.id)}"><span class="wk"><b>${p === 'x' ? 'Catch-up' : 'Week ' + (wk + 1)}</b><span class="muted">${esc(when)}</span></span><span>${esc(f)}</span></li>`;
+    }).join('')}</ol></section>`;
+  }
+  return h;
+}
+function topicWeeks(t) {
+  const out = [];
+  for (const p of [1, 2, 3]) (RG.focus[p][t.subj.id] || []).forEach((_, wk) => { if (focusTopicIds(t.subj.id, { p, wk }).includes(t.id)) out.push((p === 1 ? 'Phase 1' : 'Phase ' + p) + ' week ' + (wk + 1) + ' (' + D.fmt(weekStartOf(p, wk), { day: 'numeric', month: 'short' }) + ')'); });
+  return out;
+}
 function viewTopic(t) {
-  const s = t.subj, x = st(t.id), d = D.today(), np = nextPaper(t, d);
-  let h = `<a class="back" href="#subjects-${s.id}">${ic('chevL')} ${esc(s.name)}</a>`;
-  h += `<div class="hello"><div class="kind" style="${sv(s.id)}"><i>${ic(s.id)}</i>${esc(s.name)} · ${esc(t.paperIds.map((id) => PAPER[id].code).join(', '))}</div><h1>${esc(t.n)}</h1>
-    <div class="wrap-row" style="margin-top:6px">${t.h ? '<span class="chip">Higher only</span>' : ''}<span class="chip"><i class="dot" style="background:${ccol(x.c)}"></i>${esc(CONF_WORD[x.c || 0])}</span>${x.due ? '<span class="chip">Review ' + esc(D.short(x.due)) + '</span>' : ''}${np ? '<span class="chip">Exam ' + esc(D.short(np.date)) + '</span>' : ''}</div></div>`;
-  h += `<div class="sect"><button class="btn green full" data-act="revise" data-t="${t.id}">Start a 25-min session</button>${t.cardIds && t.cardIds.length >= 2 ? `<button class="btn full" data-act="quiz" data-src="t-${t.id}">${ic('target')} Quiz me on this topic</button>` : ''}<div class="row" style="justify-content:space-between"><span class="small muted" style="font-weight:800">Confidence</span>${rate5(t.id, x.c || 0)}</div></div>`;
-  h += `<div class="sect"><h2>Key knowledge</h2><div class="card kp">${t.pts.map((p) => '<div>' + esc(p) + '</div>').join('')}</div>${specLine(t)}</div>`;
-  if (t.cards && t.cards.length) h += `<div class="sect"><h2>Flashcards (${t.cards.length})</h2><div class="card"><ul class="pts">${t.cards.map((c) => '<li><b>' + esc(c[0]) + '</b><br><span class="muted">' + esc(c[1]) + '</span></li>').join('')}</ul></div></div>`;
-  h += `<div class="sect"><h2>Exam practice</h2><div class="card stack"><p>${esc(t.ex)}</p><div class="wrap-row">${s.resources.map((r) => `<a class="btn sm" href="${esc(r[1])}" target="_blank" rel="noopener">${esc(r[0])}</a>`).join('')}</div></div></div>`;
+  const s = t.subj, x = st(t.id), d = D.today(), np = nextPaper(t, d), wks = topicWeeks(t);
+  let h = `<header class="phead" style="${sv(s.id)}"><a class="back" href="#/subjects/${s.id}/topics" data-back>${ic('chevL')}${esc(s.name)}</a><p class="small muted">${esc(s.name)}, ${esc(t.paperIds.map((id) => PAPER[id].code).join(', '))}</p><h1>${esc(t.n)}</h1>
+    <div class="row wrap">${t.h ? '<span class="badge" data-variant="outline">Higher only</span>' : ''}${confChip(x.c)}${x.due ? '<span class="chip">Next review ' + esc(D.short(x.due)) + '</span>' : ''}${np ? '<span class="chip">Exam ' + esc(D.short(np.date)) + '</span>' : ''}</div></header>`;
+  h += `<div class="row wrap"><button class="btn" data-act="revise" data-t="${t.id}">Start a lesson</button>${t.cardIds && t.cardIds.length >= 2 ? `<button class="btn" data-variant="outline" data-act="quiz" data-src="t-${t.id}">${ic('target')}Quiz me</button>` : ''}</div>`;
+  h += `<section class="sect"><h2>How confident are you?</h2>${rate5(t.id, x.c || 0)}</section>`;
+  h += `<section class="sect"><h2>Key knowledge</h2><ul class="kp">${t.pts.map((p) => '<li>' + esc(p) + '</li>').join('')}</ul>${specLine(t)}</section>`;
+  if (t.cards && t.cards.length) h += `<section class="sect"><h2>Flashcards <span class="muted small num">${t.cards.length}</span></h2><p class="small muted">Answer in your head, then tap to check.</p><ul class="fclist">${t.cards.map((c) => `<li><details><summary>${esc(c[0])}</summary><p>${esc(c[1])}</p></details></li>`).join('')}</ul></section>`;
+  h += `<section class="sect"><h2>Exam practice</h2><p>${esc(t.ex)}</p><div class="links">${s.resources.map((r) => extLink(r[0], r[1])).join('')}</div></section>`;
+  if (wks.length) h += `<section class="sect"><h2>In your plan</h2>${list(wks)}</section>`;
   return h;
 }
 function viewRate() {
-  let h = `<a class="back" href="#subjects">${ic('chevL')} Subjects</a><div class="hello"><h1>Rate every topic</h1><p class="muted">Be honest — it's just for you. <b>1</b> = don't know it, <b>3</b> = okay, <b>5</b> = exam-ready.</p></div>`;
-  for (const s of RG.subjects) {
-    h += `<div class="sect"><div class="kind" style="${sv(s.id)}"><i>${ic(s.id)}</i>${esc(s.name)}</div><div class="card">`;
-    for (const t of visibleTopics(s)) h += `<div class="trow"><div><button class="tn" data-topic="${t.id}">${esc(t.n)}</button>${!taught(t, D.today()) ? '<div class="tiny muted">Taught later — rate once covered</div>' : ''}</div>${rate5(t.id, st(t.id).c || 0)}</div>`;
-    h += '</div></div>';
-  }
-  return h + '<div class="sect"><a class="btn green full" href="#today">Done — show my path</a></div>';
+  let h = pageHead('Rate every topic', 'Be honest, it\'s just for you. 1 means you don\'t know it, 3 is okay, 5 is exam-ready.', ['Subjects', '#/subjects']);
+  for (const s of RG.subjects) h += `<section class="sect" style="${sv(s.id)}"><h2 class="row"><span class="sicon sm">${ic(s.id)}</span>${esc(s.name)}</h2><ul class="tlist">${visibleTopics(s).map((t) => topicRow(t, D.today())).join('')}</ul></section>`;
+  return h + '<a class="btn full" href="#/today">Done, show my day</a>';
 }
 
-/* ---------- flashcards tab ---------- */
-function cardsSwitch() {
-  return `<div class="seg" role="group" aria-label="Cards or quizzes">${[['cards', 'Flashcards', 'cards'], ['quiz', 'Quizzes', 'target']].map(([k, l, i]) => `<button data-ctab="${k}" aria-pressed="${cardsTab === k}">${ic(i)}${l}</button>`).join('')}</div>`;
+/* ---------- practice ---------- */
+function viewPractice(tab) {
+  tab = ['review', 'decks', 'quizzes'].includes(tab) ? tab : 'review';
+  const qs = cardsSubj ? '?s=' + cardsSubj : '';
+  let h = pageHead('Practice', 'Flashcards, practice decks and quick quizzes, any time.');
+  h += seg([['review', 'Review', '#/practice/review' + qs], ['decks', 'Decks', '#/practice/decks' + qs], ['quizzes', 'Quizzes', '#/practice/quizzes' + qs]], tab, 'Practice type');
+  h += subjChips(cardsSubj, '#/practice/' + tab);
+  return h + (tab === 'decks' ? viewDecks() : tab === 'quizzes' ? viewQuizzes() : viewReview());
 }
-function subjTabs() {
-  return `<div class="sect"><div class="tabs" role="group" aria-label="Subject filter"><button data-cs="" aria-pressed="${!cardsSubj}">All</button>${RG.subjects.map((s) => `<button data-cs="${s.id}" aria-pressed="${cardsSubj === s.id}">${esc(s.name.replace('English ', 'Eng. ').replace('Combined ', ''))}</button>`).join('')}</div></div>`;
-}
-function viewCards() {
-  if (cardsTab === 'quiz') return cardsSwitch() + viewQuizzes();
+function viewReview() {
   const d = D.today();
   const due = dueCards(d, cardsSubj), nw = Math.min(newAllowance(d), newCardPool(cardsSubj).length);
   const seen = Object.keys(state.cards).filter((id) => CARD[id] && (!cardsSubj || CARD[id].t.subj.id === cardsSubj));
   const box = [0, 0, 0, 0, 0, 0]; for (const id of seen) box[state.cards[id].b]++;
   const mx = Math.max(1, ...box);
-  let h = cardsSwitch() + `<div class="deckhero"><div class="stackart"><i></i><i></i><i>${due.length + nw}</i></div><h1>${due.length ? plural(due.length, 'card') + ' due' : nw ? plural(nw, 'new card') + ' to learn' : 'All caught up!'}</h1>
-    <p class="muted">Get a card right and it comes back later (1 → 3 → 7 → 14 → 30 days). Miss it and you'll see it tomorrow.</p></div>`;
-  h += `<div class="sect"><button class="btn green full" data-act="review" ${due.length + nw ? '' : 'disabled'}>Review ${due.length} due + ${nw} new</button><button class="btn full" data-act="cram" ${newCardPool(cardsSubj).length + seen.length ? '' : 'disabled'}>Quick practice · 20 cards</button></div>`;
-  h += subjTabs();
-  h += viewDecks();
-  const bc = ['var(--red)', 'var(--orange)', 'var(--yellow)', 'var(--c4)', 'var(--green)', 'var(--blue)'];
-  h += `<div class="sect"><h2>Your memory boxes</h2><div class="card stack"><div class="boxes">${box.map((n, i) => `<div><b class="num">${n}</b><i style="height:${Math.max(6, n / mx * 80)}px;--bc:${bc[i]}"></i><span>BOX ${i}</span></div>`).join('')}</div>
-    <p class="small muted">${seen.length} cards started · ${newCardPool(cardsSubj).length} still new${cardsSubj === 'german' || !cardsSubj ? ' · German vocab comes first' : ''}. Box 5 = long-term memory!</p></div></div>`;
-  return h;
+  return `<section class="panel hero-panel"><h2>${due.length ? plural(due.length, 'card') + ' due' : nw ? plural(nw, 'new card') + ' to learn' : 'All caught up'}</h2>
+    <p class="muted">Get a card right and it comes back later (1, 3, 7, 14, then 30 days). Miss it and you'll see it tomorrow.</p>
+    <div class="row wrap"><button class="btn" data-act="review" ${due.length + nw ? '' : 'disabled'}>Review ${due.length} due and ${nw} new</button><button class="btn" data-variant="outline" data-act="cram" ${newCardPool(cardsSubj).length + seen.length ? '' : 'disabled'}>Quick practice, 20 cards</button></div></section>
+    <section class="sect"><h2>Your memory boxes</h2><div class="boxes">${box.map((n, i) => `<div><b class="num">${n}</b><i style="height:${Math.max(4, n / mx * 72)}px"></i><span>Box ${i}</span></div>`).join('')}</div>
+    <p class="small muted">${seen.length} cards started, ${newCardPool(cardsSubj).length} still new${cardsSubj === 'german' || !cardsSubj ? '. German vocab comes first' : ''}. Box 5 is long-term memory.</p></section>`;
 }
 
 /* ---------- settings ---------- */
-function viewMore() {
+function field(label, sub, control) { return `<div class="setrow"><div class="grow"><p class="l">${label}</p>${sub ? `<p class="s">${sub}</p>` : ''}</div>${control}</div>`; }
+function viewSettings() {
   const s = state.settings;
-  let h = '<div class="hello"><div class="caps">Settings</div><h1>Make it yours</h1></div>';
+  let h = pageHead('Settings', '');
   if (auth.available) {
-    h += `<div class="sect"><h2>Account</h2><div class="card stack">${auth.user
-      ? `<div class="row">${ic('user')}<div class="grow"><b>${esc(auth.user.email || 'Google account')}</b><div class="small muted">Progress syncs to every device you sign in on.</div></div></div>${pwSection()}<button class="btn full plain" data-act="signout">Sign out</button>`
-      : '<p>You\'re not signed in, so progress is saved on this device only.</p><button class="btn blue full" data-act="signin-now">Sign in or create account</button>'}</div></div>`;
+    h += `<section class="sect"><h2>Account</h2><div class="panel stack">${auth.user
+      ? `<div class="row">${ic('user')}<div class="grow"><b>${esc(auth.user.email || 'Google account')}</b><p class="small muted">Progress syncs to every device you sign in on.</p></div></div>${pwSection()}<button class="btn" data-variant="outline" data-act="signout">Sign out</button>`
+      : '<p>You\'re not signed in, so progress is saved on this device only.</p><button class="btn" data-act="signin-now">Sign in or create account</button>'}</div></section>`;
   }
-  h += `<div class="sect"><h2>Sound & tiers</h2><div class="card">
-    <div class="field"><div><div class="l">Sound effects</div><div class="s">Chimes when you get things right</div></div><input type="checkbox" class="switch" id="sound" data-sound ${s.sound !== false ? 'checked' : ''} aria-label="Sound effects"></div>`;
-  for (const id of ['maths', 'science', 'german']) {
-    h += `<div class="field"><div><div class="l">${esc(SUBJ[id].name)} tier</div><div class="s">Higher-only topics hide on Foundation</div></div>
-      <select id="tier-${id}" data-tier="${id}" aria-label="${esc(SUBJ[id].name)} tier"><option value="H" ${s.tiers[id] !== 'F' ? 'selected' : ''}>Higher</option><option value="F" ${s.tiers[id] === 'F' ? 'selected' : ''}>Foundation</option></select></div>`;
-  }
-  h += '</div></div>';
-  h += '<div class="sect"><h2>Mock exams</h2><p class="small muted" style="margin-top:-6px">Estimated dates — change them when you get your mock timetable.</p><div class="card">';
-  s.mocks.forEach((m, i) => {
-    h += `<div class="field" style="grid-template-columns:1fr"><div class="l">${esc(m.name)}</div><div class="row" style="flex-wrap:wrap"><input type="date" id="mock-${i}-start" data-mock="${i}" data-f="start" value="${esc(m.start)}" aria-label="${esc(m.name)} start"><span class="muted">to</span><input type="date" id="mock-${i}-end" data-mock="${i}" data-f="end" value="${esc(m.end)}" aria-label="${esc(m.name)} end"></div></div>`;
-  });
-  h += `<div class="field" style="grid-template-columns:1fr"><div><div class="l">German speaking exam</div><div class="s">Set by school (April–May)</div></div><input type="date" id="speaking" data-speaking value="${esc(s.speakingDate)}" aria-label="German speaking exam date"></div></div></div>`;
-  h += `<div class="sect"><h2>Workload</h2><div class="card">
-    <div class="field"><div><div class="l">Intensity</div><div class="s">Scales every day's time</div></div><select id="intensity" data-intensity aria-label="Intensity"><option value="0.75" ${s.intensity == 0.75 ? 'selected' : ''}>Light</option><option value="1" ${s.intensity == 1 ? 'selected' : ''}>Standard</option><option value="1.25" ${s.intensity == 1.25 ? 'selected' : ''}>Intense</option></select></div>
-    <div class="field"><div><div class="l">Light day</div><div class="s">Flashcards only, until Easter</div></div><select id="restday" data-restday aria-label="Light day">${['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map((n, i) => `<option value="${i}" ${Number(s.restDay) === i ? 'selected' : ''}>${n}</option>`).join('')}<option value="-1" ${Number(s.restDay) === -1 ? 'selected' : ''}>None</option></select></div></div></div>`;
-  h += `<div class="sect"><h2>Backup</h2><div class="card stack"><div id="sync"></div>
-    <div class="row" style="flex-wrap:wrap"><button class="btn sm" data-act="export">Copy backup</button><button class="btn sm" data-act="import">Restore from box</button></div>
-    <textarea id="backup" placeholder="Paste a backup here to restore" aria-label="Backup data"></textarea>
-    <div class="row" style="flex-wrap:wrap"><button class="btn sm plain" data-act="reset">Reset everything…</button><span id="reset-confirm"></span></div></div></div>`;
-  h += `<div class="sect"><h2>Why this works</h2><div class="card"><ul class="pts">
-    <li><b>Retrieval practice</b> (blurting, flashcards, exam questions) beats re-reading by a mile.</li>
-    <li><b>Spacing:</b> reviewing just as you start to forget makes knowledge last until June.</li>
-    <li><b>Mixing subjects</b> feels harder but improves exam performance.</li>
-    <li><b>Timed past papers + mark schemes</b> show what examiners reward.</li>
-    <li><b>Short sessions with breaks</b> keep focus high; sleep locks it in.</li></ul></div></div>`;
-  h += `<div class="sect"><h2>Sources</h2><div class="card small"><ul class="pts">
+  h += `<section class="sect"><h2>Look and sound</h2><div class="panel">
+    ${field('Theme', '', `<select class="select" data-theme-pick aria-label="Theme">${[['system', 'Match device'], ['light', 'Light'], ['dark', 'Dark']].map(([v, l]) => `<option value="${v}" ${(s.theme || 'system') === v ? 'selected' : ''}>${l}</option>`).join('')}</select>`)}
+    ${field('Sound effects', 'A chime when you get things right', `<input type="checkbox" class="input" role="switch" data-sound ${s.sound !== false ? 'checked' : ''} aria-label="Sound effects">`)}
+    ${field('Type German answers', 'In practice decks, type the word instead of flipping', `<input type="checkbox" class="input" role="switch" data-typemode ${typeOn() ? 'checked' : ''} aria-label="Type German answers">`)}</div></section>`;
+  h += `<section class="sect"><h2>Tiers</h2><div class="panel">${['maths', 'science', 'german'].map((id) => field(esc(SUBJ[id].name), 'Higher-only topics hide on Foundation',
+    `<select class="select" data-tier="${id}" aria-label="${esc(SUBJ[id].name)} tier"><option value="H" ${s.tiers[id] !== 'F' ? 'selected' : ''}>Higher</option><option value="F" ${s.tiers[id] === 'F' ? 'selected' : ''}>Foundation</option></select>`)).join('')}</div></section>`;
+  h += `<section class="sect"><h2>Dates</h2><p class="small muted">Mock and holiday dates are estimates. Change them when your online school confirms them.</p><div class="panel">`;
+  s.mocks.forEach((m, i) => { h += field(esc(m.name), '', `<span class="daterange"><input class="input" type="date" data-mock="${i}" data-f="start" value="${esc(m.start)}" aria-label="${esc(m.name)} start"><span class="muted">to</span><input class="input" type="date" data-mock="${i}" data-f="end" value="${esc(m.end)}" aria-label="${esc(m.name)} end"></span>`); });
+  h += field('German speaking exam', 'Set by your school (April to May)', `<input class="input" type="date" data-speaking value="${esc(s.speakingDate)}" aria-label="German speaking exam date">`);
+  holidayList().forEach((x, i) => { h += field(esc(x[2]), 'No online lessons', `<span class="daterange"><input class="input" type="date" data-hol="${i}" data-f="0" value="${esc(x[0])}" aria-label="${esc(x[2])} start"><span class="muted">to</span><input class="input" type="date" data-hol="${i}" data-f="1" value="${esc(x[1])}" aria-label="${esc(x[2])} end"></span>`); });
+  h += '</div></section>';
+  h += `<section class="sect"><h2>Backup</h2><div class="panel stack"><div id="sync"></div>
+    <div class="row wrap"><button class="btn" data-variant="outline" data-size="sm" data-act="export">Copy backup</button><button class="btn" data-variant="outline" data-size="sm" data-act="import">Restore from box</button></div>
+    <textarea class="textarea" id="backup" placeholder="Paste a backup here to restore" aria-label="Backup data"></textarea>
+    <div class="row wrap"><button class="btn" data-variant="ghost" data-size="sm" data-act="reset">Reset everything…</button><span id="reset-confirm"></span></div></div></section>`;
+  h += `<section class="sect"><h2>Sources</h2><ul class="pts small">
     <li>Exam boards and set texts: confirmed by Max (October 2026).</li>
-    <li>Content checked against the official specifications: <a href="${SPEC_PDF.maths}" target="_blank" rel="noopener">Edexcel 1MA1</a> · <a href="${SPEC_PDF.science}" target="_blank" rel="noopener">AQA 8464</a> · <a href="${SPEC_PDF.englang}" target="_blank" rel="noopener">AQA 8700</a> · <a href="${SPEC_PDF.englit}" target="_blank" rel="noopener">AQA 8702</a> · <a href="${SPEC_PDF.hist}" target="_blank" rel="noopener">OCR J410</a> · <a href="${SPEC_PDF.german}" target="_blank" rel="noopener">AQA 8662</a>.</li>
-    <li>Formula and equation sheets: Ofqual decision for 2025–2027; AQA June 2027 Physics Equations Sheet; Pearson 1MA1 exam aid.</li>
-    <li>Holiday dates: typical Cambridgeshire 2026–27 terms. Exam dates: AQA, OCR and Pearson 2027 timetables.</li></ul></div></div>`;
+    <li>Content checked against the official specifications: <a href="${SPEC_PDF.maths}" target="_blank" rel="noopener">Edexcel 1MA1</a>, <a href="${SPEC_PDF.science}" target="_blank" rel="noopener">AQA 8464</a>, <a href="${SPEC_PDF.englang}" target="_blank" rel="noopener">AQA 8700</a>, <a href="${SPEC_PDF.englit}" target="_blank" rel="noopener">AQA 8702</a>, <a href="${SPEC_PDF.hist}" target="_blank" rel="noopener">OCR J410</a>, <a href="${SPEC_PDF.german}" target="_blank" rel="noopener">AQA 8662</a>.</li>
+    <li>Formula and equation sheets: Ofqual decision for 2025–2027, the AQA June 2027 Physics Equations Sheet and the Pearson 1MA1 exam aid.</li>
+    <li>Timetable: the Autumn 1 2026 online timetable. Videos: hand-checked YouTube picks per week.</li>
+    <li>Interface built with <a href="https://github.com/hunvreus/basecoat" target="_blank" rel="noopener">Basecoat</a> (MIT) and <a href="https://lucide.dev" target="_blank" rel="noopener">Lucide</a> icons (ISC).</li></ul></section>`;
   return h;
 }
 function pwSection() {
@@ -482,19 +582,19 @@ function pwSection() {
   if (!A || !A.providers || !auth.user || !auth.user.email) return '';
   const prov = A.providers();
   if (prov.includes('password')) return `<p class="small muted">Sign in with ${prov.includes('google.com') ? 'Google, or ' : ''}your email and password.</p>`;
-  return `<form class="soft stack" id="pw-form" novalidate><div><b>Set a password</b><p class="small muted">Then sign in on your phone's home-screen app with <b>${esc(auth.user.email)}</b> and this password. Same account, same progress.</p></div>
+  return `<form class="stack" id="pw-form" novalidate><div><b>Set a password</b><p class="small muted">Then sign in on your phone's home-screen app with <b>${esc(auth.user.email)}</b> and this password. Same account, same progress.</p></div>
     <input type="email" autocomplete="username" value="${esc(auth.user.email)}" hidden aria-hidden="true" tabindex="-1">
-    <input id="pw-new" type="password" autocomplete="new-password" minlength="6" placeholder="New password (6+ characters)" aria-label="New password">
-    ${auth.pwMsg ? `<p class="small" role="alert" style="color:${auth.pwOk ? 'var(--green-d)' : 'var(--red)'};font-weight:800">${esc(auth.pwMsg)}</p>` : ''}
-    <button class="btn blue" type="submit" ${auth.busy ? 'disabled' : ''}>Set password</button></form>`;
+    <input class="input" id="pw-new" type="password" autocomplete="new-password" minlength="6" placeholder="New password (6+ characters)" aria-label="New password">
+    ${auth.pwMsg ? `<p class="small ${auth.pwOk ? 'ok' : 'err'}" role="alert">${esc(auth.pwMsg)}</p>` : ''}
+    <button class="btn" type="submit" ${auth.busy ? 'disabled' : ''}>Set password</button></form>`;
 }
 async function addPassword() {
   const A = window.RGAuth, pw = ($('#pw-new') || {}).value || '';
   auth.pwMsg = ''; auth.pwOk = false;
   if (pw.length < 6) { auth.pwMsg = 'Use a password of at least 6 characters.'; render(); return; }
   auth.busy = true; render();
-  try { await A.addPassword(pw); auth.pwOk = true; auth.pwMsg = ''; toast('Password set — use it on your phone'); }
-  catch (e) { auth.pwMsg = AUTH_ERR[e && e.code] || ((e && e.message) || 'Something went wrong — try again.'); }
+  try { await A.addPassword(pw); auth.pwOk = true; auth.pwMsg = ''; toast('Password set. Use it on your phone'); }
+  catch (e) { auth.pwMsg = AUTH_ERR[e && e.code] || ((e && e.message) || 'Something went wrong. Try again.'); }
   auth.busy = false; render();
 }
 function updateSync() {
@@ -503,8 +603,8 @@ function updateSync() {
     synced: ['ok', auth.available ? 'Synced to your account.' : 'Synced to your Claude account.'],
     connecting: ['', 'Connecting…'],
     readonly: ['warn', 'Saved on this device only.'],
-    error: ['warn', 'Saved on this device — sync will retry on your next change.'],
-    local: ['', auth.available ? 'Saved on this device only — sign in to sync.' : 'Saved on this device only.'],
+    error: ['warn', 'Saved on this device. Sync will retry on your next change.'],
+    local: ['', auth.available ? 'Saved on this device only. Sign in to sync.' : 'Saved on this device only.'],
   };
   const [cls, txt] = map[cloud.status] || map.local;
   el.innerHTML = `<span class="sync ${cls}"><i></i>${esc(txt)}</span>`;
@@ -516,16 +616,27 @@ const YES = ['Nice!', 'Great job!', 'You got it!', 'Brilliant!', 'Spot on!', 'Na
 const NO = ['Not quite', 'Almost!', 'Keep going'];
 function openSession(opts) {
   let b;
-  if (opts.i != null) b = state.plans[opts.date].blocks[opts.i];
-  else b = { k: kindFor(st(opts.t).c || 0, dayInfo(D.today()).phase.id, 99), t: opts.t, m: 25 };
-  if (b.k === 'cards') { startCards('review', opts); return; }
+  if (opts.id) {
+    const it = dayPlan(opts.date).items.find((x) => x.id === opts.id), pk = it && it.pick;
+    if (!pk) return;
+    b = pk.pid ? { k: 'paper', pid: pk.pid, m: PAPER[pk.pid].dur + 15 } : { k: pk.k, t: pk.t, m: itemMins(it) };
+  } else b = { k: kindFor(st(opts.t).c || 0, dayInfo(D.today()).phase.id, 99), t: opts.t, m: 25 };
   sess = { wasActive: activeOn(D.today()), b, opts, steps: KIND[b.k].steps, step: 0, left: b.m * 60, running: false, checks: {}, rating: 0, cardQ: null, score: '', max: '', xp: 0, fb: null, complete: null };
   showOverlay(); renderSession();
 }
-function showOverlay() { openNode = null; $('#session').hidden = false; document.body.style.overflow = 'hidden'; }
-function closeSession() {
+// an open session is a history entry, so the phone's back button closes it instead of leaving the app
+let sessPushed = false;
+function showOverlay() {
+  $('#session').hidden = false; document.body.style.overflow = 'hidden';
+  if (!sessPushed) { try { history.pushState({ sess: 1 }, ''); sessPushed = true; } catch (e) { /* ignore */ } }
+  const f = $('#session .x'); if (f) f.focus({ preventScroll: true });
+}
+// fromPop: the back button already left the entry. keep: another session opens straight away and reuses it.
+function closeSession(fromPop, keep) {
   clearInterval(timerInt); timerInt = null; sess = null;
   $('#session').hidden = true; $('#session').innerHTML = ''; document.body.style.overflow = '';
+  if (sessPushed && !fromPop && !keep) { sessPushed = false; history.back(); }
+  if (fromPop) sessPushed = false;
   render();
 }
 function fmtClock(s) { return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); }
@@ -542,7 +653,7 @@ function shell(progress, body, foot, footCls) {
     <div class="l-foot${footCls ? ' ' + footCls : ''}" id="l-foot"><div class="l-foot-in">${foot}</div></div>`;
 }
 function kindTag(sid, label) { return `<div class="kind" style="${sv(sid)}"><i>${ic(sid)}</i>${esc(label)}</div>`; }
-function contBtn(label, dis, cls) { return `<button class="btn ${cls || 'green'} full" data-act="next" ${dis ? 'disabled' : ''}>${esc(label || 'Continue')}</button>`; }
+function contBtn(label, dis, cls) { return `<button class="btn full" data-variant="${cls || 'success'}" data-act="next" ${dis ? 'disabled' : ''}>${esc(label || 'Continue')}</button>`; }
 function progressNow() {
   const s = sess;
   if (s.complete) return 100;
@@ -579,7 +690,7 @@ function renderSession() {
       return;
     }
   } else if (step === 'apply') {
-    body = `${tag}<div class="hero-ill" style="${sv(subj.id)}">${ic('pencil')}</div><h1 style="text-align:center">Exam practice</h1><div class="card stack"><p>${esc(t.ex)}</p><p class="small muted">Use past-paper questions on this topic and mark them with the official mark scheme.</p><div class="wrap-row">${subj.resources.map((r) => `<a class="btn sm" href="${esc(r[1])}" target="_blank" rel="noopener">${esc(r[0])}</a>`).join('')}</div></div>${note('<b>Tip:</b> ' + esc(subj.technique[0]), 'blue', 'bulb')}`;
+    body = `${tag}<div class="hero-ill" style="${sv(subj.id)}">${ic('pencil')}</div><h1 style="text-align:center">Exam practice</h1><div class="card stack"><p>${esc(t.ex)}</p><p class="small muted">Use past-paper questions on this topic and mark them with the official mark scheme.</p><div class="wrap-row">${subj.resources.map((r) => `<a class="btn" data-variant="outline" data-size="sm" href="${esc(r[1])}" target="_blank" rel="noopener">${esc(r[0])}</a>`).join('')}</div></div>${note('<b>Tip:</b> ' + esc(subj.technique[0]), 'blue', 'bulb')}`;
     foot = contBtn('Done');
   } else if (step === 'rate') {
     const got = Object.values(s.checks).filter(Boolean).length, n = t.pts.length;
@@ -590,7 +701,7 @@ function renderSession() {
   } else if (step === 'paper') {
     body = `${tag}<div class="hero-ill" style="${sv(subj.id)}">${ic('doc')}</div><h1 style="text-align:center">Timed past paper</h1><div class="card stack"><p><b>${esc(p.name)}</b> (${esc(p.subj.board)} ${esc(p.code)}) — ${minsTxt(p.dur)} under exam conditions: timer on, phone away, no notes.</p>
       <div class="kp"><div>Pick a paper you haven't done yet (from the board's website).</div><div>Do it in one sitting and stop when time is up.</div><div>Mark it strictly with the mark scheme (about 15 min).</div><div>Next: log your score and the topics that lost you marks.</div></div>
-      <div class="wrap-row">${p.subj.resources.map((r) => `<a class="btn sm" href="${esc(r[1])}" target="_blank" rel="noopener">${esc(r[0])}</a>`).join('')}</div></div>`;
+      <div class="wrap-row">${p.subj.resources.map((r) => `<a class="btn" data-variant="outline" data-size="sm" href="${esc(r[1])}" target="_blank" rel="noopener">${esc(r[0])}</a>`).join('')}</div></div>`;
     foot = contBtn('I\'ve marked it');
   } else if (step === 'score') {
     const ts = visibleTopics(p.subj).filter((x) => x.paperIds.includes(p.id));
@@ -615,11 +726,11 @@ function cardFoot(q) {
   const s = sess;
   if (s.fb) {
     const ok = s.fb.ok;
-    return `<div class="fb"><div class="badge">${ic(ok ? 'check' : 'x')}</div><div><h2>${esc(s.fb.msg)}</h2><p>${esc(fbSub(ok, q))}</p></div></div><button class="btn ${ok ? 'green' : 'red'} full" data-act="cont">Continue</button>`;
+    return `<div class="fb"><div class="badge">${ic(ok ? 'check' : 'x')}</div><div><h2>${esc(s.fb.msg)}</h2><p>${esc(fbSub(ok, q))}</p></div></div><button class="btn full" data-variant="${ok ? 'success' : 'destructive'}" data-act="cont">Continue</button>`;
   }
-  if (s.typing) return s.ptype === 'g' ? `<button class="btn full" data-act="idk">I don't know</button>` : `<div class="pair"><button class="btn full" data-act="idk">Don't know</button><button class="btn blue full" data-act="check">Check</button></div>`;
-  if (!q.flip) return `<button class="btn blue full" data-act="flip">Show answer</button>`;
-  return `<div class="pair"><button class="btn full" data-act="grade" data-ok="0" style="--fg:var(--red)">Didn't know</button><button class="btn green full" data-act="grade" data-ok="1">Knew it!</button></div>`;
+  if (s.typing) return s.ptype === 'g' ? `<button class="btn full" data-variant="outline" data-act="idk">I don't know</button>` : `<div class="pair"><button class="btn full" data-variant="outline" data-act="idk">Don't know</button><button class="btn full" data-act="check">Check</button></div>`;
+  if (!q.flip) return `<button class="btn full" data-act="flip">Show answer</button>`;
+  return `<div class="pair"><button class="btn full" data-variant="outline" data-act="grade" data-ok="0">Didn't know</button><button class="btn full" data-variant="success" data-act="grade" data-ok="1">Knew it!</button></div>`;
 }
 function fbSub(ok, q) {
   if (sess.mode !== 'practice') return ok ? '+2 XP · this card moves up a box' : 'You\'ll see this card again soon.';
@@ -651,7 +762,7 @@ function gradeCurrent(ok, note) {
   save();
   setFoot(cardFoot(q), ok ? 'good' : 'bad');
   const btn = $('#l-foot .btn');
-  if (ok) { Sound.correct(); buzz(12); confetti({ n: 36, spread: 11, y: innerHeight - 140 }); xpFloat(gain, $('#fc') || btn); }
+  if (ok) { Sound.correct(); buzz(12); xpFloat(gain, $('#fc') || btn); }
   else { Sound.wrong(); buzz([20, 40, 20]); const el = $('#session .fc-wrap'); if (el) { el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake'); } }
   const pb = $('#session .pbar i'); if (pb) { q.i++; const w = progressNow(); q.i--; pb.style.width = Math.max(3, w) + '%'; }
 }
@@ -664,22 +775,22 @@ function finishSession() {
   const s = sess, b = s.b, d = D.today(), wasActive = s.wasActive;
   let stats;
   if (b.t) {
-    rateTopic(b.t, s.rating, d); logMinutes(d, TOPIC[b.t].subj.id, b.m); addXP(20);
+    rateTopic(b.t, s.rating, d); if (!s.opts.id) logMinutes(d, TOPIC[b.t].subj.id, b.m); addXP(20);
     const n = TOPIC[b.t].pts.length, got = Object.values(s.checks).filter(Boolean).length;
     stats = [['Recalled', s.steps.includes('check') ? Math.round(got / n * 100) + '%' : s.rating + '/5', 'var(--green)', 'check'], ['Review', D.short(state.topics[b.t].due).replace(/^\w+ /, ''), 'var(--blue)', 'cal']];
   } else {
     const sc = Number(s.score), mx = Number(s.max);
     (state.papersDone[b.pid] = state.papersDone[b.pid] || []).push({ d, sc: isFinite(sc) ? sc : null, mx: isFinite(mx) && mx > 0 ? mx : null });
     for (const id of Object.keys(s.checks)) if (s.checks[id] && TOPIC[id]) state.topics[id] = Object.assign({}, st(id), { c: 2, due: D.add(d, 1) });
-    logMinutes(d, PAPER[b.pid].subj.id, b.m); addXP(50);
+    if (!s.opts.id) logMinutes(d, PAPER[b.pid].subj.id, b.m); addXP(50);
     stats = [['Score', isFinite(sc) && isFinite(mx) && mx > 0 ? Math.round(sc / mx * 100) + '%' : '—', 'var(--green)', 'target'], ['To fix', String(Object.values(s.checks).filter(Boolean).length), 'var(--blue)', 'pencil']];
   }
-  if (s.opts.i != null && state.plans[s.opts.date]) state.plans[s.opts.date].done[s.opts.i] = b.t ? s.rating : 1;
+  if (s.opts.id) { const it = dayPlan(s.opts.date).items.find((x) => x.id === s.opts.id); if (it) markItem(s.opts.date, it, b.t ? s.rating : 1); }
   save();
   s.complete = { title: b.t ? 'Session complete!' : 'Paper logged!', stats, streakUp: !wasActive };
   celebrate();
 }
-function celebrate() { renderSession(); Sound.win(); buzz([30, 50, 30]); confetti({ n: 160, spread: 18, y: innerHeight * 0.35 }); }
+function celebrate() { renderSession(); Sound.win(); buzz([30, 50, 30]); }
 function completeBody() {
   const c = sess.complete, sk = streak();
   return `<div class="stack done-scr"><div class="hero-ill" style="--c:var(--gold);--cd:var(--gold-d)">${ic('trophy')}</div><h1>${esc(c.title)}</h1>
@@ -695,7 +806,7 @@ function startCards(mode, opts) {
     const pool = Object.keys(state.cards).map((id) => CARD[id]).filter((c) => c && cardAvailable(c) && (!cardsSubj || c.t.subj.id === cardsSubj));
     list = pool.concat(newCardPool(cardsSubj)).map((c) => [Math.random(), c]).sort((a, b) => a[0] - b[0]).slice(0, 20).map((x) => x[1].id);
   } else {
-    const subj = opts && opts.i != null ? null : cardsSubj;
+    const subj = opts && opts.id ? null : cardsSubj;
     list = dueCards(d, subj).slice(0, 60).map((c) => c.id).concat(newCardPool(subj).slice(0, newAllowance(d)).map((c) => c.id));
   }
   sess = { wasActive: activeOn(D.today()), b: { k: 'cards', m: 15 }, opts: opts || {}, deck: { list, i: 0, flip: false, right: 0, wrong: 0, again: {} }, mode, left: 15 * 60, running: false, xp: 0, fb: null, complete: null };
@@ -703,7 +814,7 @@ function startCards(mode, opts) {
 }
 function renderDeck() {
   const q = sess.deck;
-  if (sess.complete) { $('#session').innerHTML = shell(100, completeBody(), sess.mode === 'practice' ? '<div class="pair"><button class="btn full" data-act="next">Done</button><button class="btn green full" data-act="again">Practise again</button></div>' : contBtn('Continue')); return; }
+  if (sess.complete) { $('#session').innerHTML = shell(100, completeBody(), sess.mode === 'practice' ? '<div class="pair"><button class="btn full" data-variant="outline" data-act="next">Done</button><button class="btn full" data-variant="success" data-act="again">Practise again</button></div>' : contBtn('Continue')); return; }
   if (!q.list.length) {
     $('#session').innerHTML = shell(100, `<div class="stack done-scr"><div class="hero-ill">${ic('check')}</div><h1 style="color:var(--green-d)">Nothing due!</h1><p class="muted">You're all caught up. Come back tomorrow, or try a quick practice set.</p></div>`, contBtn('Continue'));
     return;
@@ -716,10 +827,11 @@ function renderDeck() {
   $('#session').innerHTML = shell(progressNow(), body, cardFoot(q), sess.fb ? (sess.fb.ok ? 'good' : 'bad') : '');
   if (sess.typing && !sess.fb) { const i = $('#ans'); if (i) i.focus({ preventScroll: true }); }
 }
-// a plan flashcard block counts as done once you've worked through it (or there was nothing due)
+// a flashcard period counts as done once you've worked through the cards (or there was nothing due)
 function markDeckDone() {
-  const o = sess && sess.opts;
-  if (o && o.i != null && state.plans[o.date] && state.plans[o.date].done[o.i] == null) { state.plans[o.date].done[o.i] = 1; logMinutes(o.date, null, 15); save(); }
+  const o = sess && sess.opts; if (!o || !o.id) return;
+  const it = dayPlan(o.date).items.find((x) => x.id === o.id);
+  if (it && it.done == null) { markItem(o.date, it, 1); save(); }
 }
 function deckComplete() {
   const q = sess.deck, wasActive = sess.wasActive;
@@ -729,10 +841,10 @@ function deckComplete() {
   if (sess.mode === 'practice') {
     const st = deckStats(findDeck(sess.pdeck));
     sess.complete = { title: 'Round complete!', stats: [['First try', q.right + '/' + new Set(q.list).size, 'var(--green)', 'check'], ['Mastered', st.mastered + '/' + st.total, 'var(--blue)', 'star']], streakUp: !wasActive };
-    renderDeck(); Sound.win(); buzz([30, 50, 30]); confetti({ n: 160, spread: 18, y: innerHeight * 0.35 }); return;
+    renderDeck(); Sound.win(); buzz([30, 50, 30]); return;
   }
   sess.complete = { title: 'Deck complete!', stats: [['Correct', String(q.right), 'var(--green)', 'check'], ['Accuracy', total ? Math.round(q.right / total * 100) + '%' : '—', 'var(--blue)', 'target']], streakUp: !wasActive };
-  renderDeck(); Sound.win(); buzz([30, 50, 30]); confetti({ n: 160, spread: 18, y: innerHeight * 0.35 });
+  renderDeck(); Sound.win(); buzz([30, 50, 30]);
 }
 
 /* ---------- practice decks (always available, replay as often as you like) ----------
@@ -790,12 +902,12 @@ function startPractice(deckId) {
 function viewDecks() {
   const decks = practiceDecks();
   if (!decks.length) return '';
-  const tog = decks.some((dk) => dk.type) ? `<div class="card" style="padding-block:4px"><div class="field"><div><div class="l">Type German answers</div><div class="s">Type the word instead of flipping, or tap der/die/das for genders. Small typos are OK.</div></div><input type="checkbox" class="switch" data-typemode ${typeOn() ? 'checked' : ''} aria-label="Type German answers"></div></div>` : '';
-  return `<div class="sect"><h2>Practice decks</h2><p class="small muted" style="margin:-4px 0 12px">Always open, so replay them as often as you like. Get a card right 3 times in a row to master it.</p>${tog}<div class="decks">${decks.map((dk) => {
+  const tog = decks.some((dk) => dk.type) ? `<div class="panel">${field('Type German answers', 'Type the word instead of flipping, or tap der/die/das for genders. Small typos are OK.', `<input type="checkbox" class="input" role="switch" data-typemode ${typeOn() ? 'checked' : ''} aria-label="Type German answers">`)}</div>` : '';
+  return `<p class="small muted">Always open, so replay them as often as you like. Get a card right 3 times in a row to master it.</p>${tog}<div class="decks">${decks.map((dk) => {
     const st = deckStats(dk), pct = st.total ? Math.round(st.mastered / st.total * 100) : 0;
     return `<button class="deck" data-act="practice" data-deck="${esc(dk.id)}" style="${sv(dk.sid)}"><span class="deck-ic">${ic(dk.sid)}</span><span class="deck-tx"><b>${esc(dk.name)}</b><span class="tiny">${esc(dk.desc)}</span>
       <span class="deck-bar"><i style="width:${pct}%"></i></span><span class="tiny num">${st.mastered} / ${st.total} mastered${dk.type && typeOn() ? ' · ' + (dk.type === 'g' ? 'tap der/die/das' : 'type answers') : ''}</span></span></button>`;
-  }).join('')}</div></div>`;
+  }).join('')}</div>`;
 }
 
 /* ---------- typing mode (German decks) ----------
@@ -969,12 +1081,12 @@ function qoptsHTML(q) {
 }
 function quizFoot() {
   const z = sess.quiz, q = z.qs[z.i], f = sess.fb;
-  if (!f) return `<button class="btn full" disabled>Tap an answer</button>`;
-  return `<div class="fb"><div class="badge">${ic(f.ok ? 'check' : 'x')}</div><div><h2>${esc(f.msg)}</h2><p>${f.ok ? '+2 XP' : 'Answer: ' + esc(q.ans) + ' · added to your practice pile'}</p></div></div><button class="btn ${f.ok ? 'green' : 'red'} full" data-act="qnext">${z.i + 1 < z.qs.length ? 'Continue' : 'See your score'}</button>`;
+  if (!f) return `<button class="btn full" data-variant="outline" disabled>Tap an answer</button>`;
+  return `<div class="fb"><div class="badge">${ic(f.ok ? 'check' : 'x')}</div><div><h2>${esc(f.msg)}</h2><p>${f.ok ? '+2 XP' : 'Answer: ' + esc(q.ans) + ' · added to your practice pile'}</p></div></div><button class="btn full" data-variant="${f.ok ? 'success' : 'destructive'}" data-act="qnext">${z.i + 1 < z.qs.length ? 'Continue' : 'See your score'}</button>`;
 }
 function renderQuiz() {
   const z = sess.quiz;
-  if (sess.complete) { $('#session').innerHTML = shell(100, completeBody(), '<div class="pair"><button class="btn full" data-act="next">Done</button><button class="btn green full" data-act="qagain">New quiz</button></div>'); return; }
+  if (sess.complete) { $('#session').innerHTML = shell(100, completeBody(), '<div class="pair"><button class="btn full" data-variant="outline" data-act="next">Done</button><button class="btn full" data-variant="success" data-act="qagain">New quiz</button></div>'); return; }
   const q = z.qs[z.i], c = cardById(q.id);
   const hint = HINT[z.kind] || c.t.n;
   const body = `<div class="kind" style="${sv(z.sid)}"><i>${ic(z.sid)}</i>${esc(z.name)} · ${z.i + 1}/${z.qs.length}</div>
@@ -995,7 +1107,7 @@ function pickQuiz(i) {
   setFoot(quizFoot(), ok ? 'good' : 'bad');
   const pb = $('#session .pbar i'); if (pb) pb.style.width = Math.max(3, (z.i + 1) / z.qs.length * 100) + '%';
   const el = $('#qopts .qopt.' + (ok ? 'right' : 'wrong'));
-  if (ok) { Sound.correct(); buzz(12); confetti({ n: 36, spread: 11, y: innerHeight - 140 }); xpFloat(2, el); }
+  if (ok) { Sound.correct(); buzz(12); xpFloat(2, el); }
   else { Sound.wrong(); buzz([20, 40, 20]); if (el) { el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake'); } }
 }
 function nextQuiz() {
@@ -1008,51 +1120,83 @@ function nextQuiz() {
   addXP(5); save();
   sess.complete = { title: z.right === z.qs.length ? 'Perfect score!' : z.right >= z.qs.length * 0.7 ? 'Great quiz!' : 'Quiz complete!',
     stats: [['Score', z.right + '/' + z.qs.length, 'var(--green)', 'check'], ['Best', state.quiz[z.src].best + '/' + z.qs.length, 'var(--blue)', 'star']], streakUp: !sess.wasActive };
-  renderQuiz(); Sound.win(); buzz([30, 50, 30]); confetti({ n: 160, spread: 18, y: innerHeight * 0.35 });
+  renderQuiz(); Sound.win(); buzz([30, 50, 30]);
 }
 function viewQuizzes() {
   const L = quizList();
-  let h = `<div class="deckhero"><div class="hero-ill" style="--c:var(--purple);--cd:var(--purple-d)">${ic('target')}</div><h1>Quick-fire quizzes</h1>
-    <p class="muted">10 multiple-choice questions from your revision cards. Tap the right answer — anything you miss goes back into your practice decks.</p></div>`;
-  h += subjTabs();
-  h += `<div class="sect"><div class="decks">${L.map((q) => {
+  let h = `<p class="small muted">10 multiple-choice questions from your revision cards. Anything you miss goes back into your practice decks.</p>`;
+  h += `<div class="decks">${L.map((q) => {
     const r = (state.quiz || {})[q.id], of = Math.min(QUIZ_N, q.n), pct = r ? Math.round(r.best / (r.of || of) * 100) : 0;
     return `<button class="deck" data-act="quiz" data-src="${esc(q.id)}" style="${sv(q.sid)}"><span class="deck-ic">${ic(q.sid)}</span><span class="deck-tx"><b>${esc(q.name)}</b><span class="tiny">${esc(q.desc)}</span>
       <span class="deck-bar"><i style="width:${pct}%"></i></span><span class="tiny num">${r ? 'Best ' + r.best + '/' + (r.of || of) + ' · played ' + plural(r.n, 'time') : q.n + ' questions to draw from'}</span></span><span class="qgo">${r ? r.best + '/' + (r.of || of) : 'Go'}</span></button>`;
-  }).join('')}</div></div>`;
+  }).join('')}</div>`;
   return h;
 }
 
+
+/* ---------- leaving a lesson part-way ---------- */
+function midLesson() { return !!(sess && !sess.complete && sess.steps && sess.step > 0); }
+function requestClose() {
+  if (!sess) return;
+  if (midLesson()) {
+    setFoot(`<p class="leave-q">Leave this lesson? Your progress in it won't be saved.</p><div class="pair"><button class="btn" data-variant="outline" data-act="stay">Keep going</button><button class="btn" data-variant="destructive" data-act="leave">Leave</button></div>`);
+    return;
+  }
+  if (sess.deck && !sess.complete && sess.deck.i > 0) markDeckDone();
+  closeSession();
+}
+// the phone/browser back button closes an open session (asking first if you're part-way through a lesson)
+window.addEventListener('popstate', () => {
+  if (!sess) return;
+  if (midLesson()) { try { history.pushState({ sess: 1 }, ''); } catch (e) { /* ignore */ } requestClose(); return; }
+  sessPushed = false;
+  if (sess.deck && !sess.complete && sess.deck.i > 0) markDeckDone();
+  closeSession(true);
+});
+
 /* ---------- events ---------- */
 document.addEventListener('click', (e) => {
-  const el = e.target.closest('[data-act],[data-rate],[data-topic],[data-unlock],[data-tab],[data-cs],[data-chk],[data-weak],[data-ctab]');
+  const back = e.target.closest('[data-back]');
+  if (back && trail.length > 1) { e.preventDefault(); history.back(); return; }
+  const el = e.target.closest('[data-act],[data-rate],[data-unlock],[data-chk],[data-weak]');
   if (!el) return;
   if (el.dataset.rate) {
     quickRate(el.dataset.rate, Number(el.dataset.r)); save(); Sound.tick();
     $$('button', el.parentElement).forEach((b) => b.setAttribute('aria-pressed', b === el ? 'true' : 'false'));
     return;
   }
-  if (el.dataset.topic) { go('subjects', el.dataset.topic); return; }
   if (el.dataset.unlock) { state.unlocked[el.dataset.unlock] = true; save(); render(); toast('Added to your plan'); return; }
-  if (el.dataset.tab) { planTab = el.dataset.tab; render(); return; }
-  if (el.dataset.ctab) { cardsTab = el.dataset.ctab; Sound.tick(); render(); return; }
-  if (el.dataset.cs != null && el.closest('.tabs')) { cardsSubj = el.dataset.cs || null; render(); return; }
   if (el.dataset.chk != null) {
     const on = el.getAttribute('aria-pressed') !== 'true'; sess.checks[el.dataset.chk] = on; el.setAttribute('aria-pressed', on);
     if (on) { Sound.tick(); buzz(8); }
-    const cnt = $('#counter'); if (cnt) { cnt.textContent = Object.values(sess.checks).filter(Boolean).length + ' / ' + TOPIC[sess.b.t].pts.length; cnt.classList.remove('bump'); void cnt.offsetWidth; cnt.classList.add('bump'); }
+    const cnt = $('#counter'); if (cnt) cnt.textContent = Object.values(sess.checks).filter(Boolean).length + ' / ' + TOPIC[sess.b.t].pts.length;
     return;
   }
   if (el.dataset.weak) { const on = el.getAttribute('aria-pressed') !== 'true'; sess.checks[el.dataset.weak] = on; el.setAttribute('aria-pressed', on); if (on) Sound.tick(); return; }
-  const a = el.dataset.act, d = D.today();
+  const a = el.dataset.act;
   switch (a) {
-    case 'node': { const i = Number(el.dataset.i); openNode = openNode === i ? null : i; Sound.tick(); render(); break; }
-    case 'start': openSession({ i: Number(el.dataset.i), date: d }); break;
+    case 'tick': {
+      const d = el.dataset.d, it = dayPlan(d).items.find((x) => x.id === el.dataset.id); if (!it) break;
+      const on = it.done == null;
+      markItem(d, it, on ? 1 : null);
+      if (on) { addXP(5); Sound.tick(); }
+      save(); render();
+      if (on) xpFloat(5, $(`[data-act="tick"][data-id="${it.id}"]`));
+      break;
+    }
+    case 'start': openSession({ date: el.dataset.d, id: el.dataset.id }); break;
     case 'revise': openSession({ t: el.dataset.t }); break;
-    case 'rebuild': rebuildPlan(d); openNode = null; render(); toast('New path built from your latest ratings'); break;
-    case 'to-exams': planTab = 'exams'; go('plan'); break;
-    case 'to-road': e.preventDefault(); planTab = 'road'; go('plan'); break;
-    case 'close': if (sess && sess.deck && !sess.complete && sess.deck.i > 0) markDeckDone(); closeSession(); break;
+    case 'review': startCards('review', el.dataset.id ? { date: el.dataset.d, id: el.dataset.id } : undefined); break;
+    case 'rebuild': rebuildPlan(el.dataset.d); save(); render(); toast('Topics re-picked from your latest ratings'); break;
+    case 'nolive': {
+      const d = el.dataset.d;
+      if (state.noLive[d]) delete state.noLive[d]; else state.noLive[d] = true;
+      save(); render(); toast(state.noLive[d] ? 'Live lessons swapped for self-study' : 'Live lessons are back on');
+      break;
+    }
+    case 'close': requestClose(); break;
+    case 'stay': if (sess && sess.steps) renderSession(); break;
+    case 'leave': closeSession(); break;
     case 'timer':
       if (!sess) break;
       if (sess.left === 0) sess.left = sess.b.m * 60;
@@ -1077,13 +1221,12 @@ document.addEventListener('click', (e) => {
     case 'flip': flipCard(); break;
     case 'grade': gradeCurrent(el.dataset.ok === '1'); break;
     case 'cont': continueCard(); break;
-    case 'review': startCards('review'); break;
     case 'cram': startCards('cram'); break;
     case 'practice': startPractice(el.dataset.deck); break;
     case 'quiz': startQuiz(el.dataset.src); break;
     case 'qpick': pickQuiz(Number(el.dataset.i)); break;
     case 'qnext': nextQuiz(); break;
-    case 'qagain': { const id = sess && sess.quiz && sess.quiz.src; closeSession(); if (id) startQuiz(id); break; }
+    case 'qagain': { const id = sess && sess.quiz && sess.quiz.src; closeSession(false, true); if (id) startQuiz(id); break; }
     case 'check': checkTyped(($('#ans') || {}).value || ''); break;
     case 'idk': checkTyped('', true); break;
     case 'gpick': checkTyped(el.dataset.g); break;
@@ -1093,18 +1236,18 @@ document.addEventListener('click', (e) => {
       const a0 = i.selectionStart == null ? i.value.length : i.selectionStart, b0 = i.selectionEnd == null ? a0 : i.selectionEnd;
       i.value = i.value.slice(0, a0) + el.dataset.ch + i.value.slice(b0); i.focus(); i.setSelectionRange(a0 + 1, a0 + 1); break;
     }
-    case 'again': { const id = sess && sess.pdeck; closeSession(); if (id) startPractice(id); break; }
+    case 'again': { const id = sess && sess.pdeck; closeSession(false, true); if (id) startPractice(id); break; }
     case 'export': {
       const txt = JSON.stringify(state), ta = $('#backup'); ta.value = txt;
-      try { navigator.clipboard.writeText(txt).then(() => toast('Backup copied'), () => { ta.select(); toast('Select-all and copy the box'); }); } catch (err) { ta.select(); toast('Select-all and copy the box'); }
+      try { navigator.clipboard.writeText(txt).then(() => toast('Backup copied'), () => { ta.select(); toast('Select all and copy the box'); }); } catch (err) { ta.select(); toast('Select all and copy the box'); }
       break;
     }
     case 'import': {
-      try { const obj = JSON.parse($('#backup').value); if (!obj || !obj.settings) throw new Error('bad'); state = migrate(obj); applySettings(); save(); render(); toast('Progress restored'); }
-      catch (err) { toast('That doesn\'t look like a backup — paste the whole text'); }
+      try { const obj = JSON.parse($('#backup').value); if (!obj || !obj.settings) throw new Error('bad'); state = migrate(obj); applySettings(); applyTheme(); save(); render(); toast('Progress restored'); }
+      catch (err) { toast('That doesn\'t look like a backup. Paste the whole text'); }
       break;
     }
-    case 'reset': $('#reset-confirm').innerHTML = '<button class="btn sm red" data-act="reset-yes">Yes, delete everything</button>'; break;
+    case 'reset': $('#reset-confirm').innerHTML = '<button class="btn" data-variant="destructive" data-size="sm" data-act="reset-yes">Yes, delete everything</button>'; break;
     case 'reset-yes': { const keep = state.settings; state = defaultState(); state.settings = keep; save(); render(); toast('Progress reset'); break; }
     case 'login-signup': authDo('signup'); break;
     case 'login-google': authDo('google'); break;
@@ -1123,18 +1266,24 @@ document.addEventListener('submit', (e) => {
 document.addEventListener('mousedown', (e) => { if (e.target.closest && e.target.closest('[data-act="uml"],[data-act="check"]')) e.preventDefault(); });
 document.addEventListener('change', (e) => {
   const el = e.target;
+  if (el.dataset.themePick != null) { state.settings.theme = el.value; applyTheme(); save(); return; }
   if (el.dataset.typemode != null) { state.settings.typeMode = el.checked; save(); render(); return; }
   if (el.dataset.sound != null) { state.settings.sound = el.checked; save(); if (el.checked) Sound.correct(); return; }
+  if (el.dataset.tick) { const t = state.ticks[el.dataset.tick] || (state.ticks[el.dataset.tick] = {}); t[el.dataset.i] = el.checked; save(); render(); return; }
   if (el.dataset.tier) { state.settings.tiers[el.dataset.tier] = el.value; afterSettings(); }
   else if (el.dataset.mock != null) { const m = state.settings.mocks[Number(el.dataset.mock)]; if (el.value) m[el.dataset.f] = el.value; if (m.end < m.start) m.end = m.start; afterSettings(); }
   else if (el.dataset.speaking != null) { if (el.value) state.settings.speakingDate = el.value; applySettings(); afterSettings(); }
-  else if (el.dataset.intensity != null) { state.settings.intensity = Number(el.value); afterSettings(); }
-  else if (el.dataset.restday != null) { state.settings.restDay = Number(el.value); afterSettings(); }
+  else if (el.dataset.hol != null) {
+    const L = holidayList().map((x) => x.slice()), row = L[Number(el.dataset.hol)];
+    if (el.value) row[Number(el.dataset.f)] = el.value;
+    if (row[1] < row[0]) row[1] = row[0];
+    state.settings.holidays = L; afterSettings();
+  }
 });
 function afterSettings() { rebuildPlan(D.today()); save(); toast('Plan updated'); render(); }
 document.addEventListener('keydown', (e) => {
   if (!sess) return;
-  if (e.key === 'Escape') { closeSession(); return; }
+  if (e.key === 'Escape') { requestClose(); return; }
   if (/INPUT|TEXTAREA|SELECT/.test(document.activeElement && document.activeElement.tagName)) return;
   if (sess.quiz && !sess.complete) {
     if (!sess.fb && /^[1-4]$/.test(e.key)) pickQuiz(Number(e.key) - 1);
@@ -1152,23 +1301,31 @@ document.addEventListener('keydown', (e) => {
   }
   if (e.key === 'Enter') { const b = $('#l-foot .btn'); if (b && !b.disabled) b.click(); }
 });
-function readHash() {
-  const h = location.hash.slice(1), [r, ...rest] = h.split('-'), s = rest.join('-');
-  route = ['today', 'plan', 'subjects', 'cards', 'more', 'rate'].includes(r) ? r : 'today';
-  sub = s || null;
-}
-window.addEventListener('hashchange', () => { readHash(); openNode = null; if (sess) closeSession(); render(); window.scrollTo(0, 0); });
+window.addEventListener('hashchange', () => {
+  parseHash(); noteHash();
+  if (sess) { sessPushed = false; closeSession(true); }
+  render.scrolled = false; window.scrollTo(0, 0); render();
+});
 
 /* ---------- boot ---------- */
+// once a minute: keep the Now card current without collapsing anything you've opened
+function refreshNow() {
+  if (R.tab !== 'today' || R.parts[0] || sess) return;
+  const day = dayPlan(D.today()), t = new Date(), mins = t.getHours() * 60 + t.getMinutes(), pos = nowIn(day, mins);
+  const key = (pos.cur && pos.cur.id) + '|' + (pos.next && pos.next.id);
+  if (key !== refreshNow.key) { refreshNow.key = key; render(); return; }
+  const el = $('#view .now'); if (el) el.outerHTML = nowCard(day, pos, mins);
+}
 function boot() {
   if (typeof state.xp !== 'number') state.xp = 0;
-  $('#nav').innerHTML = '<div class="nav-in">' + [['today', 'Learn', 'home'], ['plan', 'Plan', 'plan'], ['subjects', 'Subjects', 'book'], ['cards', 'Cards', 'cards'], ['more', 'Settings', 'sliders']]
-    .map(([r, l, i]) => `<a href="#${r}" data-r="${r}">${ic(i)}<span>${l}</span></a>`).join('') + '</div>';
-  readHash(); render();
+  applyTheme();
+  if (window.matchMedia) { const mq = matchMedia('(prefers-color-scheme: dark)'); if (mq.addEventListener) mq.addEventListener('change', applyTheme); }
+  $('#nav').innerHTML = '<div class="nav-in">' + TABS.map(([r, l, i]) => `<a href="#/${r}" data-r="${r}">${ic(i)}<span>${l}</span></a>`).join('') + '</div>';
+  parseHash(); noteHash(); render();
   initClaudeCloud();
   initFirebaseAuth();
   window.addEventListener('rgauth-ready', () => { initFirebaseAuth(); render(); });
   let day = D.today();
-  setInterval(() => { if (D.today() !== day) { day = D.today(); if (!sess) render(); } }, 60000);
+  setInterval(() => { if (sess) return; if (D.today() !== day) { day = D.today(); render(); } else refreshNow(); }, 60000);
 }
 boot();
